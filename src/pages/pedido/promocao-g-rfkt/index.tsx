@@ -50,7 +50,7 @@ const Sabores: NextPage = () => {
   const comCoca = false; //getDuasRefri60();
   const comGoob = comCoca ? false : false; //getDuasRefri60();
 
-  const valorSaborFixo = 42;
+  const valorSaborFixo = 39.99;
 
   const [search, setSearch] = useState<string>("");
   const inputRef = createRef<HTMLInputElement>();
@@ -296,7 +296,7 @@ const Sabores: NextPage = () => {
     <SaboresStyle>
       <p className="title">
         <h5 className="title">Pizza GRANDE por:</h5>
-        <h1>R$ 42,00</h1>
+        <h1>R$ 39,99</h1>
         <h6 className="subtitle">GRÁTIS 1 Refri 1L e 1 KITKAT</h6>
         <h5 className="title">(Pagamento em Espécie ou PIX)</h5>
       </p>
