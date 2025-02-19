@@ -1,7 +1,7 @@
 import { IPedido } from "@models/order";
 
 export const taxaGratisAteTalHoras = (order: IPedido) => {
-  const dataPromo = new Date("2024-10-18 20:05:00");
+  const dataPromo = new Date("2025-02-19 21:05:00");
 
   const now = new Date();
 
