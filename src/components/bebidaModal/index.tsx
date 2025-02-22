@@ -28,6 +28,12 @@ const BebidaModal = ({
 
   const [bebidas, setBebidas] = useState<IOutro[]>([]);
 
+  const [nextInactive, setNextInactive] = useState<boolean>(false);
+
+  const _next = (bb: IOutro | undefined) => {
+    setNextInactive(true);
+    next(bb);
+  };
   const loadItems = async () => {
     try {
       const bebidasFromBackend = (await (
@@ -56,7 +62,7 @@ const BebidaModal = ({
 
   const selectItem = (item: IOutro) => {
     setSelectedItem(item);
-    next(item);
+    _next(item);
     // setShowQuantityModal(item ? true : false);
   };
 
@@ -118,7 +124,11 @@ const BebidaModal = ({
                         className={`${
                           !bebida.disponivel ? "disabled" : undefined
                         }`}
-                        onClick={() => selectItem(bebida)}
+                        onClick={() => {
+                          if (!nextInactive) {
+                            selectItem(bebida);
+                          }
+                        }}
                       >
                         <div className="left">
                           <Image
@@ -168,9 +178,10 @@ const BebidaModal = ({
                 ❇️ Quero a bebida grátis
               </ButtonPrimary>
               <ButtonSecondary
+                disabled={nextInactive}
                 onClick={() => {
                   setModalTemCtz(false);
-                  next(undefined);
+                  _next(undefined);
                 }}
               >
                 ❌ Não quero bebida grátis
