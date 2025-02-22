@@ -264,7 +264,12 @@ NÃO INFORMADO.
       await sendOrder();
       // window.open(whatsAppLink, "_blank");
       const isDev = localStorage.getItem("dev");
-      if (!isDev) window.open(whatsAppLink, "_self");
+      if (!isDev) {
+        window.open(whatsAppLink, "_self");
+      } else {
+        newOrder();
+        router.push("/pedido");
+      }
       setLoading(false);
     } catch (err: unknown) {
       if (tries < 3) {
