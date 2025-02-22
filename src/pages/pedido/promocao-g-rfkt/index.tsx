@@ -237,6 +237,7 @@ const Sabores: NextPage = () => {
   const next = (bebida?: IOutro | undefined) => {
     try {
       setNextInactive(true);
+      const comboId = uuidv4();
       const novaPizza: IPizza = {
         tipo: "PIZZA",
         valor: valorSaborFixo,
@@ -246,9 +247,9 @@ const Sabores: NextPage = () => {
           .filter(Boolean)
           .join(", "),
         id: uuidv4(),
+        comboId,
       };
 
-      const comboId = uuidv4();
       const novaBebida = bebida
         ? {
             ...bebida,
@@ -354,6 +355,7 @@ const Sabores: NextPage = () => {
           buttons={
             <>
               <ButtonPrimary
+                disabled={nextInactive}
                 onClick={() => {
                   setShowModalBebida(true);
                 }}

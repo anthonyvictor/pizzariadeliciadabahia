@@ -293,6 +293,7 @@ const Sabores: NextPage = () => {
           buttons={
             <>
               <ButtonPrimary
+                disabled={nextInactive}
                 onClick={() => {
                   next();
                 }}

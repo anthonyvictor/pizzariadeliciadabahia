@@ -296,6 +296,7 @@ const Sabores: NextPage<{ tamanhoId: string }> = ({ tamanhoId }) => {
           buttons={
             <>
               <ButtonPrimary
+                disabled={nextInactive}
                 onClick={() => {
                   if (getGFRefri(size)) {
                     setShowModalBebida(true);
