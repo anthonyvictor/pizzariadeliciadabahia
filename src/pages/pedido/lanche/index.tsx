@@ -62,31 +62,33 @@ const Lanche: NextPage = () => {
     <LancheStyle>
       {lanches.length ? (
         <>
-          <Text type="title">LANCHE</Text>
+          <Text type="title">LANCHES / OUTROS</Text>
           <div className="menu">
             <ul>
-              {lanches.map((lanche) => (
-                <li
-                  key={lanche.nome}
-                  className={`${!lanche.disponivel ? "disabled" : undefined}`}
-                  onClick={() => selectItem(lanche)}
-                >
-                  <div className="left">
-                    <Image
-                      loader={() => lanche.imagemUrl}
-                      src={lanche.imagemUrl}
-                      width={110}
-                      height={90}
-                      objectFit={"cover"}
-                    />
-                  </div>
+              {lanches
+                .filter((x) => x.visivel)
+                .map((lanche) => (
+                  <li
+                    key={lanche.nome}
+                    className={`${!lanche.disponivel ? "disabled" : undefined}`}
+                    onClick={() => selectItem(lanche)}
+                  >
+                    <div className="left">
+                      <Image
+                        loader={() => lanche.imagemUrl}
+                        src={lanche.imagemUrl}
+                        width={110}
+                        height={90}
+                        objectFit={"cover"}
+                      />
+                    </div>
 
-                  <div className="right">
-                    <h5 className="title">{lanche.nome.toUpperCase()}</h5>
-                    <p className="value">{formatCurrency(lanche.valor)}</p>
-                  </div>
-                </li>
-              ))}
+                    <div className="right">
+                      <h5 className="title">{lanche.nome.toUpperCase()}</h5>
+                      <p className="value">{formatCurrency(lanche.valor)}</p>
+                    </div>
+                  </li>
+                ))}
             </ul>
             <ItemQuantityModal
               item={selectedItem}
