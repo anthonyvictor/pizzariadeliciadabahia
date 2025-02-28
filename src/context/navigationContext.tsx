@@ -1,4 +1,3 @@
-import ModalPromo from "@components/modalPromo";
 import {
   createContext,
   Dispatch,
@@ -48,7 +47,7 @@ const NavigationProvider: FC<{ children: ReactNode }> = ({ children }) => {
     );
   }, [promosCarregadas]);
 
-  const somenteOndina = false;
+  const somenteOndina = true;
 
   const [showModalSomenteOndina, setShowModalSomenteOndina] = useState(true);
 

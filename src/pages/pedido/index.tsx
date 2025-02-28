@@ -209,7 +209,7 @@ const Pedido: NextPage = () => {
           </Modal>
         )}
 
-        {somenteOndina && showModalSomenteOndina && (
+        {/* {somenteOndina && showModalSomenteOndina && (
           <Modal
             label="Área de entrega reduzida!"
             description={`No momento só estamos entregando nos locais abaixo:`}
@@ -218,6 +218,25 @@ const Pedido: NextPage = () => {
             <Text type="description">
               Ondina, Rio Vermelho, Barra, Av. Vasco da Gama, Av. Garibaldi, Av.
               Ogunjá e Av. Cardeal da Silva
+            </Text>
+            <ButtonSecondary
+              onClick={() => {
+                setShowModalSomenteOndina(false);
+              }}
+            >
+              Ok, entendi!
+            </ButtonSecondary>
+          </Modal>
+        )} */}
+        {somenteOndina && showModalSomenteOndina && (
+          <Modal
+            label="⚠️ Aviso! Período de carnaval"
+            description={`Durante o período de carnaval, não estaremos fazendo entregas, apenas pedidos para retirada.`}
+            type={"custom"}
+          >
+            <Text type="description">
+              Avisaremos quando vamos retornar o serviço de entregas novamente,
+              fique de olho nas nossas redes sociais!
             </Text>
             <ButtonSecondary
               onClick={() => {

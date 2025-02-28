@@ -26,7 +26,11 @@ export const ModalCardsStyle = styled.div`
     color: #fff;
     white-space: nowrap;
 
-    &:hover {
+    &.disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    &:hover:not(.disabled) {
       transform: scale(105%);
       background-color: #ffffff40;
     }

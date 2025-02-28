@@ -29,6 +29,7 @@ interface IData {
   tipo: "retirada" | "entrega" | null;
 }
 
+const ENTREGANDO = false;
 const InformacoesAdicionais: NextPage = () => {
   const { setInfo, myOrder } = useMyOrder();
   const { getTaxaGratis, getTaxaGratis36 } = usePromo();
@@ -261,6 +262,7 @@ const InformacoesAdicionais: NextPage = () => {
                     <input
                       name="ordertype"
                       id="delivery"
+                      disabled={!ENTREGANDO}
                       type={"radio"}
                       checked={(data && data.tipo === "entrega") ?? false}
                       onChange={(e) =>
@@ -544,6 +546,7 @@ const InformacoesAdicionais: NextPage = () => {
                 id: "e",
                 label: "Entrega",
                 image: "/images/card-entrega.png",
+                disabled: !ENTREGANDO,
                 click: () => {
                   setData((prev) => ({ ...prev, tipo: "entrega" }));
                   setShowModal(false);
@@ -657,6 +660,7 @@ const InformacoesAdicionais: NextPage = () => {
           )} */}
         </Modal>
       )}
+
       {/* {showModalWhatsapp && (
         <Modal
           className="whatsapp-modal"

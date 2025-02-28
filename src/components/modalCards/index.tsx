@@ -8,6 +8,7 @@ export const Cards = ({
     id: string;
     image: string;
     label?: string;
+    disabled?: boolean;
     isDefault?: boolean;
     click: () => void;
   }[];
@@ -15,7 +16,14 @@ export const Cards = ({
   return (
     <ModalCardsStyle>
       {items.map((item) => (
-        <div key={item.id} className="card" onClick={item.click}>
+        <div
+          key={item.id}
+          className={`card ${item.disabled ? "disabled" : ""}`}
+          onClick={() => {
+            if (item.disabled === true) return;
+            item.click();
+          }}
+        >
           <div className="img">
             <Image src={item.image} layout="fill" priority />
           </div>
