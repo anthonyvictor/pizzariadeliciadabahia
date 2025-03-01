@@ -67,6 +67,8 @@ export const MyInput: FC<{
           }
           // data-mask={type === 'phoneNumber' ? "(00) 90000-0000" : undefined}
           data-mask={type === "zipCode" ? "00.000-000" : undefined}
+          autoCorrect="off"
+          spellCheck={false}
           autoComplete={
             type === "address"
               ? "street-address"
@@ -74,9 +76,10 @@ export const MyInput: FC<{
               // ? "tel-national"
               type === "zipCode"
               ? "postal-code"
-              : type === "name"
-              ? "given-name"
-              : undefined
+              : // : type === "name"
+                // ? "given-name"
+                // : undefined
+                "off"
           }
           min={min ?? undefined}
           maxLength={maxLength ?? undefined}
