@@ -228,25 +228,6 @@ const Pedido: NextPage = () => {
             </ButtonSecondary>
           </Modal>
         )} */}
-        {somenteOndina && showModalSomenteOndina && (
-          <Modal
-            label="⚠️ Aviso! Período de carnaval"
-            description={`Durante o período de carnaval, não estaremos fazendo entregas, apenas pedidos para retirada.`}
-            type={"custom"}
-          >
-            <Text type="description">
-              Avisaremos quando vamos retornar o serviço de entregas novamente,
-              fique de olho nas nossas redes sociais!
-            </Text>
-            <ButtonSecondary
-              onClick={() => {
-                setShowModalSomenteOndina(false);
-              }}
-            >
-              Ok, entendi!
-            </ButtonSecondary>
-          </Modal>
-        )}
       </PedidoStyle>
     )
   );

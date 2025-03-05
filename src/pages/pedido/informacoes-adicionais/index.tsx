@@ -29,7 +29,7 @@ interface IData {
   tipo: "retirada" | "entrega" | null;
 }
 
-const ENTREGANDO = false;
+const ENTREGANDO = true;
 const InformacoesAdicionais: NextPage = () => {
   const { setInfo, myOrder } = useMyOrder();
   const { getTaxaGratis, getTaxaGratis36 } = usePromo();
