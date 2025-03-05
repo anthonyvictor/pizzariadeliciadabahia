@@ -334,7 +334,7 @@ const Sabores: NextPage = () => {
           label={
             itensEscolhidos.length === 0 ? `PRIMEIRA pizza` : "SEGUNDA pizza"
           }
-          description={`Selecione até 2 sabores e depois, clique em "Pronto!"`}
+          description={`Selecione até 2 sabores e depois, clique em "Continuar!"`}
           type={"custom"}
           buttons={
             <>

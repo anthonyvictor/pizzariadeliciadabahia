@@ -48,7 +48,8 @@ const Sabores: NextPage = () => {
   const comCoca = false; //getDuasRefri60();
   const comGoob = comCoca ? false : false; //getDuasRefri60();
 
-  const valorSaborFixo = comCoca ? 26.5 : comGoob ? 30 : 30;
+  const _VALORFIXO = comCoca ? 26.49 : comGoob ? 34.99 : 34.99;
+  const valorSaborFixo = _VALORFIXO + 0.01;
 
   const [search, setSearch] = useState<string>("");
   const inputRef = createRef<HTMLInputElement>();
@@ -235,7 +236,7 @@ const Sabores: NextPage = () => {
         ) : (
           <>
             <h5 className="title">Pizza GRANDE por:</h5>
-            <h1>R$ 29,99</h1>
+            <h1>{formatCurrency(_VALORFIXO)}</h1>
           </>
         )}
         <h5 className="title">(Pagamento em Espécie ou PIX)</h5>
