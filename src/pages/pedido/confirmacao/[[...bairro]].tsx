@@ -193,6 +193,11 @@ NÃO INFORMADO.
           observacao: x.observacao,
         }));
 
+      const reduzirTextoLocal = (local: string | undefined) =>
+        ["minha casa", "casa"].some((x) => String(local).toLowerCase() === x)
+          ? ""
+          : local;
+
       const order = {
         ...myOrder,
         taxaEntrega: entregaGratis ? 3 : myOrder.taxaEntrega,
@@ -201,7 +206,9 @@ NÃO INFORMADO.
           ? {
               ...myOrder.cliente?.endereco,
               logradouro: myOrder.cliente?.endereco?.rua,
-              local: myOrder.cliente?.endereco?.localDeEntrega,
+              local: reduzirTextoLocal(
+                myOrder.cliente?.endereco?.localDeEntrega
+              ),
               referencia: myOrder.cliente?.endereco?.pontoDeReferencia,
               bairro: bairroNome,
               taxa: entregaGratis ? 3 : myOrder.taxaEntrega,
