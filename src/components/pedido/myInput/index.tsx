@@ -70,7 +70,9 @@ export const MyInput: FC<{
           autoCorrect="off"
           spellCheck={false}
           autoComplete={
-            type === "address"
+            localStorage.getItem("dev")
+              ? "off"
+              : type === "address"
               ? "street-address"
               : // : type === "phoneNumber"
               // ? "tel-national"
