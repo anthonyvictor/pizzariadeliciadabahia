@@ -38,11 +38,11 @@ const Pedido: NextPage = () => {
         route: "pedido/promocao-dia-das-criancas",
         image: "/images/kids.png",
       },
-      {
-        name: "",
-        route: "pedido/promocao-g-rfkt",
-        image: "/images/promocao-g-rfkt.png",
-      },
+      // {
+      //   name: "",
+      //   route: "pedido/promocao-g-rfkt",
+      //   image: "/images/promocao-g-rfkt.png",
+      // },
       getGrande29() && {
         name: "",
         route: "pedido/promocao-grande-2999",
