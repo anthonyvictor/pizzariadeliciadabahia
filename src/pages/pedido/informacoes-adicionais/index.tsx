@@ -535,6 +535,13 @@ const InformacoesAdicionais: NextPage = () => {
           label="Qual o tipo do seu pedido?"
           description="Você vem buscar ou é pra entrega?"
           type={"custom"}
+          buttons={
+            <>
+              <ButtonSecondary onClick={() => router.back()}>
+                Voltar
+              </ButtonSecondary>
+            </>
+          }
         >
           <Cards
             items={[

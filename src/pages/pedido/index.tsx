@@ -189,7 +189,17 @@ const Pedido: NextPage = () => {
           }}
         />
         {showModal && (
-          <Modal label="Adicionar bebida? 🍹🍻" type={"custom"}>
+          <Modal
+            label="Adicionar bebida? 🍹🍻"
+            type={"custom"}
+            buttons={
+              <>
+                <ButtonSecondary onClick={() => setShowModal(false)}>
+                  Voltar
+                </ButtonSecondary>
+              </>
+            }
+          >
             <Cards
               items={[
                 {
