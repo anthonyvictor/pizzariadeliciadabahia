@@ -29,6 +29,7 @@ const Tamanho: NextPage = () => {
   const router = useRouter();
 
   const [sizes, setSizes] = useState<IPizzaTamanho[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const loadSizes = async () => {
     try {
@@ -38,6 +39,7 @@ const Tamanho: NextPage = () => {
         })
       ).json()) as IPizzaTamanho[];
       setSizes(tamanhos.filter((x) => x.visivel));
+      setIsLoaded(true);
     } catch (err) {
       console.error((err as Error).message, (err as Error).stack);
     }
@@ -54,7 +56,10 @@ const Tamanho: NextPage = () => {
   }, [sizes]);
 
   const getImageSize = (index) => Math.ceil((60 / sizes.length) * (index + 1));
-  return (
+
+  return !isLoaded ? (
+    <Loading />
+  ) : (
     <TamanhoStyle>
       {sizes.length > 0 ? (
         <>
@@ -76,6 +81,9 @@ const Tamanho: NextPage = () => {
                   }}
                   index={index}
                   route={`/pedido/pizza/sabores/${item.id}`}
+                  onClick={() =>
+                    item.ativado ? setIsLoaded(false) : undefined
+                  }
                 >
                   <BottomInfo
                     prop={item.fatias}

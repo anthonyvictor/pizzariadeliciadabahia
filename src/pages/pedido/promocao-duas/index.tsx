@@ -297,18 +297,21 @@ const Sabores: NextPage = () => {
       {showModal && (
         <Modal
           className="observacoes-modal"
-          label="Alguma observação à fazer?"
+          label="Alguma observação?"
           description={`Por ex: "Sem cebola", ou "Bem assada"...`}
           type={"custom"}
           buttons={
             <>
+              <ButtonSecondary onClick={() => setShowModal(false)}>
+                Voltar
+              </ButtonSecondary>
               <ButtonPrimary
                 disabled={nextInactive}
                 onClick={() => {
                   next();
                 }}
               >
-                Pronto!
+                Continuar!
               </ButtonPrimary>
             </>
           }

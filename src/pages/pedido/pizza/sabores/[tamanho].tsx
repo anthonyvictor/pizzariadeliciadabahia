@@ -295,6 +295,9 @@ const Sabores: NextPage<{ tamanhoId: string }> = ({ tamanhoId }) => {
           type={"custom"}
           buttons={
             <>
+              <ButtonSecondary onClick={() => setShowModal(false)}>
+                Voltar
+              </ButtonSecondary>
               <ButtonPrimary
                 disabled={nextInactive}
                 onClick={() => {
@@ -305,7 +308,7 @@ const Sabores: NextPage<{ tamanhoId: string }> = ({ tamanhoId }) => {
                   }
                 }}
               >
-                Pronto!
+                Continuar!
               </ButtonPrimary>
             </>
           }

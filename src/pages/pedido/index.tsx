@@ -145,6 +145,7 @@ const Pedido: NextPage = () => {
                 title={item.name}
                 route={item.route}
                 index={index}
+                onClick={() => setIsLoaded(false)}
               />
             ))}
           </Carousel>
@@ -152,14 +153,16 @@ const Pedido: NextPage = () => {
         <Dots items={items} />
         <BottomControls
           secondaryButton={{
-            click: () => router.push("/pedido/itens"),
+            click: () => {
+              setIsLoaded(false);
+              router.push("/pedido/itens");
+            },
             disabled: (myOrder?.itens?.length ?? 0) < 1,
             text: "MEUS ITENS",
             badge: myOrder?.itens?.length,
           }}
           primaryButton={{
             click: () => {
-              console.log(myOrder?.itens);
               if (
                 myOrder?.itens.some((x) =>
                   [
@@ -176,6 +179,7 @@ const Pedido: NextPage = () => {
                   ].some((y) => (x as IOutro)?.nome?.toUpperCase().includes(y))
                 )
               ) {
+                setIsLoaded(false);
                 router.push("/pedido/informacoes-adicionais");
               } else {
                 askIfCustomerWantsDrink();
@@ -193,6 +197,7 @@ const Pedido: NextPage = () => {
                   label: "Sem bebida",
                   image: "/images/card-sem-bebida.png",
                   click: () => {
+                    setIsLoaded(false);
                     router.push("/pedido/informacoes-adicionais");
                   },
                 },
@@ -201,6 +206,7 @@ const Pedido: NextPage = () => {
                   label: "Quero bebida",
                   image: "/images/card-com-bebida.png",
                   click: () => {
+                    setIsLoaded(false);
                     router.push("/pedido/bebida");
                   },
                 },

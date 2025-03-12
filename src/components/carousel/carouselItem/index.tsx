@@ -12,6 +12,7 @@ interface ICarouselItem {
   index: number;
   enabled?: boolean;
   children?: ReactElement[];
+  onClick?: () => void;
 }
 
 const CarouselItem: FC<ICarouselItem> = ({
@@ -23,6 +24,7 @@ const CarouselItem: FC<ICarouselItem> = ({
   index,
   enabled,
   children,
+  onClick,
 }) => {
   const { selectedIndex, length } = useCarousel();
 
@@ -30,7 +32,13 @@ const CarouselItem: FC<ICarouselItem> = ({
 
   const Wrapper = ({ children }) => {
     return _enabled ? (
-      <Link href={_enabled ? route : "#"} passHref key={route}>
+      <Link
+        href={_enabled ? route : "#"}
+        prefetch={true}
+        onClick={onClick}
+        passHref
+        key={route}
+      >
         {children}
       </Link>
     ) : (

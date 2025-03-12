@@ -40,6 +40,7 @@ const InformacoesAdicionais: NextPage = () => {
   const [showModal, setShowModal] = useState<boolean>(true);
   const [isDataLoaded, setIsDataLoaded] = useState<boolean>(false);
   const [isFormUnlocked, setIsFormUnlocked] = useState<boolean>(false);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   const [showModalCEP, setShowModalCEP] = useState<boolean>(false);
 
@@ -106,10 +107,12 @@ const InformacoesAdicionais: NextPage = () => {
     getNeighbourhoods();
 
     getCustomerFromLocalStorage();
+    setIsPageLoaded(true);
   }, []);
 
   const next = async () => {
     try {
+      setIsPageLoaded(false);
       setNextInactive(true);
       let endereco;
       if (data.tipo === "entrega") {
@@ -240,7 +243,9 @@ const InformacoesAdicionais: NextPage = () => {
     }
   }, [loc]);
 
-  return (
+  return !isPageLoaded ? (
+    <Loading />
+  ) : (
     <>
       {isDataLoaded && isFormUnlocked && (
         <InformacoesAdicionaisStyle>

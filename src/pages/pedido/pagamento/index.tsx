@@ -14,12 +14,14 @@ import Modal from "@components/modal";
 import { colors } from "@styles/colors";
 import { usePromo } from "@context/promoContext";
 import { taxaGratisAteTalHoras } from "@util/promo";
+import Loading from "@components/loading";
 
 const Pagamento: NextPage = () => {
   const { myOrder, addPayment, removeAllPayments, setFee } = useMyOrder();
   const { getTaxaGratis, getTaxaGratis36 } = usePromo();
 
   const router = useRouter();
+  const [isLoaded, setIsLoaded] = useState(false);
   const [nextInactive, setNextInactive] = useState<boolean>(false);
   const [bankNoteInactive, setBankNoteInactive] = useState<boolean>(false);
   const [trocoParaInput, setTrocoParaInput] = useState<string>("");
@@ -54,6 +56,7 @@ const Pagamento: NextPage = () => {
     } else {
       // setFee(fee);
       removeAllPayments();
+      setIsLoaded(true);
     }
   }, []);
 
@@ -63,9 +66,25 @@ const Pagamento: NextPage = () => {
       trocoPara: prev.trocoPara === value ? 0 : value,
     }));
   };
+  const [finalData, setFinalData] = useState<
+    | {
+        valor: number;
+        trocoPara: number;
+        tipo: "especie" | "cartao" | "pix";
+      }
+    | undefined
+  >();
   const setSelectedPaymentMethod = (value: "especie" | "cartao" | "pix") => {
-    setData((prev) => ({ ...prev, tipo: prev.tipo === value ? null : value }));
+    const newData = { ...data, tipo: data.tipo === value ? null : value };
+    setData(newData);
+    setFinalData(newData);
   };
+
+  useEffect(() => {
+    if (finalData) {
+      data.tipo === "especie" ? setShowNeedChangeModal(true) : next();
+    }
+  }, [finalData]);
 
   const MakeButtonBankNote = ({
     value,
@@ -111,6 +130,7 @@ const Pagamento: NextPage = () => {
       ...data,
       trocoPara: trocoPara ?? data.trocoPara,
     });
+    setIsLoaded(false);
     router.push(
       `/pedido/confirmacao${
         myOrder.tipo === "entrega"
@@ -120,7 +140,9 @@ const Pagamento: NextPage = () => {
     );
   };
 
-  return (
+  return !isLoaded ? (
+    <Loading />
+  ) : (
     <PagamentoStyle>
       <TextContainer
         title="PAGAMENTO"
@@ -160,12 +182,12 @@ const Pagamento: NextPage = () => {
       </div>
       <BottomControls
         backButton
-        primaryButton={{
-          click: () => {
-            data.tipo === "especie" ? setShowNeedChangeModal(true) : next();
-          },
-          disabled: nextInactive || !data || !data.tipo,
-        }}
+        // primaryButton={{
+        //   click: () => {
+        //     data.tipo === "especie" ? setShowNeedChangeModal(true) : next();
+        //   },
+        //   disabled: nextInactive || !data || !data.tipo,
+        // }}
       />
       {showNeedChangeModal && (
         <Modal
