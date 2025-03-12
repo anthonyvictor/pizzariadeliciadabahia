@@ -14,6 +14,7 @@ export default function App({ Component, pageProps }) {
     <>
       <Head>
         <link rel="shortcut icon" href={Favicon.src} />
+        <link rel="manifest" href="/manifest.json" />
         <title>Pizzaria Delicia da Bahia - a melhor de Salvador</title>
         <meta charSet="UTF-8" />
         <meta
@@ -24,7 +25,7 @@ export default function App({ Component, pageProps }) {
         />
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+          content="width=device-width, initial-scale=1.0, user-scalable=no maximum-scale=1.0"
         />
       </Head>
       <PromoProvider>

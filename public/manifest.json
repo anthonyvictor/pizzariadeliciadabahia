@@ -1,0 +1,15 @@
+{
+    "name": "Pizzaria Delicia Da Bahia",
+    "short_name": "PizzariaDelicia",
+    "icons": [
+      {
+        "src": "delicia.svg",
+        "sizes": "any",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#8D0000",
+    "theme_color": "#FFBE18"
+  }
