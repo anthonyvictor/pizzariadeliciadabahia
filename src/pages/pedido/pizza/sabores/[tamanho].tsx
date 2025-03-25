@@ -87,7 +87,7 @@ const Sabores: NextPage<{ tamanhoId: string }> = ({ tamanhoId }) => {
       size &&
       getValueString({
         name: size.nome,
-        value: valores.find((x) => x.tamanhoId === size.id).valor,
+        value: valores.find((x) => x.tamanhoId === size.id).valor - 0.01,
       })
     );
   };
@@ -145,7 +145,7 @@ const Sabores: NextPage<{ tamanhoId: string }> = ({ tamanhoId }) => {
 
   const getValorFormatted = (v: number) =>
     formatCurrency(
-      Math.ceil(Number(Number(v / checkedList.length).toFixed(1)))
+      Math.ceil(Number(Number(v / checkedList.length).toFixed(1))) - 0.01
     );
 
   enum Erros {

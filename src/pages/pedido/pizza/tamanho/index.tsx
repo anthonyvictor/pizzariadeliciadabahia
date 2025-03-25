@@ -74,7 +74,9 @@ const Tamanho: NextPage = () => {
                   key={item.nome}
                   title={item.nome}
                   enabled={item.ativado}
-                  subtitle={`(À partir de ${formatCurrency(item.valorMin)})`}
+                  subtitle={`(À partir de ${formatCurrency(
+                    item.valorMin - 0.01
+                  )})`}
                   image={{
                     src: "/images/pedido-pizza.svg",
                     w: getImageSize(index),

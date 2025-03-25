@@ -74,7 +74,7 @@ const CarouselItem: FC<ICarouselItem> = ({
           />
         </div>
         {!!title && <h3 className="title">{title}</h3>}
-        {!!subtitle && <small className="subtitle">{subtitle}</small>}
+        {!!subtitle && <h4 className="subtitle">{subtitle}</h4>}
         {!!description && <p className="tooltip">{description}</p>}
         {children && <div className="bottom-elements">{children}</div>}
       </CarouselItemStyle>
