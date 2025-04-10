@@ -124,19 +124,19 @@ ${item.observacao}`
     `---TOTAL---
   ITENS: ${formatCurrency(valorItens)}${
       ehEntrega
-        ? entregaGratis
+        ? entregaGratis && valorEntrega === 0
           ? `
   ENTREGA: GRÁTIS
         `
+          : entregaGratis
+          ? `ENTREGA: ${formatCurrency(valorEntrega)}`
           : valorEntrega > 0
           ? `
   ENTREGA: ${formatCurrency(valorEntrega)}`
           : ""
         : ""
     }${`
-  VALOR TOTAL: ${formatCurrency(
-    entregaGratis ? valorItens : valorItens + valorEntrega
-  )}`}${
+  VALOR TOTAL: ${formatCurrency(valorItens + valorEntrega)}`}${
       ehEntrega && !entregaGratis && !valorEntrega
         ? `
     (FALTA INCLUIR A TAXA DE ENTREGA)`
@@ -183,7 +183,10 @@ NÃO INFORMADO.
           entregaGratis && ehEntrega
             ? `PROMOCIONAL${x.observacao ? ` ${x.observacao}` : ""}`
             : x.observacao,
-        valor: entregaGratis && ehEntrega && i === 0 ? x.valor - 3 : x.valor,
+        valor:
+          entregaGratis && ehEntrega && i === 0
+            ? x.valor - (myOrder.taxaEntrega === 0 ? 3 : 6)
+            : x.valor,
       }));
 
       const outros = myOrder.itens
@@ -200,7 +203,11 @@ NÃO INFORMADO.
 
       const order = {
         ...myOrder,
-        taxaEntrega: entregaGratis ? 3 : myOrder.taxaEntrega,
+        taxaEntrega: entregaGratis
+          ? myOrder.taxaEntrega === 0
+            ? 3
+            : 6
+          : myOrder.taxaEntrega,
         itens: [...pizzas, ...outros],
         endereco: ehEntrega
           ? {

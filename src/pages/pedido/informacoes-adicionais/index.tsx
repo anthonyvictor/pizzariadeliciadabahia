@@ -147,11 +147,17 @@ const InformacoesAdicionais: NextPage = () => {
         customer,
         data.tipo,
         getTaxaGratis(myOrder.itens)
-          ? 0
+          ? (endereco?.taxa ?? 0) > 6
+            ? endereco.taxa - 6
+            : 0
           : getTaxaGratis36(myOrder.itens)
-          ? 0
+          ? (endereco?.taxa ?? 0) > 6
+            ? endereco.taxa - 6
+            : 0
           : taxaGratisAteTalHoras(myOrder)
-          ? 0
+          ? (endereco?.taxa ?? 0) > 6
+            ? endereco.taxa - 6
+            : 0
           : Number(endereco?.taxa ?? 0)
       );
 

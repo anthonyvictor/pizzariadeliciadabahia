@@ -33,9 +33,7 @@ const Pagamento: NextPage = () => {
     valor:
       myOrder && myOrder.itens?.length
         ? myOrder.itens.reduce((acc, item) => acc + item.valor, 0) +
-          (getTaxaGratis(myOrder.itens) || getTaxaGratis36(myOrder.itens)
-            ? 0
-            : myOrder.taxaEntrega)
+          myOrder.taxaEntrega
         : 0,
     trocoPara: 0,
     tipo: null,
@@ -152,14 +150,13 @@ const Pagamento: NextPage = () => {
             ? getTaxaGratis(myOrder.itens) ||
               getTaxaGratis36(myOrder.itens) ||
               taxaGratisAteTalHoras(myOrder)
-              ? ` (Você ganhou entrega GRÁTIS!)`
+              ? `(Desconto na entrega aplicado!)`
               : myOrder?.taxaEntrega > 0
               ? ` (ITENS + ENTREGA)`
               : ` (ENDEREÇO NÃO ENCONTRADO, FALTA INCLUIR TAXA DE ENTREGA)`
             : undefined
         }
       />
-
       <div className="menu">
         <div className="inputs-changes-methods">
           <div className="methods">
