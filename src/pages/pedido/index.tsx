@@ -19,7 +19,13 @@ import { useNavigation } from "@context/navigationContext";
 import Text from "@components/text";
 
 const Pedido: NextPage = () => {
-  const { getKids, getDuasRefri60, getGrande29, promosCarregadas } = usePromo();
+  const {
+    getKids,
+    getDuasRefri60,
+    grandeOuFamilia,
+    getGrande29,
+    promosCarregadas,
+  } = usePromo();
 
   const getItems = () => {
     return [
@@ -46,12 +52,18 @@ const Pedido: NextPage = () => {
       getGrande29() && {
         name: "",
         route: "pedido/promocao-grande-2999",
-        image: "/images/promocao-grande-2999.png",
+        image:
+          grandeOuFamilia === "grande"
+            ? "/images/promocao-grande-2999.png"
+            : "/images/familia 39.png",
       },
       getDuasRefri60() && {
         name: "",
         route: "pedido/promocao-duas",
-        image: "/images/promocao-duas-refri-60.png",
+        image:
+          grandeOuFamilia === "grande"
+            ? "/images/promocao-duas-refri-60.png"
+            : "/images/duas familia quadrado.png",
       },
       {
         name: "BEBIDAS",
@@ -67,13 +79,6 @@ const Pedido: NextPage = () => {
     if (promosCarregadas) {
       setItems(getItems());
     }
-
-    console.log(
-      "getDuasRefri60()",
-      getDuasRefri60(),
-      "getGrande29()",
-      getGrande29()
-    );
   }, [promosCarregadas]);
 
   const { myOrder } = useMyOrder();

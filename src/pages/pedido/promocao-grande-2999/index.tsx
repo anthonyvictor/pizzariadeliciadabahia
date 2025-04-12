@@ -28,8 +28,6 @@ import Modal from "@components/modal";
 import { usePromo } from "@context/promoContext";
 import { Searchbar } from "@styles/components/Searchbar";
 
-const tamanhoId = "656a0b4781f555282573eb4a";
-
 const Sabores: NextPage = () => {
   const router = useRouter();
   const [checkedList, setCheckedList] = useState<IPizzaSabor[]>([]);
@@ -37,7 +35,7 @@ const Sabores: NextPage = () => {
   const [size, setSize] = useState<IPizzaTamanho | null>(null);
   const [groups, setGroups] = useState<Array<IPizzaGrupo[]>>([]);
   const [nextInactive, setNextInactive] = useState<boolean>(false);
-  const { getGrande29, promosCarregadas } = usePromo();
+  const { getGrande29, promosCarregadas, grandeOuFamilia } = usePromo();
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -47,8 +45,19 @@ const Sabores: NextPage = () => {
   const [itensEscolhidos, setItensEscolhidos] = useState<IPizza[]>([]);
   const comCoca = false; //getDuasRefri60();
   const comGoob = comCoca ? false : false; //getDuasRefri60();
+  const tamanhoId =
+    grandeOuFamilia === "grande"
+      ? "656a0b4781f555282573eb4a"
+      : "656a0b4781f555282573eb4b";
 
-  const _VALORFIXO = comCoca ? 26.49 : comGoob ? 34.99 : 34.99;
+  const _VALORFIXO =
+    grandeOuFamilia === "grande"
+      ? comCoca
+        ? 26.49
+        : comGoob
+        ? 34.99
+        : 34.99
+      : 39.99;
   const valorSaborFixo = _VALORFIXO + 0.01;
 
   const [search, setSearch] = useState<string>("");
@@ -235,7 +244,9 @@ const Sabores: NextPage = () => {
           </>
         ) : (
           <>
-            <h5 className="title">Pizza GRANDE por:</h5>
+            <h5 className="title">
+              Pizza {grandeOuFamilia === "grande" ? "GRANDE" : "FAMÍLIA"} por:
+            </h5>
             <h1>{formatCurrency(_VALORFIXO)}</h1>
           </>
         )}

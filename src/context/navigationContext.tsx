@@ -24,7 +24,8 @@ const NavigationContext = createContext<{
 
 const NavigationProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState<Boolean>(false);
-  const { getKids, getDuasRefri60, promosCarregadas } = usePromo();
+  const { getKids, getDuasRefri60, promosCarregadas, grandeOuFamilia } =
+    usePromo();
   const [modalPromo, setModalPromo] = useState(<></>);
   const router = useRouter();
 
@@ -33,8 +34,14 @@ const NavigationProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setModalPromo(
       getDuasRefri60() && !getKids() && router.pathname.startsWith("/home") ? (
         <ModalPromo2
-          url="/pedido/promocao-duas"
-          image="/images/promo-duas-refri-60-modal.png"
+          url={
+            grandeOuFamilia === "grande" ? "/pedido/promocao-duas" : "/pedido"
+          }
+          image={
+            grandeOuFamilia === "grande"
+              ? "/images/promo-duas-refri-60-modal.png"
+              : "/images/promo familias.png"
+          }
         />
       ) : getKids() && router.pathname.startsWith("/home") ? (
         <ModalPromo2
