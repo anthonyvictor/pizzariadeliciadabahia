@@ -49,22 +49,30 @@ const Pedido: NextPage = () => {
       //   route: "pedido/promocao-g-rfkt",
       //   image: "/images/promocao-g-rfkt.png",
       // },
-      getGrande29() && {
-        name: "",
-        route: "pedido/promocao-grande-2999",
-        image:
-          grandeOuFamilia === "grande"
-            ? "/images/promocao-grande-2999.png"
-            : "/images/familia 39.png",
-      },
-      getDuasRefri60() && {
-        name: "",
-        route: "pedido/promocao-duas",
-        image:
-          grandeOuFamilia === "grande"
-            ? "/images/promocao-duas-refri-60.png"
-            : "/images/duas familia quadrado.png",
-      },
+      getGrande29() &&
+        (grandeOuFamilia === "grande" || grandeOuFamilia === "ambas") && {
+          name: "",
+          route: "pedido/promocao-grande-2999",
+          image: "/images/promocao-grande-2999.png",
+        },
+      getGrande29() &&
+        (grandeOuFamilia === "familia" || grandeOuFamilia === "ambas") && {
+          name: "",
+          route: "pedido/promocao-familia-3999",
+          image: "/images/familia 39.png",
+        },
+      getDuasRefri60() &&
+        (grandeOuFamilia === "grande" || grandeOuFamilia === "ambas") && {
+          name: "",
+          route: "pedido/promocao-duas",
+          image: "/images/promocao-duas-refri-60.png",
+        },
+      getDuasRefri60() &&
+        (grandeOuFamilia === "familia" || grandeOuFamilia === "ambas") && {
+          name: "",
+          route: "pedido/promocao-duas-f",
+          image: "/images/duas familia quadrado.png",
+        },
       {
         name: "BEBIDAS",
         route: "pedido/bebida",
