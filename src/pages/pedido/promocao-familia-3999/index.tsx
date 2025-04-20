@@ -35,10 +35,9 @@ const Sabores: NextPage = () => {
   const [size, setSize] = useState<IPizzaTamanho | null>(null);
   const [groups, setGroups] = useState<Array<IPizzaGrupo[]>>([]);
   const [nextInactive, setNextInactive] = useState<boolean>(false);
-  const { getDuasRefri60, promosCarregadas } = usePromo();
+  const { getGrande29, promosCarregadas } = usePromo();
 
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [showModalTuto, setShowModalTuto] = useState<boolean>(true);
 
   const [observacao, setObservacao] = useState<string>("");
   const [comboId] = useState<string>(uuidv4());
@@ -46,10 +45,10 @@ const Sabores: NextPage = () => {
   const [itensEscolhidos, setItensEscolhidos] = useState<IPizza[]>([]);
   const comCoca = false; //getDuasRefri60();
   const comGoob = comCoca ? false : false; //getDuasRefri60();
+  const tamanhoId = "656a0b4781f555282573eb4b";
 
-  const tamanhoId = "656a0b4781f555282573eb4a";
-  const valorSaborFixo = comCoca ? 26.5 : comGoob ? 29 : 29; //27.5;
-  const valorPromo = 54.99;
+  const _VALORFIXO = 39.99;
+  const valorSaborFixo = _VALORFIXO + 0.01;
 
   const [search, setSearch] = useState<string>("");
   const inputRef = createRef<HTMLInputElement>();
@@ -57,7 +56,7 @@ const Sabores: NextPage = () => {
 
   useEffect(() => {
     if (promosCarregadas) {
-      if (!getDuasRefri60()) {
+      if (!getGrande29()) {
         router.push("/pedido");
       }
     }
@@ -77,14 +76,6 @@ const Sabores: NextPage = () => {
   };
   useEffect(() => {
     if (itensEscolhidos.length === 1) {
-      toast("Pizza adicionada! Agora adicione a segunda pizza.", {
-        type: "success",
-      });
-
-      setCheckedList([]);
-      setNextInactive(false);
-      setShowModalTuto(true);
-    } else if (itensEscolhidos.length === 2) {
       const novaBebida: IOutro | undefined = comCoca
         ? {
             id: "656a212781f555282589ba9b",
@@ -167,6 +158,7 @@ const Sabores: NextPage = () => {
             .includes(removeAccents(search).toLowerCase())
         : true
     );
+
     return !sabores.length ? (
       <></>
     ) : (
@@ -200,7 +192,6 @@ const Sabores: NextPage = () => {
       </div>
     );
   };
-
   const getSaborValor = (s) => {
     return valorSaborFixo;
   };
@@ -243,13 +234,12 @@ const Sabores: NextPage = () => {
           </>
         ) : (
           <>
-            <h5 className="title">2 pizzas {"GRANDES"} por:</h5>
-            <h1>{formatCurrency(valorPromo)}</h1>
+            <h5 className="title">Pizza {"FAMÍLIA"} por:</h5>
+            <h1>{formatCurrency(_VALORFIXO)}</h1>
           </>
         )}
         <h5 className="title">(Pagamento em Espécie ou PIX)</h5>
       </p>
-
       {groups.length && size ? (
         <>
           <TextContainer title="SABORES" subtitle={size && `SELECIONE ATÉ 2`} />
@@ -283,7 +273,7 @@ const Sabores: NextPage = () => {
             disabled={nextInactive}
             onClick={() => setShowModal(true)}
           >
-            <p>Conitinuar {">>"}</p>
+            <p>Pronto! {">>"}</p>
             {/* <b>
               {getValorFormatted(
                 checkedList.reduce((max, curr) => getSaborValor(curr) + max, 0)
@@ -297,21 +287,18 @@ const Sabores: NextPage = () => {
       {showModal && (
         <Modal
           className="observacoes-modal"
-          label="Alguma observação?"
+          label="Alguma observação à fazer?"
           description={`Por ex: "Sem cebola", ou "Bem assada"...`}
           type={"custom"}
           buttons={
             <>
-              <ButtonSecondary onClick={() => setShowModal(false)}>
-                Voltar
-              </ButtonSecondary>
               <ButtonPrimary
                 disabled={nextInactive}
                 onClick={() => {
                   next();
                 }}
               >
-                Continuar!
+                Pronto!
               </ButtonPrimary>
             </>
           }
@@ -329,28 +316,6 @@ const Sabores: NextPage = () => {
             }}
           />
         </Modal>
-      )}
-
-      {showModalTuto && (
-        <Modal
-          className="tuto-modal"
-          label={
-            itensEscolhidos.length === 0 ? `PRIMEIRA pizza` : "SEGUNDA pizza"
-          }
-          description={`Selecione até 2 sabores e depois, clique em "Continuar!"`}
-          type={"custom"}
-          buttons={
-            <>
-              <ButtonPrimary
-                onClick={() => {
-                  setShowModalTuto(false);
-                }}
-              >
-                Ok
-              </ButtonPrimary>
-            </>
-          }
-        />
       )}
     </SaboresStyle>
   );

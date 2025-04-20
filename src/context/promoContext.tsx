@@ -22,7 +22,7 @@ const PromoContext = createContext<{
   getGFRefri: (tamanho: IPizzaTamanho) => boolean;
   getKids: () => boolean;
   promosCarregadas: boolean;
-  grandeOuFamilia: "grande" | "familia";
+  grandeOuFamilia: "grande" | "familia" | "ambas";
 }>(null);
 
 const PromoProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -109,7 +109,7 @@ const PromoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const CONDICAO = tamanho.valorMin >= 36 && tamanho.fatias >= 8;
     return CONDICAO;
   };
-  const grandeOuFamilia: "grande" | "familia" = "familia";
+  const grandeOuFamilia: "grande" | "ambas" | "familia" = "familia";
   const getDuasRefri60 = () => {
     const promo = promos.find((x) => x.nome.includes("duas-refri-60"));
     if (!promo || !promo.ativa) return false;

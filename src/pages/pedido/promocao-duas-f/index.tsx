@@ -47,9 +47,9 @@ const Sabores: NextPage = () => {
   const comCoca = false; //getDuasRefri60();
   const comGoob = comCoca ? false : false; //getDuasRefri60();
 
-  const tamanhoId = "656a0b4781f555282573eb4a";
-  const valorSaborFixo = comCoca ? 26.5 : comGoob ? 29 : 29; //27.5;
-  const valorPromo = 54.99;
+  const tamanhoId = "656a0b4781f555282573eb4b";
+  const valorSaborFixo = 36; //35;
+  const valorPromo = 71.99; //69.99;
 
   const [search, setSearch] = useState<string>("");
   const inputRef = createRef<HTMLInputElement>();
@@ -243,7 +243,7 @@ const Sabores: NextPage = () => {
           </>
         ) : (
           <>
-            <h5 className="title">2 pizzas {"GRANDES"} por:</h5>
+            <h5 className="title">2 pizzas {"TAMANHO FAMÍLIA"} por:</h5>
             <h1>{formatCurrency(valorPromo)}</h1>
           </>
         )}

@@ -35,7 +35,7 @@ const NavigationProvider: FC<{ children: ReactNode }> = ({ children }) => {
       getDuasRefri60() && !getKids() && router.pathname.startsWith("/home") ? (
         <ModalPromo2
           url={
-            grandeOuFamilia === "grande" ? "/pedido/promocao-duas" : "/pedido"
+            "/pedido" //grandeOuFamilia === "grande" ? "/pedido/promocao-duas" :
           }
           image={
             grandeOuFamilia === "grande"
