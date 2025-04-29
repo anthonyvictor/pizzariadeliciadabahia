@@ -24,6 +24,8 @@ const Pedido: NextPage = () => {
     getDuasRefri60,
     grandeOuFamilia,
     getGrande29,
+    pequenaPromo,
+    duasPequenas,
     promosCarregadas,
   } = usePromo();
 
@@ -43,6 +45,16 @@ const Pedido: NextPage = () => {
         name: "",
         route: "pedido/promocao-dia-das-criancas",
         image: "/images/kids.png",
+      },
+      pequenaPromo() && {
+        name: "",
+        route: "pedido/pequena-promocional",
+        image: "/images/pequena promo quadrado.png",
+      },
+      duasPequenas() && {
+        name: "",
+        route: "pedido/duas-pequenas",
+        image: "/images/duas pequenas quadrado.png",
       },
       // {
       //   name: "",
