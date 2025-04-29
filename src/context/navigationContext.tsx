@@ -27,6 +27,7 @@ const NavigationProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const {
     getKids,
     duasPequenas,
+    pequenaPromo,
     getDuasRefri60,
     promosCarregadas,
     grandeOuFamilia,
@@ -53,7 +54,9 @@ const NavigationProvider: FC<{ children: ReactNode }> = ({ children }) => {
           url="/pedido/promocao-dia-das-criancas"
           image="/images/promo-dia-das-criancas-modal.png"
         />
-      ) : duasPequenas() && router.pathname.startsWith("/home") ? (
+      ) : duasPequenas() &&
+        pequenaPromo() &&
+        router.pathname.startsWith("/home") ? (
         <ModalPromo2 url="/pedido" image="/images/promo pequenas.png" />
       ) : (
         <></>
