@@ -48,8 +48,8 @@ const Sabores: NextPage = () => {
   const comGoob = comCoca ? false : false; //getDuasRefri60();
 
   const tamanhoId = "656a0b4781f555282573eb48";
-  const valorSaborFixo = comCoca ? 26.5 : comGoob ? 29 : 15; //27.5;
-  const valorPromo = 29.99;
+  const valorSaborFixo = comCoca ? 26.5 : comGoob ? 29 : 21; //27.5;
+  const valorPromo = 41.99;
 
   const [search, setSearch] = useState<string>("");
   const inputRef = createRef<HTMLInputElement>();

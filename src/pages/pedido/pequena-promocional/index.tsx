@@ -47,7 +47,7 @@ const Sabores: NextPage = () => {
   const comGoob = comCoca ? false : false; //getDuasRefri60();
   const tamanhoId = "656a0b4781f555282573eb48";
 
-  const _VALORFIXO = comCoca ? 26.49 : comGoob ? 34.99 : 16.99;
+  const _VALORFIXO = comCoca ? 26.49 : comGoob ? 34.99 : 19.99;
 
   const valorSaborFixo = _VALORFIXO + 0.01;
 
