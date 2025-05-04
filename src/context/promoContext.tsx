@@ -111,7 +111,7 @@ const PromoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const CONDICAO = tamanho.valorMin >= 36 && tamanho.fatias >= 8;
     return CONDICAO;
   };
-  const grandeOuFamilia: "grande" | "ambas" | "familia" = "grande";
+  const grandeOuFamilia: "grande" | "ambas" | "familia" = "familia";
   const getDuasRefri60 = () => {
     const promo = promos.find((x) => x.nome.includes("duas-refri-60"));
     if (!promo || !promo.ativa) return false;
