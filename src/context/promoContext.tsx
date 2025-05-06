@@ -21,8 +21,8 @@ const PromoContext = createContext<{
   getGrande29: () => boolean;
   getGFRefri: (tamanho: IPizzaTamanho) => boolean;
   getKids: () => boolean;
-  pequenaPromo: () => boolean
-  duasPequenas: () => boolean
+  pequenaPromo: () => boolean;
+  duasPequenas: () => boolean;
   promosCarregadas: boolean;
   grandeOuFamilia: "grande" | "familia" | "ambas";
 }>(null);
@@ -111,7 +111,7 @@ const PromoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const CONDICAO = tamanho.valorMin >= 36 && tamanho.fatias >= 8;
     return CONDICAO;
   };
-  const grandeOuFamilia: "grande" | "ambas" | "familia" = "familia";
+  const grandeOuFamilia: "grande" | "ambas" | "familia" = "ambas";
   const getDuasRefri60 = () => {
     const promo = promos.find((x) => x.nome.includes("duas-refri-60"));
     if (!promo || !promo.ativa) return false;
@@ -185,7 +185,9 @@ const PromoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         getGFRefri,
         getKids,
         getTaxaGratis36,
-        getGrande29,pequenaPromo,duasPequenas,
+        getGrande29,
+        pequenaPromo,
+        duasPequenas,
         promosCarregadas,
       }}
     >
