@@ -83,7 +83,7 @@ const PromoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!promo || !promo.ativa) return false;
     if (!getEhDia(promo)) return false;
 
-    const pizzas = itens.filter((x) => x.tipo === "PIZZA") as IPizza[];
+    const pizzas = itens.filter((x) => x.tipo === "pizza") as IPizza[];
     const CONDICAO =
       pizzas.length > 0 &&
       pizzas.some((x) => x.tamanho.valorMin >= 27 && x.tamanho.fatias >= 8);
@@ -95,7 +95,7 @@ const PromoProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!promo || !promo.ativa) return false;
     if (!getEhDia(promo)) return false;
 
-    const pizzas = itens.filter((x) => x.tipo === "PIZZA") as IPizza[];
+    const pizzas = itens.filter((x) => x.tipo === "pizza") as IPizza[];
     const CONDICAO =
       pizzas.length > 0 &&
       pizzas.some((x) => x.tamanho.valorMin >= 36 && x.tamanho.fatias >= 8);

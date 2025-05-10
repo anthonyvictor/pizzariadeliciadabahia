@@ -173,7 +173,7 @@ NÃO INFORMADO.
   const confirm = async () => {
     const sendOrder = async () => {
       const _pizzas = myOrder.itens.filter(
-        (x) => x.tipo === "PIZZA"
+        (x) => x.tipo === "pizza"
       ) as IPizza[];
 
       const pizzas = _pizzas.map((x, i) => ({
@@ -190,7 +190,7 @@ NÃO INFORMADO.
       }));
 
       const outros = myOrder.itens
-        .filter((x) => x.tipo !== "PIZZA")
+        .filter((x) => x.tipo !== "pizza")
         .map((x) => ({
           ...x,
           observacao: x.observacao,

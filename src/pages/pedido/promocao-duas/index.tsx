@@ -96,7 +96,7 @@ const Sabores: NextPage = () => {
             comboId,
             vendidos: 50,
             visivel: true,
-            tipo: "BEBIDA",
+            tipo: "bebida",
           }
         : comGoob
         ? {
@@ -107,7 +107,7 @@ const Sabores: NextPage = () => {
             imagemUrl: "https://i.ibb.co/S53JdwH/ylhq3wwi.png",
             comboId,
             observacao: "",
-            tipo: "BEBIDA",
+            tipo: "bebida",
             vendidos: 200,
             visivel: true,
           }
@@ -216,7 +216,7 @@ const Sabores: NextPage = () => {
         checkedList.reduce((max, curr) => getSaborValor(curr) + max, 0) /
         checkedList.length;
       const novaPizza: IPizza = {
-        tipo: "PIZZA",
+        tipo: "pizza",
         valor: valorSaborFixo,
         sabores: checkedList,
         tamanho: size,

@@ -46,7 +46,7 @@ const Sabores: NextPage = () => {
   useEffect(() => {
     if (itensEscolhidos.length > 0) {
       const novaPizza: IPizza = {
-        tipo: "PIZZA",
+        tipo: "pizza",
         valor: 9.99,
         sabores: [
           {
@@ -97,7 +97,7 @@ const Sabores: NextPage = () => {
         observacao: "",
         vendidos: 50,
         visivel: true,
-        tipo: "BEBIDA",
+        tipo: "bebida",
       };
 
       addItem([itensEscolhidos[0], novaPizza, novaBebida]);
@@ -182,7 +182,7 @@ const Sabores: NextPage = () => {
     try {
       setNextInactive(true);
       const novaPizza: IPizza = {
-        tipo: "PIZZA",
+        tipo: "pizza",
         valor: 33,
         sabores: checkedList,
         tamanho: size,

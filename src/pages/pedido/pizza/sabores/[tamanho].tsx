@@ -166,7 +166,7 @@ const Sabores: NextPage<{ tamanhoId: string }> = ({ tamanhoId }) => {
         )
       );
       const novaPizza: IPizza = {
-        tipo: "PIZZA",
+        tipo: "pizza",
         valor: midValue,
         sabores: checkedList,
         tamanho: size,
@@ -200,7 +200,7 @@ const Sabores: NextPage<{ tamanhoId: string }> = ({ tamanhoId }) => {
         //     "https://tucunarenachapa.com.br/wp-content/uploads/2022/11/coc-600ml.png",
         //   valor: 5,
         //   observacao: "",
-        //   tipo: "BEBIDA",
+        //   tipo: "bebida",
         //   vendidos: 10,
         //   visivel: false,
         //   comboId,

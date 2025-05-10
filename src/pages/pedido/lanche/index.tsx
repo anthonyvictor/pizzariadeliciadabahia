@@ -31,7 +31,7 @@ const Lanche: NextPage = () => {
           headers: { "Content-Type": "application/json" },
         })
       ).json()) as IOutro[];
-      setLanches(lanchesFromBackend.map((x) => ({ ...x, tipo: "OUTRO" })));
+      setLanches(lanchesFromBackend.map((x) => ({ ...x, tipo: "outro" })));
     } catch (err) {
       console.error((err as Error).message, (err as Error).stack);
     }

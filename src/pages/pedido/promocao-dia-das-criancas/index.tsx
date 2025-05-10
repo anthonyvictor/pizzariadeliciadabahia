@@ -86,7 +86,7 @@ const Sabores: NextPage = () => {
         comboId,
         vendidos: 50,
         visivel: false,
-        tipo: "BEBIDA",
+        tipo: "bebida",
       };
 
       const itensFinais: IItem[] = [...itensEscolhidos];
@@ -175,7 +175,7 @@ const Sabores: NextPage = () => {
         checkedList.reduce((max, curr) => getSaborValor(curr) + max, 0) /
         checkedList.length;
       const novaPizza: IPizza = {
-        tipo: "PIZZA",
+        tipo: "pizza",
         valor: valorSaborFixo,
         sabores: checkedList,
         tamanho:

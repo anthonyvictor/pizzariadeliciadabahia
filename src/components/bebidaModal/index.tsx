@@ -43,7 +43,7 @@ const BebidaModal = ({
       ).json()) as IOutro[];
 
       const r = bebidasFromBackend
-        .map((x) => ({ ...x, tipo: "BEBIDA" }))
+        .map((x) => ({ ...x, tipo: "bebida" }))
         .filter(
           (x) =>
             x.nome.toLowerCase().includes("refri") &&
