@@ -9,13 +9,18 @@ import { env } from "@config/env";
 const Cardapio: NextPage<ICardapio> = ({ sizes, groupsLeft, groupsRight }) => {
   const getAllValues = (s: IPizzaSabor) => {
     return s.valores
+      .filter((x) => {
+        const tam = sizes.find((t) => t.id === x.tamanhoId && t.visivel);
+
+        return !!tam;
+      })
       .map((v) =>
         getValueString({
           value: v.valor - 0.01,
-          name: sizes.find((x) => x.id === v.tamanhoId).nome,
+          name: sizes.find((x) => x.id === v.tamanhoId).nome.slice(0, 3),
         })
       )
-      .join(", ");
+      .join(" • ");
   };
 
   const getGroups = (g: IPizzaGrupo) => (
