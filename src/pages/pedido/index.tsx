@@ -1,134 +1,51 @@
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import Carousel from "@components/carousel";
-import CarouselItem from "@components/carousel/carouselItem";
-import { useMyOrder } from "@context/myOrderContext";
-import { PedidoStyle } from "@styles/pages/pedido/styles";
+import {
+  BebidaLi,
+  ComboLi,
+  LancheLi,
+  PedidoStyle,
+  ProdGrid,
+  ProdGroup,
+  ProdList,
+  TamanhoLi,
+} from "@styles/pages/pedido/styles";
 import TextContainer from "@components/textContainer";
 import BottomControls from "@components/pedido/bottomControls";
-import { Dots } from "@components/dots";
-import { env } from "@config/env";
-import { IOutro } from "@models/outro";
-import { useEffect, useState } from "react";
-import Modal from "@components/modal";
-import { ButtonPrimary, ButtonSecondary } from "@styles/components/buttons";
+import { useState } from "react";
 import Loading from "@components/loading";
-import { usePromo } from "@context/promoContext";
-import { Cards } from "@components/modalCards";
-import { useNavigation } from "@context/navigationContext";
-import Text from "@components/text";
+import { IPizzaTamanho, ICombo, IBebida, ILanche, IPedido } from "tpdb-lib";
+import Image from "next/image";
+import { formatCurrency } from "@util/format";
+import { tamanhoDescricao } from "@util/pizza";
+import { abreviarBebida } from "@util/bebidas";
+import { obterHome } from "@routes/pages/home";
+import { IHome } from "tpdb-lib";
+import { withSuperjsonGSSP } from "src/infra/superjson";
+import { verificarClienteEPedido } from "@util/verificarClienteEPedido";
+import Link from "next/link";
 
-const Pedido: NextPage = () => {
-  const {
-    getKids,
-    getDuasRefri60,
-    grandeOuFamilia,
-    getGrande29,
-    pequenaPromo,
-    duasPequenas,
-    promosCarregadas,
-  } = usePromo();
-
-  const getItems = () => {
-    return [
-      {
-        name: "LANCHES",
-        route: "pedido/lanche",
-        image: "/images/pedido-lanche.svg",
-      },
-      {
-        name: "PIZZAS",
-        route: "pedido/pizza/tamanho",
-        image: "/images/pedido-pizza.svg",
-      },
-      getKids() && {
-        name: "",
-        route: "pedido/promocao-dia-das-criancas",
-        image: "/images/kids.png",
-      },
-      pequenaPromo() && {
-        name: "",
-        route: "pedido/pequena-promocional",
-        image: "/images/pequena promo quadrado.png",
-      },
-      duasPequenas() && {
-        name: "",
-        route: "pedido/duas-pequenas",
-        image: "/images/duas pequenas quadrado.png",
-      },
-      // {
-      //   name: "",
-      //   route: "pedido/promocao-g-rfkt",
-      //   image: "/images/promocao-g-rfkt.png",
-      // },
-      getGrande29() &&
-        (grandeOuFamilia === "grande" || grandeOuFamilia === "ambas") && {
-          name: "",
-          route: "pedido/promocao-grande-2999",
-          image: "/images/promocao-grande-2999.png",
-        },
-      getGrande29() &&
-        (grandeOuFamilia === "familia" || grandeOuFamilia === "ambas") && {
-          name: "",
-          route: "pedido/promocao-familia-3999",
-          image: "/images/familia 39.png",
-        },
-      getDuasRefri60() &&
-        (grandeOuFamilia === "grande" || grandeOuFamilia === "ambas") && {
-          name: "",
-          route: "pedido/promocao-duas",
-          image: "/images/promocao-duas-refri-60.png",
-        },
-      getDuasRefri60() &&
-        (grandeOuFamilia === "familia" || grandeOuFamilia === "ambas") && {
-          name: "",
-          route: "pedido/promocao-duas-f",
-          image: "/images/duas familia quadrado.png",
-        },
-      {
-        name: "BEBIDAS",
-        route: "pedido/bebida",
-        image: "/images/pedido-bebida.svg",
-      },
-    ].filter(Boolean);
-  };
-
-  const [items, setItems] = useState(getItems());
-
-  useEffect(() => {
-    if (promosCarregadas) {
-      setItems(getItems());
-    }
-  }, [promosCarregadas]);
-
-  const { myOrder } = useMyOrder();
+const Pedido: NextPage = ({
+  items,
+  pedido,
+}: {
+  items: IHome;
+  pedido: IPedido;
+}) => {
   const router = useRouter();
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [closedUntil, setClosedUntil] = useState<Date | null | undefined>();
 
-  const askIfCustomerWantsDrink = () => {
-    setShowModal(true);
-  };
-
-  useEffect(() => {
-    (async () => {
-      const { closedUntil: _closedUntil } = (await (
-        await fetch(`${env.apiURL}/loja`)
-      ).json()) ?? { closedUntil: null };
-      setIsLoaded(true);
-      setClosedUntil(_closedUntil);
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (myOrder?.id) {
-      router.push("/pedido/confirmacao");
-    }
-  }, [myOrder]);
-
-  const { somenteOndina, showModalSomenteOndina, setShowModalSomenteOndina } =
-    useNavigation();
+  const [isLoaded, setIsLoaded] = useState<boolean>(true);
+  // useEffect(() => {
+  //const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  //   (async () => {
+  //     const { closedUntil: _closedUntil } = (await (
+  //       await fetch(`${env.apiURL}/loja`)
+  //     ).json()) ?? { closedUntil: null };
+  //     setIsLoaded(true);
+  //     setClosedUntil(_closedUntil);
+  //   })();
+  // }, []);
 
   if (!isLoaded) return <Loading />;
 
@@ -143,114 +60,238 @@ const Pedido: NextPage = () => {
       </PedidoStyle>
     );
 
-  return (
-    promosCarregadas && (
-      <PedidoStyle
-        onContextMenu={(e) => {
-          e.preventDefault();
+  const Tab = ({ id, label }: { id: string; label: string }) => {
+    return (
+      <button
+        id={`tab-button-${id}`}
+        className="tab-button"
+        onClick={() => {
+          const el = document.querySelector(`#${id}-ul`);
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
         }}
       >
-        <TextContainer title="MONTE SEU PEDIDO" subtitle="ADICIONE UM ITEM" />
+        {label}
+      </button>
+    );
+  };
 
-        <div className="menu">
-          <Carousel
-            length={items.length}
-            defaultSelectedIndex={
-              promosCarregadas
-                ? getDuasRefri60() || getGrande29()
-                  ? 2
-                  : undefined
-                : undefined
-            }
-          >
-            {items.map((item, index) => (
-              <CarouselItem
-                key={item.route}
-                image={{ src: item.image, w: 100 }}
-                title={item.name}
-                route={item.route}
-                index={index}
-                onClick={() => setIsLoaded(false)}
-              />
+  const Ul = ({
+    id,
+    label,
+    itens,
+  }: {
+    id: string;
+    label: string;
+    itens: (
+      | ICombo
+      | IPizzaTamanho
+      | (IBebida & { tipo: "bebida" })
+      | (ILanche & { tipo: "lanche" })
+    )[];
+  }) => {
+    const iZero = itens[0];
+
+    const [locked, setLocked] = useState(false);
+    return (
+      <ProdGroup id={`${id}-ul`}>
+        <header>
+          <h2>{label}</h2>
+        </header>
+        {"produtos" in iZero ? (
+          <ProdGrid>
+            {itens.map((prod: ICombo) => (
+              <ComboLi
+                key={`${prod.id ?? prod.nome}`}
+                combo={prod}
+                disabled={locked}
+                onClick={() => {
+                  setLocked(true);
+                  router.push(`/pedido/item/combo/${prod.id}`);
+                }}
+              >
+                <aside className="prod-img">
+                  <Image src={prod.imagemUrl} layout="fill" priority />
+                </aside>
+                <aside className="conteudo">
+                  <h5>{prod.nome}</h5>
+                  <p style={{ fontSize: "0.7rem" }}>{prod.descricao}</p>
+                  <h6>À partir de {formatCurrency(prod.valorMin)}</h6>
+                </aside>
+              </ComboLi>
             ))}
-          </Carousel>
-        </div>
-        <Dots items={items} />
-        <BottomControls
-          secondaryButton={{
-            click: () => {
-              setIsLoaded(false);
-              router.push("/pedido/itens");
-            },
-            disabled: (myOrder?.itens?.length ?? 0) < 1,
-            text: "MEUS ITENS",
-            badge: myOrder?.itens?.length,
-          }}
-          primaryButton={{
-            click: () => {
-              if (
-                myOrder?.itens.some((x) =>
-                  [
-                    "CERVEJA",
-                    "SUCO",
-                    "REFRIGERANTE",
-                    "REFRI",
-                    "COCA",
-                    "AGUA",
-                    "SUKITA",
-                    "PEPSI",
-                    "ANTÁRCTICA",
-                    "ÁGUA",
-                  ].some((y) => (x as IOutro)?.nome?.toUpperCase().includes(y))
-                )
-              ) {
-                setIsLoaded(false);
-                router.push("/pedido/informacoes-adicionais");
-              } else {
-                askIfCustomerWantsDrink();
-              }
-            },
-            disabled: (myOrder?.itens?.length ?? 0) < 1,
-          }}
-        />
-        {showModal && (
-          <Modal
-            label="Adicionar bebida? 🍹🍻"
-            type={"custom"}
-            buttons={
-              <>
-                <ButtonSecondary onClick={() => setShowModal(false)}>
-                  Voltar
-                </ButtonSecondary>
-              </>
-            }
-          >
-            <Cards
-              items={[
-                {
-                  id: "n",
-                  label: "Sem bebida",
-                  image: "/images/card-sem-bebida.png",
-                  click: () => {
-                    setIsLoaded(false);
-                    router.push("/pedido/informacoes-adicionais");
-                  },
-                },
-                {
-                  id: "a",
-                  label: "Quero bebida",
-                  image: "/images/card-com-bebida.png",
-                  click: () => {
-                    setIsLoaded(false);
-                    router.push("/pedido/bebida");
-                  },
-                },
-              ]}
-            />
-          </Modal>
+          </ProdGrid>
+        ) : "maxSabores" in iZero ? (
+          <ProdList>
+            {itens.map((prod: IPizzaTamanho) => (
+              <TamanhoLi
+                key={prod.id ?? prod.nome}
+                tamanho={prod}
+                disabled={locked}
+                onClick={() => {
+                  setLocked(true);
+                  router.push(`/pedido/item/pizza/${prod.id}`);
+                }}
+              >
+                <aside className="prod-img">
+                  <Image src={prod.imagemUrl} layout="fill" priority />
+                </aside>
+                <aside className="conteudo">
+                  <h5>Pizza {prod.nome}</h5>
+                  <p style={{ fontSize: "0.7rem" }}>{tamanhoDescricao(prod)}</p>
+                  <h6>À partir de {formatCurrency(prod.valorMin)}</h6>
+                </aside>
+              </TamanhoLi>
+            ))}
+          </ProdList>
+        ) : iZero.tipo === "bebida" ? (
+          <ProdList>
+            {itens.map((prod: IBebida & { tipo: "bebida" }) => (
+              <BebidaLi
+                key={prod.id ?? prod.nome}
+                bebida={prod}
+                disabled={locked}
+                onClick={() => {
+                  setLocked(true);
+                  router.push(`/pedido/item/bebida/${prod.id}`);
+                }}
+              >
+                <aside className="prod-img">
+                  <Image
+                    src={prod.imagemUrl}
+                    width={40}
+                    height={60}
+                    objectFit="scale-down"
+                    priority
+                  />
+                </aside>
+                <aside className="conteudo">
+                  <h5>{abreviarBebida(prod.nome)}</h5>
+                  <h6>{formatCurrency(prod.valor)}</h6>
+                </aside>
+              </BebidaLi>
+            ))}
+          </ProdList>
+        ) : (
+          <ProdList>
+            {itens.map((prod: ILanche & { tipo: "lanche" }) => (
+              <LancheLi
+                key={prod.id ?? prod.nome}
+                lanche={prod}
+                disabled={locked}
+                onClick={() => {
+                  setLocked(true);
+                  router.push(`/pedido/item/lanche/${prod.id}`);
+                }}
+              >
+                <aside className="prod-img">
+                  <Image
+                    src={prod.imagemUrl}
+                    width={60}
+                    height={60}
+                    style={{ flexShrink: 0 }}
+                    objectFit="cover"
+                    priority
+                  />
+                </aside>
+                <aside className="conteudo">
+                  <h5>{prod.nome}</h5>
+                  <p style={{ fontSize: "0.7rem" }}>{prod.descricao}</p>
+                  <h6>{formatCurrency(prod.valor)}</h6>
+                </aside>
+              </LancheLi>
+            ))}
+          </ProdList>
         )}
+      </ProdGroup>
+    );
+  };
 
-        {/* {somenteOndina && showModalSomenteOndina && (
+  const menus: { i: string; l: string; a: Array<any> }[] = [
+    { i: "combos", l: "Promos 🏷️", a: items.combos },
+    { i: "pizzas", l: "Pizzas 🍕", a: items.tamanhos },
+    { i: "bebidas", l: "Bebidas 🍹", a: items.bebidas },
+    { i: "lanches", l: "Lanches 🍔", a: items.lanches },
+  ];
+
+  return (
+    <PedidoStyle
+      onContextMenu={(e) => {
+        e.preventDefault();
+      }}
+    >
+      <TextContainer title="Monte seu pedido" />
+
+      <div className="menu">
+        <nav>
+          {menus
+            .filter((x) => x.a.length)
+            .map(({ i, l }) => (
+              <Tab key={i} id={i} label={l} />
+            ))}
+        </nav>
+
+        <div className="uls no-scroll">
+          {!!items.combos.length && (
+            <Ul id={"combos"} label={"Promoções 🏷️"} itens={items.combos} />
+          )}
+          {!!items.tamanhos.length && (
+            <Ul id={"pizzas"} label={"Pizzas 🍕"} itens={items.tamanhos} />
+          )}
+          {!!items.bebidas.length && (
+            <Ul id={"bebidas"} label={"Bebidas 🍹"} itens={items.bebidas} />
+          )}
+          {!!items.lanches.length && (
+            <Ul id={"lanches"} label={"Lanches 🍔"} itens={items.lanches} />
+          )}
+        </div>
+
+        {!pedido.codigoCupom && (
+          <div className="cupom">
+            Tem um código de cupom?{" "}
+            <Link href={"/pedido/cupom"}>Digite aqui</Link>
+          </div>
+        )}
+      </div>
+      {/* <Dots items={items} /> */}
+      <BottomControls
+        secondaryButton={{
+          click: () => {
+            setIsLoaded(false);
+            router.push("/pedido/itens");
+          },
+          disabled: (pedido?.itens?.length ?? 0) < 1,
+          text: "MEUS ITENS",
+          badge: pedido?.itens?.length,
+        }}
+        primaryButton={{
+          click: () => {
+            // if (
+            //   pedido?.itens.some((x) =>
+            //     [
+            //       "CERVEJA",
+            //       "SUCO",
+            //       "REFRIGERANTE",
+            //       "REFRI",
+            //       "COCA",
+            //       "AGUA",
+            //       "SUKITA",
+            //       "PEPSI",
+            //       "ANTÁRCTICA",
+            //       "ÁGUA",
+            //     ].some((y) => (x as IOutro)?.nome?.toUpperCase().includes(y))
+            //   )
+            // ) {
+            setIsLoaded(false);
+            router.push(`/pedido/tipo`);
+            // } else {
+            //   askIfCustomerWantsDrink();
+            // }
+          },
+          disabled: (pedido?.itens?.length ?? 0) < 1,
+        }}
+      />
+
+      {/* {somenteOndina && showModalSomenteOndina && (
           <Modal
             label="Área de entrega reduzida!"
             description={`No momento só estamos entregando nos locais abaixo:`}
@@ -269,60 +310,34 @@ const Pedido: NextPage = () => {
             </ButtonSecondary>
           </Modal>
         )} */}
-      </PedidoStyle>
-    )
+    </PedidoStyle>
   );
 };
 
-// const result = await getWorkingTime();
-// const hoje = new Date()
-//   .toLocaleString("pt-BR", { weekday: "short" })
-//   .replace(".", "");
-
-// const dia = result.find((x) => String(x.dia).startsWith(hoje));
-
-// if (!!!dia.inicio) {
-//   return {
-//     props: {
-//       isWorking: true,
-//     },
-//   };
-// }
-
-// const dataInicio = new Date();
-// dataInicio.getHours() < 5 && dataInicio.setDate(dataInicio.getDate() - 1);
-// dataInicio.setHours(Number(dia.inicio.split(":")[0]) - 2);
-// dataInicio.setMinutes(Number(dia.inicio.split(":")[1]));
-// dataInicio.setSeconds(0);
-
-// const dataFim = new Date();
-// dataFim.getHours() < 5 && dataFim.setDate(dataFim.getDate() - 1);
-// dataFim.setHours(Number(dia.fim.split(":")[0]));
-// dataFim.setMinutes(Number(dia.fim.split(":")[1]) + 10);
-// dataFim.setSeconds(0);
-
-// const dataAtual = new Date();
-
-// console.log(
-//   "working:",
-//   dataAtual < dataInicio || dataAtual > dataFim ? false : true
-// );
-// console.log(
-//   "atual",
-//   dataAtual.toLocaleString(),
-//   "inicio",
-//   dataInicio.toLocaleString(),
-//   "fim",
-//   dataFim.toLocaleString()
-// );
-// return {
-//   props: {
-//     isWorking: true,
-//     // env.environment === "development"
-//     // ? true
-//     //     : dataAtual < dataInicio || dataAtual > dataFim
-//     // dataAtual < dataInicio || dataAtual > dataFim ? false : true,
-//   },
-// };
-
 export default Pedido;
+
+export const getServerSideProps: GetServerSideProps = withSuperjsonGSSP(
+  async (ctx) => {
+    try {
+      const verif = await verificarClienteEPedido(ctx);
+      if ("redirect" in verif) return verif;
+
+      const items = await obterHome(verif.props.cliente.id);
+
+      return {
+        props: {
+          ...verif.props,
+          items,
+        },
+      };
+    } catch (e) {
+      console.error(e);
+      return {
+        props: {
+          items: null,
+          pedido: null,
+        },
+      };
+    }
+  }
+);

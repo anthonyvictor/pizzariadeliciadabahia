@@ -1,0 +1,94 @@
+import { ICombo, IBebida, ILanche, IPizzaSabor } from "tpdb-lib";
+
+export const sortCombos = (combos: ICombo[] | undefined) => {
+  if (!combos) return [];
+  const r = combos
+    .sort((a, b) =>
+      a.vendidos !== b.vendidos
+        ? a.vendidos - b.vendidos
+        : b.valorMin - a.valorMin
+    )
+    .map((x) => ({ ...x, tipo: "combo" }));
+
+  return r as ICombo[];
+};
+
+export const aplicarValorMinCombo = (
+  combo: ICombo,
+  sabores: IPizzaSabor[],
+  bebidas: IBebida[],
+  lanches: ILanche[]
+) => {
+  combo.produtos.forEach((produto) => {
+    if (produto.tipo === "pizza") {
+      const obterValorMin = (sabs: IPizzaSabor[]) => {
+        const valorMin = Math.min(
+          ...sabs
+            .map((x) => x.valores)
+            .flat()
+            .filter((x) => x.tamanhoId === produto.tamanho.id)
+            .map((x) => x.valor)
+        );
+        return valorMin;
+      };
+
+      produto.valorMin =
+        produto.sabores && produto.sabores?.length
+          ? obterValorMin(
+              sabores.filter((sab) =>
+                (produto?.sabores ?? []).some((x) => x.id === sab.id)
+              )
+            )
+          : obterValorMin(sabores);
+
+      (produto.acoes ?? []).forEach((acao) => {
+        switch (acao.tipo) {
+          case "valor_fixo":
+            produto.valorMin = acao.valor;
+            break;
+          case "desconto_fixo":
+            produto.valorMin =
+              produto.valorMin - acao.valor >= 0
+                ? produto.valorMin - acao.valor
+                : 0;
+            break;
+          case "desconto_percentual":
+            const valorRealDesconto = produto.valorMin * (acao.valor / 100);
+            produto.valorMin =
+              produto.valorMin -
+              (acao.maxDesconto != null
+                ? valorRealDesconto > acao.maxDesconto
+                  ? acao.maxDesconto
+                  : valorRealDesconto
+                : valorRealDesconto);
+
+            break;
+        }
+      });
+    } else if (produto.tipo === "bebida") {
+      produto.valorMin = Math.min(
+        ...bebidas
+          .filter((x) =>
+            produto.bebidas?.length
+              ? (produto.bebidas ?? []).some((y) => y.id === x.id)
+              : true
+          )
+          .map((x) => x.valor)
+      );
+    } else if (produto.tipo === "lanche") {
+      produto.valorMin = Math.min(
+        ...lanches
+          .filter((x) =>
+            produto.lanches?.length
+              ? (produto.lanches ?? []).some((y) => y.id === x.id)
+              : true
+          )
+          .map((x) => x.valor)
+      );
+    }
+  });
+
+  combo.valorMin = combo.produtos.reduce((acc, curr) => acc + curr.valorMin, 0);
+
+  return { ...combo, tipo: "combo" };
+};

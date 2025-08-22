@@ -8,18 +8,20 @@ export const PecaJaButton: FC<{
   closeMenu?: Function;
 }> = ({ style, closeMenu }) => {
   return (
-    <Link
-      href={"/pedido"}
-      style={{ textDecoration: "none" }}
-      aria-label="Clique aqui para realizar um pedido"
-    >
-      <PecaJaButtonStyle
-        onClick={() => closeMenu && closeMenu()}
-        className={`noprint peca-ja-button ${style}`}
+    <PecaJaButtonStyle className="peca-ja-button">
+      <Link
+        href={"/pedido"}
+        style={{ textDecoration: "none" }}
+        aria-label="Clique aqui para realizar um pedido"
       >
-        <span className="title">PEÇA JÁ</span>
-        {style === "large" && <MdDeliveryDining className="icon" />}
-      </PecaJaButtonStyle>
-    </Link>
+        <button
+          onClick={() => closeMenu && closeMenu()}
+          className={`noprint peca-ja-button ${style}`}
+        >
+          <span className="title">PEÇA JÁ</span>
+          {style === "large" && <MdDeliveryDining className="icon" />}
+        </button>
+      </Link>
+    </PecaJaButtonStyle>
   );
 };

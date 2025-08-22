@@ -1,0 +1,86 @@
+[
+  {
+    "timestamp": "2025-08-20T20:48:32.706Z",
+    "bbox": [
+      -38.503528,
+      -13.009115,
+      -38.503461,
+      -13.009086
+    ],
+    "routes": [
+      {
+        "summary": {
+          "distance": 7.9,
+          "duration": 0.6
+        },
+        "segments": [
+          {
+            "distance": 7.9,
+            "duration": 0.6,
+            "steps": [
+              {
+                "distance": 7.9,
+                "duration": 0.6,
+                "type": 11,
+                "instruction": "Head southwest on Ladeira do Jardim Zoológico",
+                "name": "Ladeira do Jardim Zoológico",
+                "way_points": [
+                  0,
+                  1
+                ]
+              },
+              {
+                "distance": 0,
+                "duration": 0,
+                "type": 10,
+                "instruction": "Arrive at Ladeira do Jardim Zoológico, on the left",
+                "name": "-",
+                "way_points": [
+                  1,
+                  1
+                ]
+              }
+            ]
+          }
+        ],
+        "bbox": [
+          -38.503528,
+          -13.009115,
+          -38.503461,
+          -13.009086
+        ],
+        "geometry": "xyknAre_jFDL",
+        "way_points": [
+          0,
+          1
+        ]
+      }
+    ],
+    "metadata": {
+      "attribution": "openrouteservice.org | OpenStreetMap contributors",
+      "service": "routing",
+      "timestamp": 1755722967666,
+      "query": {
+        "coordinates": [
+          [
+            -38.50322741855074,
+            -13.00958089162007
+          ],
+          [
+            -38.5033053,
+            -13.0095855
+          ]
+        ],
+        "profile": "driving-hgv",
+        "profileName": "driving-hgv",
+        "format": "json"
+      },
+      "engine": {
+        "version": "9.3.0",
+        "build_date": "2025-06-06T15:39:25Z",
+        "graph_date": "2025-08-13T00:01:38Z",
+        "osm_date": "2025-08-04T00:00:00Z"
+      }
+    }
+  }
+]

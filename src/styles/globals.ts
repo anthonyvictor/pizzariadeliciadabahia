@@ -13,7 +13,11 @@ const Globals = createGlobalStyle`
   font-weight: 400;
   font-display: swap;
 } */
-
+.react-phone-number-input {
+  width: 1.5em;
+  height: auto;
+  opacity: 0;
+}
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
@@ -65,16 +69,29 @@ body{
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
+      /* font-family: 'Inter', sans-serif; */
+          font-family: 'Roboto', sans-serif;
+
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       outline: none;
       user-select: none;
     }
 
-    input{
+    input, textarea{
       user-select: auto;
     }
+
+    .no-scroll {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+
+    overflow: auto; /* ainda permite rolagem */
+
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+  }
 
 
     @media only screen {
@@ -86,6 +103,14 @@ body{
       .noprint{
         display: none!important;
       } 
+    }
+
+    .checklistheader{
+
+      &.sticky{
+        position: sticky;
+      }
+
     }
 
 `;

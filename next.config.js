@@ -5,6 +5,9 @@ const withPWA = require("next-pwa")({
 });
 
 const nextConfig = withPWA({
+  images: {
+    domains: ["i.ibb.co"],
+  },
   reactStrictMode: true,
   compiler: {
     styledComponents: true,

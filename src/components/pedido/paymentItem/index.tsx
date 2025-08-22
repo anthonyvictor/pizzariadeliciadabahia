@@ -1,9 +1,9 @@
 import { FC } from "react";
-import { IPagamento } from "@models/order";
+import { IPagamentoPedido } from "tpdb-lib";
 import { formatCurrency } from "@util/format";
 import { PaymentItemStyle } from "./styles";
 
-export const PaymentItem: FC<{ payment: IPagamento }> = ({ payment }) => {
+export const PaymentItem: FC<{ payment: IPagamentoPedido }> = ({ payment }) => {
   return (
     <PaymentItemStyle>
       <h5 className="title">{`${formatCurrency(payment.valor)} (${

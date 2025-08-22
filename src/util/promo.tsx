@@ -1,4 +1,4 @@
-import { IPedido } from "@models/order";
+import { IPedido } from "tpdb-lib";
 
 export const taxaGratisAteTalHoras = (order: IPedido) => {
   const dataPromo = new Date("2025-02-19 21:05:00");

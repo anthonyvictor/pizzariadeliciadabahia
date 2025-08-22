@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -9,6 +13,11 @@
     "noEmit": true,
     "incremental": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "node",
+      "@types/styled-components"
+    ],
     "module": "esnext",
     "resolveJsonModule": true,
     "moduleResolution": "node",
@@ -16,22 +25,56 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["src/components/*"],
-      "@context/*": ["src/context/*"],
-      "@pages/*": ["src/pages/*.tsx"],
-      "@routes/*": ["src/pages/api/*"],
-      "@services/*": ["src/services/*"],
-      "@controllers/*": ["src/controllers/*"],
-      "@repositories/*": ["src/repositories/*"],
-      "@util/*": ["src/util/*"],
-      "@dtos/*": ["src/dtos/*"],
-      "@config/*": ["src/config/*"],
-      "@styles/*": ["src/styles/*"],
-      "@models/*": ["src/models/*"],
-      "@assets/*": ["src/assets/*"],
-      "@data/*": ["src/data/*"],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@context/*": [
+        "src/context/*"
+      ],
+      "@pages/*": [
+        "src/pages/*.tsx"
+      ],
+      "@routes/*": [
+        "src/pages/api/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@controllers/*": [
+        "src/controllers/*"
+      ],
+      "@repositories/*": [
+        "src/repositories/*"
+      ],
+      "@util/*": [
+        "src/util/*"
+      ],
+      "@dtos/*": [
+        "src/dtos/*"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@styles/*": [
+        "src/styles/*"
+      ],
+      "@models/*": [
+        "src/infra/types/*"
+      ],
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@data/*": [
+        "src/data/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

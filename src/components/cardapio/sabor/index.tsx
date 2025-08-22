@@ -3,7 +3,7 @@ import { SaborStyle } from "./styles";
 
 export const Sabor = ({
   nome,
-  ingredientes,
+  descricao,
   valuesString,
   showCheckBox = false,
   ingredientesDoLado = false,
@@ -14,7 +14,7 @@ export const Sabor = ({
   forPrint = false,
 }: {
   nome: string;
-  ingredientes: string[];
+  descricao: string;
   valuesString?: string;
   showCheckBox?: boolean;
   ingredientesDoLado?: boolean;
@@ -54,7 +54,7 @@ export const Sabor = ({
         {/* <h5>{`${nome.split(" ").slice(0, -1).join(" ")}`}</h5> */}
         {/* <h5>{FlagEmojiToPNG(nome.split(" ").pop())}</h5> */}
       </span>
-      <p className="flavour-ingredients">{ingredientes.join(", ")}</p>
+      <p className="flavour-ingredients">{descricao}</p>
       {!!valuesString && <p className="flavour-values">{valuesString}</p>}
     </div>
   </SaborStyle>

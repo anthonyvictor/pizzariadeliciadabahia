@@ -1,8 +1,9 @@
 import { Badge } from "@components/badge";
 import { ButtonPrimary, ButtonSecondary } from "@styles/components/buttons";
 import { useRouter } from "next/router";
-import type { FC } from "react";
+import { useState, type FC } from "react";
 import { BottomControlsStyle } from "./styles";
+import { sleep } from "@util/misc";
 
 interface BottomControlsProps {
   backButton?: boolean;
@@ -28,15 +29,37 @@ const BottomControls: FC<BottomControlsProps> = ({
   notFixed = false,
 }) => {
   const router = useRouter();
+
+  const [disabled, setDisabled] = useState({
+    back: false,
+    secondary: false,
+    primary: false,
+  });
+
   return (
     <BottomControlsStyle fixed={!notFixed}>
       {backButton && (
-        <ButtonSecondary onClick={router.back}>VOLTAR</ButtonSecondary>
+        <ButtonSecondary
+          disabled={disabled.back}
+          onClick={async () => {
+            setDisabled((prev) => ({ ...prev, back: true }));
+            router.back();
+            await sleep(2000);
+            setDisabled((prev) => ({ ...prev, back: false }));
+          }}
+        >
+          VOLTAR
+        </ButtonSecondary>
       )}
       {!backButton && secondaryButton && (
         <ButtonSecondary
-          disabled={!!secondaryButton.disabled}
-          onClick={secondaryButton.click}
+          disabled={!!secondaryButton.disabled || disabled.secondary}
+          onClick={async () => {
+            setDisabled((prev) => ({ ...prev, secondary: true }));
+            await secondaryButton.click();
+            await sleep(3000);
+            setDisabled((prev) => ({ ...prev, secondary: false }));
+          }}
         >
           {secondaryButton.text || "VOLTAR"}
           {!!secondaryButton.badge && <Badge number={secondaryButton.badge} />}
@@ -44,8 +67,13 @@ const BottomControls: FC<BottomControlsProps> = ({
       )}
       {primaryButton && (
         <ButtonPrimary
-          disabled={!!primaryButton.disabled}
-          onClick={primaryButton.click}
+          disabled={!!primaryButton.disabled || disabled.primary}
+          onClick={async () => {
+            setDisabled((prev) => ({ ...prev, primary: true }));
+            await primaryButton.click();
+            await sleep(3000);
+            setDisabled((prev) => ({ ...prev, primary: false }));
+          }}
         >
           {primaryButton.text || "CONTINUAR"}
           {primaryButton.badge && <Badge number={primaryButton.badge} />}

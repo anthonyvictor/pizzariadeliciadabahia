@@ -1,18 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { usePromo } from "./promoContext";
-import { useMyOrder } from "./myOrderContext";
-import { IItem } from "@models/item";
-import { IPagamento } from "@models/order";
-const taxaMaquininha = 5;
+import { createContext, FC, ReactNode, useContext } from "react";
 
 const PaymentContext = createContext<{
   // itensTaxados: IItem[];
@@ -30,7 +16,7 @@ const PaymentProvider: FC<{ children: ReactNode }> = ({ children }) => {
   //     : 0;
 
   // const { promos } = usePromo();
-  // const { myOrder } = useMyOrder();
+  // const { pedido } = usePedido();
 
   // const getValores = (itens: IItem[]) =>
   //   itens.reduce((acc, curr) => acc + curr.valor, 0);
@@ -39,7 +25,7 @@ const PaymentProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // const totalTaxa = itensTaxados.length
   //   ? getValores(itensTaxados) -
   //     getValores(
-  //       (myOrder.itens ?? []).filter((x) =>
+  //       (pedido.itens ?? []).filter((x) =>
   //         itensTaxados.some((y) => y.id === x.id)
   //       )
   //     )
@@ -48,7 +34,7 @@ const PaymentProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // useEffect(() => {
   //   setItensTaxados([]);
   //   const _itensTaxados: IItem[] = [];
-  //   (myOrder?.itens ?? []).forEach((item) => {
+  //   (pedido?.itens ?? []).forEach((item) => {
   //     if (item.promoId) {
   //       const itemPromo = promos.find((x) => x.id === item.promoId);
   //       if (itemPromo?.taxaMaquininha) {
@@ -60,16 +46,16 @@ const PaymentProvider: FC<{ children: ReactNode }> = ({ children }) => {
   //     }
   //   });
   //   setItensTaxados(_itensTaxados);
-  // }, [myOrder?.itens]);
+  // }, [pedido?.itens]);
 
   // const { getTaxaGratis, getTaxaGratis36 } = usePromo();
 
   // const totalPedido =
-  //   myOrder && myOrder.itens?.length
-  //     ? myOrder.itens.reduce((acc, item) => acc + item.valor, 0) +
-  //       (getTaxaGratis(myOrder.itens) || getTaxaGratis36(myOrder.itens)
+  //   pedido && pedido.itens?.length
+  //     ? pedido.itens.reduce((acc, item) => acc + item.valor, 0) +
+  //       (getTaxaGratis(pedido.itens) || getTaxaGratis36(pedido.itens)
   //         ? 0
-  //         : myOrder.taxaEntrega)
+  //         : pedido.taxaEntrega)
   //     : 0;
   return (
     <PaymentContext.Provider
