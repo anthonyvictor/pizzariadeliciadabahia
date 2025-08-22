@@ -34,6 +34,8 @@ export const verificarClienteEPedido = async (
     ? await obterCliente(clienteId, opcoes?.comEnderecoCompleto)
     : null;
 
+  console.log("achou cliente", !!cliente?.id);
+  console.log("1: tem em:", ctx.resolvedUrl);
   if (!cliente && ctx.resolvedUrl !== "/cliente/informacoes-iniciais") {
     return {
       redirect: {
@@ -47,9 +49,13 @@ export const verificarClienteEPedido = async (
 
   if (pedidoId) pedido = await obterPedido(pedidoId);
 
+  console.log("achou pedido", !!pedido?.id);
+
   if (!pedido || pedido.cliente.id !== cliente.id) {
     pedido = await novoPedido(clienteId);
     salvarCookie("pedidoId", pedido.id, ctx.res, 60 * 60 * 24 * 1); // expira em 1 dia
+    console.log("2: tem em:", ctx.resolvedUrl);
+
     if (ctx.resolvedUrl !== "/pedido")
       return {
         redirect: {
@@ -61,7 +67,7 @@ export const verificarClienteEPedido = async (
 
   if (
     !pedido.itens?.length &&
-    ["/pag", "/tipo", "/conf"].some((x) =>
+    ["/pag", "/tipo", "/conf", "/fin"].some((x) =>
       ctx.resolvedUrl.startsWith("/pedido" + x)
     )
   ) {

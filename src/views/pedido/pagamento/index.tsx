@@ -32,9 +32,6 @@ export const PagamentoView = ({
 
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("pagamentos", pagamentos);
-  }, [pagamentos]);
   const metodos: Record<IPagamentoTipo, IMetodo> = {
     pix: {
       icone: MdPix,

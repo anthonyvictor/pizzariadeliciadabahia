@@ -115,12 +115,6 @@ export const MetodoModal = ({
                   return;
                 }
 
-                console.log(
-                  "troco para vai ser:",
-                  troco ? Number(troco) : Number(valor)
-                );
-                console.log("troco", troco);
-                console.log("valor", valor);
                 onConfirm({
                   id: uuidv4(),
                   tipo: m.tipo,
