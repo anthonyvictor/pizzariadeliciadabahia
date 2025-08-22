@@ -49,7 +49,7 @@ export const verificarClienteEPedido = async (
 
   if (!pedido || pedido.cliente.id !== cliente.id) {
     pedido = await novoPedido(clienteId);
-
+    salvarCookie("pedidoId", pedido.id, ctx.res, 60 * 60 * 24 * 1); // expira em 1 dia
     if (ctx.resolvedUrl !== "/pedido")
       return {
         redirect: {
