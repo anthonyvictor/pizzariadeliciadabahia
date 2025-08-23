@@ -31,8 +31,6 @@ export const useAuth = () => {
     };
 
     const _cliente = await obterCliente();
-    console.log("_cliente, clienteId", _cliente, clienteId);
-    console.log("router.pathname", router.pathname);
 
     if (!_cliente && router.pathname !== "/cliente/informacoes-iniciais")
       return router.push("/cliente/informacoes-iniciais");

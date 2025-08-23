@@ -31,7 +31,7 @@ const BairroPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
     }
   }, [authCarregado]);
 
-  if (!authCarregado) return <Loading />;
+  if (!authCarregado || !bairros) return <Loading />;
 
   return <BairroView bairros={bairros} />;
 };

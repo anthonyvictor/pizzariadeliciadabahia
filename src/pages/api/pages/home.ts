@@ -18,6 +18,7 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     if (!req.query.clienteId) return res.status(400).end();
+
     const data = await obterHome(req.query.clienteId as any);
     res.status(200).json(data);
   } else {

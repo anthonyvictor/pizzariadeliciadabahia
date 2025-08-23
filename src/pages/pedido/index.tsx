@@ -69,7 +69,7 @@ const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
     }
   }, [authCarregado]);
 
-  if (!authCarregado) return <Loading />;
+  if (!authCarregado || !items) return <Loading />;
 
   if (!isLoaded) return <Loading />;
 
