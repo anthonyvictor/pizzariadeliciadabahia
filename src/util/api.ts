@@ -1,4 +1,5 @@
 import { parse } from "cookie";
+import { setCookie } from "nookies";
 
 export type RespType<T> = T | T[];
 
@@ -46,14 +47,23 @@ export const salvarCookie = (
   res: any,
   maxAge?: Segundos
 ) => {
+  // const serialized = encodeURIComponent(
   const serialized = encodeURIComponent(
     typeof obj === "string" ? obj : JSON.stringify(obj)
   );
 
-  res.setHeader(
-    "Set-Cookie",
-    `${nome}=${serialized}; Path=/; HttpOnly${
-      maxAge ? `; Max-Age=${maxAge}` : ""
-    }`
-  );
+  setCookie({ res }, nome, serialized, {
+    path: "/",
+    maxAge,
+    httpOnly: true,
+    sameSite: "lax", // importante no Vercel
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  // res.setHeader(
+  //   "Set-Cookie",
+  //   `${nome}=${serialized}; Path=/; HttpOnly${
+  //     maxAge ? `; Max-Age=${maxAge}` : ""
+  //   }`
+  // );
 };

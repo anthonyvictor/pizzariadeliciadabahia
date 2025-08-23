@@ -24,6 +24,7 @@ import { IHome } from "tpdb-lib";
 import { withSuperjsonGSSP } from "src/infra/superjson";
 import { verificarClienteEPedido } from "@util/verificarClienteEPedido";
 import Link from "next/link";
+import { colors } from "@styles/colors";
 
 const Pedido: NextPage = ({
   items,
@@ -33,7 +34,9 @@ const Pedido: NextPage = ({
   pedido: IPedido;
 }) => {
   const router = useRouter();
-  const [closedUntil, setClosedUntil] = useState<Date | null | undefined>();
+  const [closedUntil, setClosedUntil] = useState<Date | null | undefined>(
+    new Date("2025-09-10 00:00:00")
+  );
 
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
   // useEffect(() => {
@@ -50,15 +53,27 @@ const Pedido: NextPage = ({
   if (!isLoaded) return <Loading />;
 
   // if (closedUntil && new Date(closedUntil) > new Date())
-  return (
-    <PedidoStyle>
-      <TextContainer
-        title="OPA! ESTAMOS FECHADOS NESTE MOMENTO!"
-        //   subtitle="NOSSO HORÁRIO
-        //  DE FUNCIONAMENTO É DE TERÇA À DOMINGO, DAS 18:30 ATÉ ÀS 23:30"
-      />
-    </PedidoStyle>
-  );
+  if (closedUntil && new Date(closedUntil) > new Date())
+    return (
+      <PedidoStyle>
+        <TextContainer
+          title="OPA! ESTAMOS FECHADOS NESTE MOMENTO."
+          subtitle="NOSSO HORÁRIO 
+       DE FUNCIONAMENTO É DE TERÇA À DOMINGO, DAS 18:30 ATÉ ÀS 23:30"
+        />
+        <div
+          onClick={() => {
+            setClosedUntil(null);
+          }}
+          style={{
+            backgroundColor: colors.background,
+            color: colors.backgroundDark,
+          }}
+        >
+          ......
+        </div>
+      </PedidoStyle>
+    );
 
   const Tab = ({ id, label }: { id: string; label: string }) => {
     return (

@@ -12,6 +12,7 @@ export default async function handler(
   if (req.method === "POST") {
     const { pedidoId } = req.body;
     await finalizarPedido(pedidoId);
+    res.status(200).end();
   } else {
     res.status(405).end(); // Método não permitido
   }
