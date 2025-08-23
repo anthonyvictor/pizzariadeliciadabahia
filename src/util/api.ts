@@ -47,7 +47,6 @@ export const salvarCookie = (
   res: any,
   maxAge?: Segundos
 ) => {
-  // const serialized = encodeURIComponent(
   const serialized = encodeURIComponent(
     typeof obj === "string" ? obj : JSON.stringify(obj)
   );
@@ -59,11 +58,4 @@ export const salvarCookie = (
     sameSite: "lax", // importante no Vercel
     secure: process.env.NODE_ENV === "production",
   });
-
-  // res.setHeader(
-  //   "Set-Cookie",
-  //   `${nome}=${serialized}; Path=/; HttpOnly${
-  //     maxAge ? `; Max-Age=${maxAge}` : ""
-  //   }`
-  // );
 };

@@ -29,7 +29,8 @@ export default async function handler(
     const cliente = req.body.cliente;
     const data = await loginCliente(cliente);
     salvarCookie("clienteId", data.id, res, 60 * 60 * 24 * 30);
-    res.status(200).json(data);
+    res.writeHead(302, { Location: "/pedido" });
+    res.end();
   } else {
     res.status(405).end(); // Método não permitido
   }

@@ -24,8 +24,9 @@ export default async function handler(
     const { clienteId } = req.body;
     const data = await novoPedido(clienteId);
     salvarCookie("pedidoId", data.id, res, 60 * 60 * 24 * 1); // expira em 1 dia
+    res.writeHead(302, { Location: "/pedido" });
 
-    res.status(200).json(data);
+    res.end();
   } else if (req.method === "PATCH") {
     const { pedidoId, pedido } = req.body;
     await patchPedido(pedidoId, pedido);
