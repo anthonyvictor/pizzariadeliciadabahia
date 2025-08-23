@@ -21,7 +21,12 @@ export const ItensView = ({ pedido }: { pedido: IPedido }) => {
     show: boolean;
     id?: string;
   }>({ show: false });
+
   const [itens, setItens] = useState(pedido.itens);
+
+  useEffect(() => {
+    if (!itens.length) router.push("/pedido");
+  }, [itens]);
 
   return (
     <ItensStyle>

@@ -3,8 +3,10 @@ import { useRouter } from "next/router";
 import {
   BebidaLi,
   ComboLi,
+  DestaqueLi,
   LancheLi,
   PedidoStyle,
+  ProdCard,
   ProdGrid,
   ProdGroup,
   ProdList,
@@ -133,8 +135,39 @@ const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
         <header>
           <h2>{label}</h2>
         </header>
-        {"produtos" in iZero ? (
+        {id.toLowerCase().includes("destaq") ? (
           <ProdGrid>
+            {itens.map((prod) => (
+              <DestaqueLi
+                key={`${prod.id ?? prod.nome}`}
+                disabled={locked}
+                onClick={() => {
+                  setLocked(true);
+                  router.push(
+                    `/pedido/item/${
+                      "maxSabores" in prod ? "pizza" : prod["tipo"]
+                    }/${prod.id}`
+                  );
+                }}
+              >
+                <aside className="prod-img">
+                  <Image src={prod.imagemUrl} layout="fill" priority />
+                </aside>
+                <aside className="conteudo">
+                  <h6 className="nome">{prod.nome.toUpperCase()}</h6>
+                  {!!prod["valorMin"] && (
+                    <p style={{ fontSize: "0.6rem", opacity: "0.6" }}>
+                      À partir de
+                    </p>
+                  )}
+
+                  <h6>{formatCurrency(prod["valorMin"] ?? prod["valor"])}</h6>
+                </aside>
+              </DestaqueLi>
+            ))}
+          </ProdGrid>
+        ) : "produtos" in iZero ? (
+          <ProdList>
             {itens.map((prod: ICombo) => (
               <ComboLi
                 key={`${prod.id ?? prod.nome}`}
@@ -149,13 +182,13 @@ const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
                   <Image src={prod.imagemUrl} layout="fill" priority />
                 </aside>
                 <aside className="conteudo">
-                  <h5>{prod.nome}</h5>
+                  <h5 className="nome">{prod.nome}</h5>
                   <p style={{ fontSize: "0.7rem" }}>{prod.descricao}</p>
                   <h6>À partir de {formatCurrency(prod.valorMin)}</h6>
                 </aside>
               </ComboLi>
             ))}
-          </ProdGrid>
+          </ProdList>
         ) : "maxSabores" in iZero ? (
           <ProdList>
             {itens.map((prod: IPizzaTamanho) => (
@@ -172,7 +205,7 @@ const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
                   <Image src={prod.imagemUrl} layout="fill" priority />
                 </aside>
                 <aside className="conteudo">
-                  <h5>Pizza {prod.nome}</h5>
+                  <h5>Pizza {prod.nome.toUpperCase()}</h5>
                   <p style={{ fontSize: "0.7rem" }}>{tamanhoDescricao(prod)}</p>
                   <h6>À partir de {formatCurrency(prod.valorMin)}</h6>
                 </aside>
@@ -201,7 +234,7 @@ const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
                   />
                 </aside>
                 <aside className="conteudo">
-                  <h5>{abreviarBebida(prod.nome)}</h5>
+                  <h5>{abreviarBebida(prod.nome.toUpperCase())}</h5>
                   <h6>{formatCurrency(prod.valor)}</h6>
                 </aside>
               </BebidaLi>
@@ -230,7 +263,7 @@ const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
                   />
                 </aside>
                 <aside className="conteudo">
-                  <h5>{prod.nome}</h5>
+                  <h5>{prod.nome.toUpperCase()}</h5>
                   <p style={{ fontSize: "0.7rem" }}>{prod.descricao}</p>
                   <h6>{formatCurrency(prod.valor)}</h6>
                 </aside>
@@ -241,12 +274,39 @@ const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
       </ProdGroup>
     );
   };
+  const maxDestaques = 8;
+  const fmv = (arr: any[], max = 2) =>
+    arr.sort((a, b) => (b.vendidos ?? 0) - (a.vendidos ?? 0)).slice(0, max);
+
+  const destaques = items
+    ? (() => {
+        const combos = fmv(items.combos, 5);
+        const tamanhos = fmv(
+          items.tamanhos,
+          maxDestaques - (combos.length + 2)
+        );
+        const bebidas = fmv(
+          items.bebidas,
+          maxDestaques - (combos.length + tamanhos.length + 1)
+        );
+        const lanches = fmv(items.lanches, 1);
+        const itens = [...combos, ...tamanhos, ...bebidas, ...lanches];
+
+        console.log(itens.map((x) => x.vendidos));
+        return fmv(itens, maxDestaques);
+      })()
+    : [];
 
   const menus: { i: string; l: string; a: Array<any> }[] = [
+    {
+      i: "destaques",
+      l: "+ Vend 🔥",
+      a: destaques,
+    },
     { i: "combos", l: "Promos 🏷️", a: items.combos },
     { i: "pizzas", l: "Pizzas 🍕", a: items.tamanhos },
     { i: "bebidas", l: "Bebidas 🍹", a: items.bebidas },
-    { i: "lanches", l: "Lanches 🍔", a: items.lanches },
+    { i: "lanches", l: "Outros 🍦", a: items.lanches },
   ];
 
   return (
@@ -267,6 +327,9 @@ const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
         </nav>
 
         <div className="uls no-scroll">
+          {!!destaques.length && (
+            <Ul id={"destaques"} label={"Mais vendidos 🔥"} itens={destaques} />
+          )}
           {!!items.combos.length && (
             <Ul id={"combos"} label={"Promoções 🏷️"} itens={items.combos} />
           )}
@@ -277,7 +340,11 @@ const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
             <Ul id={"bebidas"} label={"Bebidas 🍹"} itens={items.bebidas} />
           )}
           {!!items.lanches.length && (
-            <Ul id={"lanches"} label={"Lanches 🍔"} itens={items.lanches} />
+            <Ul
+              id={"lanches"}
+              label={"Lanches e Outros 🍦"}
+              itens={items.lanches}
+            />
           )}
         </div>
 

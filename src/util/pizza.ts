@@ -98,7 +98,7 @@ export const sortExtras = (extras: IPizzaExtra[] | undefined) => {
   if (!extras) return [];
   const r = extras
     .sort((a, b) =>
-      b.vendidos != a.vendidos ? a.vendidos - b.vendidos : a.valor - b.valor
+      b.vendidos != a.vendidos ? b.vendidos - a.vendidos : a.valor - b.valor
     )
     .map((x) => ({ ...x, tipo: "extra" }));
 

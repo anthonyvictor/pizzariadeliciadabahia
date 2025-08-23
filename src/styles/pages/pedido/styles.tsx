@@ -29,12 +29,12 @@ export const PedidoStyle = styled.main`
       width: 100%;
 
       button {
-        padding: 5px;
-        background-color: ${colors.background};
+        padding: 10px;
+        background-color: transparent;
         border: none;
         color: #fff;
         flex: 1;
-
+        font-size: 0.6rem;
         &:not(:last-child) {
           border-right: 2px solid #fff;
         }
@@ -61,19 +61,22 @@ export const ProdCard = styled.li.attrs(
   border-radius: 10px;
   display: flex;
   gap: 5px;
+  display: flex;
+  align-items: center;
 
   .prod-img {
     position: relative;
     background-color: #fff;
     border-radius: 10px;
-    border: 1px solid ${colors.backgroundDark};
+    border: 2px solid #000;
     overflow: hidden;
     flex-shrink: 0;
     img {
       display: none;
       background-color: #fff;
       border-radius: 10px;
-      transform: scale(101%);
+      transform: scale(102%);
+      transform-origin: center center;
       flex-shrink: 0;
     }
   }
@@ -84,11 +87,10 @@ export const ProdCard = styled.li.attrs(
       pointer-events: none;
     `}
 `;
-export const ComboLi = styled(ProdCard).attrs(
-  (props: { combo: ICombo }) => props
-)`
+export const DestaqueLi = styled(ProdCard)`
   flex: 1;
   flex-direction: column;
+  align-items: start;
 
   .prod-img {
     min-width: 100%;
@@ -97,12 +99,32 @@ export const ComboLi = styled(ProdCard).attrs(
     aspect-ratio: 1/1;
   }
 `;
+
+export const ComboLi = styled(ProdCard).attrs(
+  (props: { combo: ICombo }) => props
+)`
+  /* flex: 1;
+  flex-direction: column; */
+
+  /* .prod-img {
+    min-width: 100%;
+    max-width: 100%;
+
+    aspect-ratio: 1/1;
+  } */
+
+  .prod-img {
+    width: 70px;
+    height: 70px;
+    aspect-ratio: 1/1;
+  }
+`;
 export const TamanhoLi = styled(ProdCard).attrs(
   (props: { tamanho: IPizzaTamanho }) => props
 )`
   .prod-img {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     aspect-ratio: 1/1;
   }
 `;
@@ -128,7 +150,7 @@ export const LancheLi = styled(ProdCard).attrs(
 export const ProdGrid = styled.div`
   display: grid;
   flex-wrap: wrap;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   list-style: none;
   min-height: min-content;
 `;
