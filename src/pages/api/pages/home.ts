@@ -17,9 +17,8 @@ export default async function handler(
   res: NextApiResponse<RespType<IHome>>
 ) {
   if (req.method === "GET") {
-    const cookies = parse(req.headers.cookie || "");
-    const clienteId = cookies.clienteId ?? "";
-    const data = await obterHome(clienteId);
+    if (!req.query.clienteId) return res.status(400).end();
+    const data = await obterHome(req.query.clienteId as any);
     res.status(200).json(data);
   } else {
     res.status(405).end(); // Método não permitido

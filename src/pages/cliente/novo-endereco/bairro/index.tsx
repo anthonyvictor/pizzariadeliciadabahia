@@ -1,40 +1,49 @@
 import { GetServerSideProps, NextPage } from "next";
-import { IBairro } from "tpdb-lib";
 import { BairroView } from "src/views/cliente/novoEndereco/bairro";
 import { env } from "@config/env";
-import { obterBairros } from "@routes/bairros";
-import { withSuperjsonGSSP } from "src/infra/superjson";
-import { verificarClienteEPedido } from "@util/verificarClienteEPedido";
+import { useEffect, useState } from "react";
+import { useAuth } from "@util/hooks/auth";
+import Loading from "@components/loading";
+import { ICookies } from "@models/cookies";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { obterCookies } from "@util/cookies";
 
-const BairroPage: NextPage = ({ bairros }: { bairros: IBairro[] }) => {
+const BairroPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
+  const [bairros, setBairros] = useState([]);
+  const { temClientePedido, authCarregado } = useAuth();
+
+  useEffect(() => {
+    temClientePedido(clienteId, pedidoId);
+  }, []);
+
+  useEffect(() => {
+    if (authCarregado) {
+      axios
+        .get(`${env.apiURL}/bairros`)
+        .then((res) => {
+          setBairros(res.data);
+        })
+        .catch((err) => {
+          toast.error("Erro ao carregar dados");
+          console.error(err);
+        });
+    }
+  }, [authCarregado]);
+
+  if (!authCarregado) return <Loading />;
+
   return <BairroView bairros={bairros} />;
 };
 
 export default BairroPage;
 
-export const getServerSideProps: GetServerSideProps = withSuperjsonGSSP(
-  async (ctx) => {
-    try {
-      const verif = await verificarClienteEPedido(ctx);
-
-      if ("redirect" in verif) return verif;
-
-      const bairros = await obterBairros();
-
-      return {
-        props: {
-          ...verif.props,
-          bairros,
-        },
-      };
-    } catch (e) {
-      console.error(e);
-      return {
-        props: {
-          bairros: null,
-          pedido: null,
-        },
-      };
-    }
-  }
-);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { clienteId, pedidoId } = obterCookies(ctx);
+  return {
+    props: {
+      clienteId,
+      pedidoId,
+    },
+  };
+};

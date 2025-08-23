@@ -19,11 +19,9 @@ import { EnderecoStyle } from "./endereco/styles";
 import { colors } from "@styles/colors";
 export const TipoView = ({
   pedido,
-  cliente,
   cupomEntrega,
 }: {
   pedido: IPedido;
-  cliente: ICliente;
   cupomEntrega: ICupom | null;
 }) => {
   const router = useRouter();
@@ -62,7 +60,7 @@ export const TipoView = ({
       </button>
 
       <ul className="tipos no-scroll">
-        {!!cliente?.enderecos?.length && (
+        {!!pedido.cliente?.enderecos?.length && (
           <>
             <h2
               className="item-type"
@@ -74,7 +72,7 @@ export const TipoView = ({
             >
               Entrega 🛵
             </h2>
-            {cliente.enderecos.map((e) => (
+            {pedido.cliente.enderecos.map((e) => (
               <Endereco
                 key={e.id}
                 e={e}

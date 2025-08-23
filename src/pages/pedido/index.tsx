@@ -12,27 +12,24 @@ import {
 } from "@styles/pages/pedido/styles";
 import TextContainer from "@components/textContainer";
 import BottomControls from "@components/pedido/bottomControls";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "@components/loading";
 import { IPizzaTamanho, ICombo, IBebida, ILanche, IPedido } from "tpdb-lib";
 import Image from "next/image";
 import { formatCurrency } from "@util/format";
 import { tamanhoDescricao } from "@util/pizza";
 import { abreviarBebida } from "@util/bebidas";
-import { obterHome } from "@routes/pages/home";
 import { IHome } from "tpdb-lib";
-import { withSuperjsonGSSP } from "src/infra/superjson";
-import { verificarClienteEPedido } from "@util/verificarClienteEPedido";
 import Link from "next/link";
 import { colors } from "@styles/colors";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ICookies } from "@models/cookies";
+import { useAuth } from "@util/hooks/auth";
+import { env } from "@config/env";
+import { obterCookies } from "@util/cookies";
 
-const Pedido: NextPage = ({
-  items,
-  pedido,
-}: {
-  items: IHome;
-  pedido: IPedido;
-}) => {
+const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
   const router = useRouter();
   const [closedUntil, setClosedUntil] = useState<Date | null | undefined>(
     new Date("2025-09-10 00:00:00")
@@ -49,6 +46,29 @@ const Pedido: NextPage = ({
   //     setClosedUntil(_closedUntil);
   //   })();
   // }, []);
+
+  const [items, setItems] = useState<IHome>();
+  const { temClientePedido, authCarregado, pedido } = useAuth();
+
+  useEffect(() => {
+    temClientePedido(clienteId, pedidoId);
+  }, []);
+
+  useEffect(() => {
+    if (authCarregado) {
+      axios
+        .get(`${env.apiURL}/pages/home?clienteId=${clienteId}`)
+        .then((res) => {
+          setItems(res.data);
+        })
+        .catch((err) => {
+          toast.error("Erro ao carregar dados");
+          console.error(err);
+        });
+    }
+  }, [authCarregado]);
+
+  if (!authCarregado) return <Loading />;
 
   if (!isLoaded) return <Loading />;
 
@@ -331,28 +351,12 @@ const Pedido: NextPage = ({
 
 export default Pedido;
 
-export const getServerSideProps: GetServerSideProps = withSuperjsonGSSP(
-  async (ctx) => {
-    try {
-      const verif = await verificarClienteEPedido(ctx);
-      if ("redirect" in verif) return verif;
-
-      const items = await obterHome(verif.props.cliente.id);
-
-      return {
-        props: {
-          ...verif.props,
-          items,
-        },
-      };
-    } catch (e) {
-      console.error(e);
-      return {
-        props: {
-          items: null,
-          pedido: null,
-        },
-      };
-    }
-  }
-);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { clienteId, pedidoId } = obterCookies(ctx);
+  return {
+    props: {
+      clienteId,
+      pedidoId,
+    },
+  };
+};

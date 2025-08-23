@@ -2,18 +2,46 @@ import { GetServerSideProps, NextPage } from "next";
 import { IItemBuilder } from "tpdb-lib";
 import { ItemBuilderProvider } from "@context/itemContext";
 import { ItemBuilderView } from "src/views/pedido/itemBuilder";
-import { obterItemBuilder } from "@routes/pages/item-builder";
-import { IItemPedidoTipo } from "tpdb-lib";
-import { withSuperjsonGSSP } from "src/infra/superjson";
-import { verificarClienteEPedido } from "@util/verificarClienteEPedido";
+import { obterCookies } from "@util/cookies";
+import { useAuth } from "@util/hooks/auth";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { env } from "@config/env";
+import { toast } from "react-toastify";
+import { ICookies } from "@models/cookies";
+import Loading from "@components/loading";
 
 const ItemBuilderPage: NextPage = ({
-  builder,
+  clienteId,
   pedidoId,
-}: {
-  builder: IItemBuilder | null;
-  pedidoId: string;
-}) => {
+  id,
+  tipo,
+}: { id: string; tipo: string } & ICookies) => {
+  const [builder, setBuilder] = useState<IItemBuilder>();
+  const { temClientePedido, authCarregado } = useAuth();
+
+  useEffect(() => {
+    temClientePedido(clienteId, pedidoId);
+  }, []);
+
+  useEffect(() => {
+    if (authCarregado) {
+      axios
+        .get(
+          `${env.apiURL}/pages/item-builder?id=${id}&clienteId=${clienteId}&tipo=${tipo}`
+        )
+        .then((res) => {
+          setBuilder(res.data);
+        })
+        .catch((err) => {
+          toast.error("Erro ao carregar dados");
+          console.error(err);
+        });
+    }
+  }, [authCarregado]);
+
+  if (!authCarregado || !builder) return <Loading />;
+
   return (
     <ItemBuilderProvider builder={builder} pedidoId={pedidoId}>
       <ItemBuilderView />
@@ -23,33 +51,14 @@ const ItemBuilderPage: NextPage = ({
 
 export default ItemBuilderPage;
 
-export const getServerSideProps: GetServerSideProps = withSuperjsonGSSP(
-  async (ctx) => {
-    try {
-      const verif = await verificarClienteEPedido(ctx);
-
-      if ("redirect" in verif) return verif;
-
-      const builder = await obterItemBuilder(
-        ctx.query.id as string,
-        ctx.query.tipo as IItemPedidoTipo | "combo",
-        verif.props.cliente.id
-      );
-
-      return {
-        props: {
-          pedidoId: verif.props.pedido.id,
-          builder,
-        },
-      };
-    } catch (e) {
-      console.error(e);
-      return {
-        redirect: {
-          destination: "/pedido",
-          permanent: false,
-        },
-      };
-    }
-  }
-);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { clienteId, pedidoId } = obterCookies(ctx);
+  return {
+    props: {
+      clienteId,
+      pedidoId,
+      tipo: ctx.query.tipo,
+      id: ctx.query.id,
+    },
+  };
+};

@@ -1,37 +1,48 @@
+import Loading from "@components/loading";
+import { ICookies } from "@models/cookies";
+import { obterCookies } from "@util/cookies";
+import { useAuth } from "@util/hooks/auth";
 import { obterLocalizacaoPeloIp } from "@util/obterLocalizacaoPeloIp";
-import { verificarClienteEPedido } from "@util/verificarClienteEPedido";
 import { GetServerSideProps, NextPage } from "next";
-import { withSuperjsonGSSP } from "src/infra/superjson";
+import { useEffect, useState } from "react";
 import { RuaView } from "src/views/cliente/novoEndereco/rua";
 
-const RuaPage: NextPage = ({ ipLoc }: { ipLoc: [number, number] | null }) => {
+const RuaPage: NextPage = ({
+  ipLoc,
+  clienteId,
+  pedidoId,
+}: { ipLoc: [number, number] | null } & ICookies) => {
+  const { temClientePedido, authCarregado } = useAuth();
+
+  useEffect(() => {
+    temClientePedido(clienteId, pedidoId);
+  }, []);
+
+  if (!authCarregado) return <Loading />;
   return <RuaView ipLoc={ipLoc} />;
 };
 
 export default RuaPage;
 
-export const getServerSideProps: GetServerSideProps = withSuperjsonGSSP(
-  async (ctx) => {
-    try {
-      const verif = await verificarClienteEPedido(ctx);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  try {
+    const { clienteId, pedidoId } = obterCookies(ctx);
 
-      if ("redirect" in verif) return verif;
+    const ipLoc = await obterLocalizacaoPeloIp(ctx);
 
-      const ipLoc = await obterLocalizacaoPeloIp(ctx);
-
-      return {
-        props: {
-          ...verif.props,
-          ipLoc,
-        },
-      };
-    } catch (e) {
-      console.error(e);
-      return {
-        props: {
-          ipLoc: null,
-        },
-      };
-    }
+    return {
+      props: {
+        ipLoc,
+        clienteId,
+        pedidoId,
+      },
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      props: {
+        ipLoc: null,
+      },
+    };
   }
-);
+};

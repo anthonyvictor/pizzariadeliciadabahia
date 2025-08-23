@@ -27,10 +27,14 @@ export default async function handler(
   res: NextApiResponse<RespType<IItemBuilder>>
 ) {
   if (req.method === "GET") {
-    const id = req.query.id as string;
-    const tipo = req.query.tipo as IItemPedidoTipo | "combo";
-    const clienteId = req.query.clienteId as string;
-    const data = await obterItemBuilder(id, tipo, clienteId);
+    const { id, tipo, clienteId } = req.query;
+    if (!id || !tipo || !clienteId) return res.status(400).end();
+
+    const data = await obterItemBuilder(
+      id as any,
+      tipo as any,
+      clienteId as any
+    );
 
     res.status(200).json(data);
   } else {

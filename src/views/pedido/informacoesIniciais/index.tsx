@@ -155,7 +155,9 @@ export const InformacoesIniciaisView = () => {
 
               if (axiosOk(res.status)) {
                 login(res.data);
-                router.replace("/pedido");
+                router.push("/pedido").then(() => {
+                  router.reload();
+                });
               }
             } catch (err) {
               toast.error(

@@ -1,34 +1,31 @@
 import { GetServerSideProps, NextPage } from "next";
-import { withSuperjsonGSSP } from "src/infra/superjson";
-import { verificarClienteEPedido } from "@util/verificarClienteEPedido";
 import { ItensView } from "src/views/pedido/itens";
-import { IPedido } from "tpdb-lib";
+import { ICookies } from "@models/cookies";
+import { obterCookies } from "@util/cookies";
+import Loading from "@components/loading";
+import { useEffect } from "react";
+import { useAuth } from "@util/hooks/auth";
 
-const ItensPage: NextPage = ({ pedido }: { pedido: IPedido }) => {
+const ItensPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
+  const { temClientePedido, authCarregado, pedido } = useAuth();
+
+  useEffect(() => {
+    temClientePedido(clienteId, pedidoId);
+  }, []);
+
+  if (!authCarregado) return <Loading />;
+
   return <ItensView pedido={pedido} />;
 };
 
 export default ItensPage;
 
-export const getServerSideProps: GetServerSideProps = withSuperjsonGSSP(
-  async (ctx) => {
-    try {
-      const verif = await verificarClienteEPedido(ctx);
-
-      if ("redirect" in verif) return verif;
-
-      return {
-        props: {
-          ...verif.props,
-        },
-      };
-    } catch (e) {
-      console.error(e);
-      return {
-        props: {
-          pedido: null,
-        },
-      };
-    }
-  }
-);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { clienteId, pedidoId } = obterCookies(ctx);
+  return {
+    props: {
+      clienteId,
+      pedidoId,
+    },
+  };
+};

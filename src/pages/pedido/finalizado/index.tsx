@@ -1,37 +1,33 @@
-import { IPedido } from "tpdb-lib";
-import { verificarClienteEPedido } from "@util/verificarClienteEPedido";
 import { GetServerSideProps, NextPage } from "next";
-import { withSuperjsonGSSP } from "src/infra/superjson";
 import { FinalizadoView } from "src/views/pedido/finalizado";
+import { obterCookies } from "@util/cookies";
+import { useAuth } from "@util/hooks/auth";
+import Loading from "@components/loading";
+import { useEffect } from "react";
+import { ICookies } from "@models/cookies";
 
-const FinaliadoPage: NextPage = ({ pedido }: { pedido: IPedido }) => {
+const FinaliadoPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
+  const { temClientePedido, authCarregado, pedido } = useAuth();
+
+  useEffect(() => {
+    temClientePedido(clienteId, pedidoId, {
+      comEnderecoCompleto: true,
+    });
+  }, []);
+
+  if (!authCarregado) return <Loading />;
+
   return <FinalizadoView pedido={pedido} />;
 };
 
 export default FinaliadoPage;
 
-export const getServerSideProps: GetServerSideProps = withSuperjsonGSSP(
-  async (ctx) => {
-    try {
-      const verif = await verificarClienteEPedido(ctx, {
-        comEnderecoCompleto: true,
-      });
-
-      if ("redirect" in verif) return verif;
-
-      return {
-        props: {
-          pedido: verif.props.pedido,
-        },
-      };
-    } catch (e) {
-      console.error(e);
-      return {
-        redirect: {
-          destination: "/pedido",
-          permanent: false,
-        },
-      };
-    }
-  }
-);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { clienteId, pedidoId } = obterCookies(ctx);
+  return {
+    props: {
+      clienteId,
+      pedidoId,
+    },
+  };
+};
