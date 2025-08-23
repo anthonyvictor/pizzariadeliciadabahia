@@ -5,7 +5,9 @@ import { EnderecosModel, PedidosModel } from "tpdb-lib";
 import { RespType, salvarCookie } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
 import { populates } from "tpdb-lib";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
+import { obterCliente, obterClientes } from "@routes/clientes";
+import { obterEnderecosExtras } from "@routes/enderecos/extras";
 
 // Função handler da rota
 export default async function handler(
@@ -14,10 +16,14 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     let data;
-    if (req.query.id) {
-      data = await obterPedido(req.query.id as string);
+    const { id, comEnderecoCompleto, ids } = req.query;
+    if (id) {
+      data = await obterPedido(id as string, comEnderecoCompleto as any);
     } else {
-      data = await obterPedidos();
+      data = await obterPedidos({
+        ids: ids as any,
+        comEnderecoCompleto: comEnderecoCompleto as any,
+      });
     }
     res.status(200).json(data);
   } else if (req.method === "POST") {
@@ -35,40 +41,49 @@ export default async function handler(
   }
 }
 
-export const obterPedidos = async () => {
+export const obterPedidos = async ({
+  ids,
+  comEnderecoCompleto = true,
+}: {
+  ids?: string[];
+  clientesIds?: string[];
+  comEnderecoCompleto?: boolean;
+}) => {
   await conectarDB();
 
-  const pedidos = await ff({
+  const q: any = {};
+  if (ids && ids.length)
+    q._id = { $in: ids.map((x) => new mongoose.Types.ObjectId(x)) };
+
+  let pedidos = await ff({
     m: PedidosModel,
-    populates: populates.pedidos,
+    q,
+    populates: populates.pedidos.filter((x) => x.path !== "cliente"),
   });
 
   if (!pedidos) return [];
 
-  const entregas = pedidos.filter(
-    (x) => x.tipo === "entrega" && x.endereco?.cep
-  );
-  const ceps = entregas.map((x) => x.endereco.cep);
-  const enderecosExtras = await ff({
-    m: EnderecosModel,
-    q: {
-      cep: { $in: ceps },
-    },
+  const clientes = await obterClientes({
+    ids: pedidos.map((x) => x.cliente.id),
+    comEnderecoCompleto,
   });
 
   return pedidos.map((pedido) => {
+    const cliente = clientes.find((x) => x.id === pedido.cliente.id);
     const endereco =
       pedido.tipo === "entrega" && pedido.endereco?.cep
         ? {
+            ...((cliente.enderecos ?? []).find(
+              (e) => e.cep === pedido.endereco.cep
+            ) ?? {}),
             ...pedido.endereco,
-            ...enderecosExtras.find((e) => e.cep === pedido.endereco.cep),
           }
         : null;
-    return { ...pedido, endereco: endereco || null };
+    return { ...pedido, endereco, cliente };
   });
 };
 
-export const obterPedido = async (id: string) => {
+export const obterPedido = async (id: string, comEnderecoCompleto = true) => {
   if (!Types.ObjectId.isValid(id)) {
     throw new Error("ID inválido");
   }
@@ -77,26 +92,21 @@ export const obterPedido = async (id: string) => {
   const pedido = await ffid({
     m: PedidosModel,
     id: id,
-    populates: populates.pedidos,
+    populates: populates.pedidos.filter((x) => x.path !== "cliente"),
   });
   if (!pedido) return null;
-  const enderecoExtra = pedido?.endereco?.cep
-    ? (
-        await ff({
-          m: EnderecosModel,
-          q: {
-            cep: pedido.endereco.cep,
-          },
-        })
-      )[0]
-    : {};
+
+  const cliente = await obterCliente(pedido.cliente.id, comEnderecoCompleto);
 
   return {
     ...pedido,
+    cliente,
     endereco:
       pedido.tipo === "entrega"
         ? {
-            ...enderecoExtra,
+            ...((cliente.enderecos ?? []).find(
+              (x) => x.cep === pedido.endereco.cep
+            ) ?? {}),
             ...pedido.endereco,
             desconto: pedido.endereco.desconto ?? 0,
           }

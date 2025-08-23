@@ -39,7 +39,9 @@ export const useAuth = () => {
 
     const obterPedido = async () => {
       if (!pedidoId) return null;
-      const res = await axios.get(`${env.apiURL}/pedidos?id=${pedidoId}`);
+      const res = await axios.get(
+        `${env.apiURL}/pedidos?id=${pedidoId}&comEnderecoCompleto=${opcoes?.comEnderecoCompleto}`
+      );
       return res.data as IPedido;
     };
 

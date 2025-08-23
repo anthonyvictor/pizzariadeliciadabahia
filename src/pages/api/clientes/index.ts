@@ -1,13 +1,14 @@
 import { conectarDB } from "src/infra/mongodb/config";
-import { ICliente } from "tpdb-lib";
+import { ICliente, IEndereco } from "tpdb-lib";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ff, ffid, serializeMongo } from "tpdb-lib";
 import { ClientesModel } from "tpdb-lib";
 import { EnderecosModel } from "tpdb-lib";
 import { RespType, salvarCookie } from "@util/api";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { DistanciasModel } from "tpdb-lib";
 import { encontrarTaxa } from "@util/distancias";
+import { obterEnderecosExtras } from "@routes/enderecos/extras";
 
 // Função handler da rota
 export default async function handler(
@@ -22,7 +23,11 @@ export default async function handler(
         req.query.comEnderecoCompleto as unknown as boolean
       );
     } else {
-      data = await obterClientes();
+      const { ids, comEnderecoCompleto } = req.query as {
+        ids: any;
+        comEnderecoCompleto: any;
+      };
+      data = await obterClientes({ ids, comEnderecoCompleto });
     }
     res.status(200).json(data);
   } else if (req.method === "POST") {
@@ -48,46 +53,49 @@ export const obterCliente = async (
   if (!cliente) return null;
 
   if (!cliente.enderecos || cliente.enderecos.length === 0) return cliente;
+  let enderecos = cliente.enderecos;
 
-  const distancias = (await ff({ m: DistanciasModel })).sort(
-    (a, b) => a.de - b.de
-  );
+  if (comEnderecoCompleto)
+    enderecos = (await obterEnderecosExtras(enderecos)) as any[];
 
-  const enderecosCompletos = comEnderecoCompleto
-    ? await Promise.all(
-        cliente.enderecos.map(async (endereco: any) => {
-          const enderecoExtra = (
-            await ff({
-              m: EnderecosModel,
-              q: {
-                cep: endereco.cep,
-              },
-            })
-          )[0];
-
-          const taxaPorDistancia = encontrarTaxa(
-            enderecoExtra.distancia_metros,
-            distancias
-          );
-
-          return {
-            ...enderecoExtra,
-            ...endereco,
-            cep: endereco.cep,
-            taxa: enderecoExtra?.taxa ?? taxaPorDistancia,
-          };
-        })
-      )
-    : cliente.enderecos;
-
-  return { ...cliente, enderecos: enderecosCompletos } as ICliente;
+  return { ...cliente, enderecos } as ICliente;
 };
-export const obterClientes = async () => {
+export const obterClientes = async ({
+  ids,
+  comEnderecoCompleto = false,
+}: {
+  ids?: string[];
+  comEnderecoCompleto?: boolean;
+}) => {
   await conectarDB();
+  const q: any = {};
+  if (ids && ids.length)
+    q._id = { $in: ids.map((x) => new mongoose.Types.ObjectId(x)) };
+  let clientes = await ff({ m: ClientesModel, q });
+  let enderecosBase = clientes
+    .map((x) => x.enderecos ?? [])
+    .flat()
+    .filter(
+      (item, index, self) => index === self.findIndex((x) => x.cep === item.cep)
+    );
 
-  const data = await ff({ m: ClientesModel });
+  if (comEnderecoCompleto) {
+    const enderecosExtras = (await obterEnderecosExtras(
+      enderecosBase
+    )) as any[];
 
-  return data;
+    clientes = clientes.map((cliente) => {
+      return {
+        ...cliente,
+        enderecos: (cliente.enderecos ?? []).map((endereco) => ({
+          ...(enderecosExtras.find((x) => x.cep === endereco.cep) ?? {}),
+          ...endereco,
+        })),
+      };
+    });
+  }
+
+  return clientes;
 };
 
 export const loginCliente = async (cliente: ICliente) => {
