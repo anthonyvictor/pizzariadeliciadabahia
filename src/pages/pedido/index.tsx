@@ -49,16 +49,16 @@ const Pedido: NextPage = ({
 
   if (!isLoaded) return <Loading />;
 
-  if (closedUntil && new Date(closedUntil) > new Date())
-    return (
-      <PedidoStyle>
-        <TextContainer
-          title="OPA! ESTAMOS FECHADOS NESTE MOMENTO."
-          subtitle="NOSSO HORÁRIO 
-       DE FUNCIONAMENTO É DE TERÇA À DOMINGO, DAS 18:30 ATÉ ÀS 23:30"
-        />
-      </PedidoStyle>
-    );
+  // if (closedUntil && new Date(closedUntil) > new Date())
+  return (
+    <PedidoStyle>
+      <TextContainer
+        title="OPA! ESTAMOS FECHADOS NESTE MOMENTO!"
+        //   subtitle="NOSSO HORÁRIO
+        //  DE FUNCIONAMENTO É DE TERÇA À DOMINGO, DAS 18:30 ATÉ ÀS 23:30"
+      />
+    </PedidoStyle>
+  );
 
   const Tab = ({ id, label }: { id: string; label: string }) => {
     return (
