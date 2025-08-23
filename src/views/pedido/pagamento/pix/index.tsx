@@ -7,7 +7,6 @@ import { formatCurrency } from "@util/format";
 import { usePagamentoStore } from "src/infra/zustand/pagamentos";
 import axios from "axios";
 import { env } from "@config/env";
-import { toast } from "react-toastify";
 import { PixViewStyle } from "./styles";
 import QRCode from "react-qr-code";
 import { CgClipboard } from "react-icons/cg";

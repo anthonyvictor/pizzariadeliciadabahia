@@ -49,14 +49,13 @@ export const verificarPixAguardando = async ({
     })) as unknown as IPixRecebido[]
   );
 
-  const q = {} as any;
-  if (pedido) q._id = pedido;
-  let pixAguardando: IPagamentoPedidoPix | undefined = (
-    await ffid({
-      m: PedidosModel,
-      id: pedido,
-    })
-  )?.pagamentos?.find((x) => x.id === pix) as IPagamentoPedidoPix;
+  const _pedido = await ffid({
+    m: PedidosModel,
+    id: pedido,
+  });
+
+  let pixAguardando: IPagamentoPedidoPix | undefined =
+    _pedido?.pagamentos?.find((x) => x.id === pix) as IPagamentoPedidoPix;
 
   if (!pixAguardando || !pixAguardando.qrcode || !pixAguardando.txid) {
     throw new HTTPError(
@@ -65,6 +64,7 @@ export const verificarPixAguardando = async ({
     );
   } else if (pixAguardando.status !== "aguardando") {
     // atualiza o pix aguardando para pago/pendente no bd e retorna o status
+
     return true;
   } else if (pixAguardando.status === "aguardando") {
     const encontrado = pixRecebidos.find((rcbd) => {
@@ -94,7 +94,17 @@ export const verificarPixAguardando = async ({
           },
         }
       );
+
+      if (
+        !_pedido.pagamentos.filter((x) => x.id !== pix && x.status !== "pago")
+          .length
+      ) {
+        await PedidosModel.findByIdAndUpdate(pedido, {
+          $set: { enviadoEm: new Date() },
+        });
+      }
     }
+
     return !!encontrado;
   }
 };
