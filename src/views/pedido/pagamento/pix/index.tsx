@@ -42,7 +42,7 @@ export const PixView = ({
 
         if (!axiosOk(res.status)) return router.replace("/pedido/pagamento");
         if (res.data === true) {
-          router.push("/pedido/pagamento/pixi");
+          router.push("/pedido/finalizado");
         }
       }
     }, 1000 * 15);
