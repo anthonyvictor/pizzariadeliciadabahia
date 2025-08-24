@@ -25,10 +25,14 @@ export function useEnderecoAutocomplete({
     const query = `https://photon.komoot.io/api/?q=${encodeURIComponent(
       value + ` ${bairro}`
     )}&bbox=-38.573,-13.071,-38.327,-12.809&limit=5&lang=en&layer=street`;
+    console.log("viadddddooooo");
     console.time(`Photon Query ${value}`);
     const res = await axios.get(query);
     console.timeEnd(`Photon Query ${value}`);
-    const data = await res.data;
+    const data = res.data;
+    console.log("viadddddooooo");
+    console.log(res.data);
+
     setLoading(false);
     return data.features || [];
   };

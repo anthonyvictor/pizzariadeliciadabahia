@@ -7,10 +7,12 @@ import { ICliente, IPagamentoPedidoPix, IPedido } from "tpdb-lib";
 export const useAuth = () => {
   const router = useRouter();
 
+  const [fechado, setFechado] = useState(false);
   const [authCarregado, setAuthCarregado] = useState(false);
   const [cliente, setCliente] = useState<ICliente>();
   const [pedido, setPedido] = useState<IPedido>();
   const [pixAguardando, setPixAguardando] = useState<IPagamentoPedidoPix>();
+
   const temClientePedido = async (
     clienteId: string | null,
     pedidoId: string | null,
@@ -52,7 +54,7 @@ export const useAuth = () => {
 
     let _pedido = await obterPedido();
 
-    if (!!_pedido.enviadoEm && router.pathname !== "/pedido/finalizado") {
+    if (!!_pedido?.enviadoEm && router.pathname !== "/pedido/finalizado") {
       _pedido = await novoPedido();
       return router.push("/pedido").then(() => {
         router.reload();
@@ -100,5 +102,6 @@ export const useAuth = () => {
     cliente,
     pedido,
     pixAguardando,
+    fechado,
   };
 };
