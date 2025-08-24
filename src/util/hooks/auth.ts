@@ -52,6 +52,13 @@ export const useAuth = () => {
 
     let _pedido = await obterPedido();
 
+    if (!!_pedido.enviadoEm && router.pathname !== "/pedido/finalizado") {
+      _pedido = await novoPedido();
+      return router.push("/pedido").then(() => {
+        router.reload();
+      });
+    }
+
     if (!_pedido || _pedido.cliente?.id !== _cliente.id) {
       _pedido = await novoPedido();
       if (router.pathname !== "/pedido") return;

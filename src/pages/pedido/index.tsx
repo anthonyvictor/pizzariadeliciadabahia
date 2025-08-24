@@ -34,8 +34,8 @@ import { obterCookies } from "@util/cookies";
 const Pedido: NextPage = ({ clienteId, pedidoId }: ICookies) => {
   const router = useRouter();
   const [closedUntil, setClosedUntil] = useState<Date | null | undefined>(
-    // new Date("2025-09-10 00:00:00")
-    null
+    new Date("2025-08-24 16:00:00")
+    // null
   );
 
   const [isLoaded, setIsLoaded] = useState<boolean>(true);
