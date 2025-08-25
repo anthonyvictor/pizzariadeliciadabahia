@@ -4,6 +4,12 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { ICliente, IPagamentoPedidoPix, IPedido } from "tpdb-lib";
 
+const pages = {
+  infoIniciais: "/cliente/informacoes-iniciais",
+  finalizado: "/pedido/finalizado",
+  pedido: "/pedido",
+};
+
 export const useAuth = () => {
   const router = useRouter();
 
@@ -14,8 +20,6 @@ export const useAuth = () => {
   const [pixAguardando, setPixAguardando] = useState<IPagamentoPedidoPix>();
 
   const temClientePedido = async (
-    clienteId: string | null,
-    pedidoId: string | null,
     opcoes: {
       comEnderecoCompleto?: boolean;
       verificarPixAguardando?: boolean;
@@ -24,6 +28,9 @@ export const useAuth = () => {
       verificarPixAguardando: true,
     }
   ) => {
+    const clienteId = localStorage.getItem("clienteId");
+    const pedidoId = localStorage.getItem("pedidoId");
+
     const obterCliente = async () => {
       if (!clienteId) return null;
       const res = await axios.get(
@@ -34,8 +41,8 @@ export const useAuth = () => {
 
     const _cliente = await obterCliente();
 
-    if (!_cliente && router.pathname !== "/cliente/informacoes-iniciais")
-      return router.push("/cliente/informacoes-iniciais");
+    if (!_cliente && router.pathname !== pages.infoIniciais)
+      return router.push(pages.infoIniciais);
 
     setCliente(_cliente);
 
@@ -49,24 +56,20 @@ export const useAuth = () => {
 
     const novoPedido = async () => {
       const res = await axios.post(`${env.apiURL}/pedidos`, { clienteId });
+      localStorage.setItem("pedidoId", res.data.id);
       return res.data as IPedido;
     };
 
     let _pedido = await obterPedido();
 
-    if (!!_pedido?.enviadoEm && router.pathname !== "/pedido/finalizado") {
+    if (!!_pedido?.enviadoEm && router.pathname !== pages.finalizado) {
       _pedido = await novoPedido();
-      return router.push("/pedido").then(() => {
-        router.reload();
-      });
+      return router.push(pages.pedido);
     }
 
     if (!_pedido || _pedido.cliente?.id !== _cliente.id) {
       _pedido = await novoPedido();
-      if (router.pathname !== "/pedido") return;
-      router.push("/pedido").then(() => {
-        router.reload();
-      });
+      router.push(pages.pedido);
     }
 
     setPedido(_pedido);

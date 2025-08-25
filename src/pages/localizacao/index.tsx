@@ -22,21 +22,6 @@ const Localizacao: NextPage = () => {
           marginWidth={0}
         ></iframe>
       </div>
-
-      <button
-        style={{
-          background: "transparent",
-          outline: "none",
-          border: "none",
-          fontSize: "2rem",
-          color: "red",
-        }}
-        onClick={() => {
-          localStorage.setItem("dev", "1");
-        }}
-      >
-        _
-      </button>
     </LocalizacaoStyle>
   );
 };

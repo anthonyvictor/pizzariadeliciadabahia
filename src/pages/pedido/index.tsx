@@ -1,25 +1,25 @@
-import { GetServerSideProps, NextPage } from "next";
-import { ICookies } from "@models/cookies";
-import { obterCookies } from "@util/cookies";
+import { NextPage } from "next";
 import { PedidoPageProvider } from "src/views/pedido/inicio/context";
 import { PedidoView } from "src/views/pedido/inicio";
+import { useAuth } from "@util/hooks/auth";
+import { useEffect } from "react";
+import Loading from "@components/loading";
 
-const PedidoPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
+const PedidoPage: NextPage = () => {
+  const { temClientePedido, authCarregado, pedido, fechado } = useAuth();
+
+  useEffect(() => {
+    temClientePedido();
+  }, []);
+
+  if (!authCarregado) return <Loading />;
+  if (fechado) return <div>Estamos fechados no momento</div>;
+
   return (
-    <PedidoPageProvider clienteId={clienteId} pedidoId={pedidoId}>
+    <PedidoPageProvider pedido={pedido}>
       <PedidoView />
     </PedidoPageProvider>
   );
 };
 
 export default PedidoPage;
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { clienteId, pedidoId } = obterCookies(ctx);
-  return {
-    props: {
-      clienteId,
-      pedidoId,
-    },
-  };
-};

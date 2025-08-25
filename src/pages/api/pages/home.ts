@@ -4,7 +4,6 @@ import { ClientesModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { IHome } from "tpdb-lib";
 import { conectarDB } from "src/infra/mongodb/config";
-import { parse } from "cookie";
 import { obterCombos } from "@routes/combos";
 import { obterTamanhos } from "@routes/pizzas/tamanhos";
 import { obterSabores } from "@routes/pizzas/sabores";

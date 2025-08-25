@@ -1,13 +1,12 @@
 import { IPedido } from "tpdb-lib";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ff, ffid } from "tpdb-lib";
-import { EnderecosModel, PedidosModel } from "tpdb-lib";
-import { RespType, salvarCookie } from "@util/api";
+import { PedidosModel } from "tpdb-lib";
+import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
 import { populates } from "tpdb-lib";
 import mongoose, { Types } from "mongoose";
 import { obterCliente, obterClientes } from "@routes/clientes";
-import { obterEnderecosExtras } from "@routes/enderecos/extras";
 
 // Função handler da rota
 export default async function handler(
@@ -29,8 +28,6 @@ export default async function handler(
   } else if (req.method === "POST") {
     const { clienteId } = req.body;
     const data = await novoPedido(clienteId);
-    salvarCookie("pedidoId", data.id, res, 60 * 60 * 24 * 1); // expira em 1 dia
-
     res.end();
   } else if (req.method === "PATCH") {
     const { pedidoId, pedido } = req.body;

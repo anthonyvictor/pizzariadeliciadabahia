@@ -1,5 +1,10 @@
 import { SetState } from "@config/react";
-import { IBebidaPedido, IItemPedidoIds, ILanchePedido } from "tpdb-lib";
+import {
+  IBebidaPedido,
+  IItemPedidoIds,
+  ILanchePedido,
+  IPedido,
+} from "tpdb-lib";
 import { IItemBuilder } from "tpdb-lib";
 import { createContext, ReactNode, useContext, useState } from "react";
 import { useRouter } from "next/router";
@@ -25,11 +30,11 @@ const ItemBuilderContext = createContext<IItemBuilderContext>(
 export const ItemBuilderProvider = ({
   children,
   builder,
-  pedidoId,
+  pedido,
 }: {
   children: ReactNode;
   builder: IItemBuilder | null;
-  pedidoId: string;
+  pedido: IPedido;
 }) => {
   const [itensFinais, setItensFinais] = useState<ItemComBuilder[]>([]);
   const [observacoes, setObservacoes] = useState("");
@@ -53,7 +58,7 @@ export const ItemBuilderProvider = ({
       });
 
       await axios.post(`${env.apiURL}/pedidos/itens`, {
-        pedidoId,
+        pedidoId: pedido.id,
         itens,
       });
 

@@ -21,12 +21,12 @@ export default async function handler(
     if (req.query.id) {
       data = await obterLanche({
         id: req.query.id as string,
-        _cliente: req.cookies.clienteId,
+        _cliente: req.query.clienteId as any,
         deveEstar: req.query.deveEstar as any,
       });
     } else {
       data = await obterLanches({
-        _cliente: req.cookies.clienteId,
+        _cliente: req.query.clienteId as any,
         deveEstar: req.query.deveEstar as any,
       });
     }

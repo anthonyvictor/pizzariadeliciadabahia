@@ -1,13 +1,10 @@
 import { conectarDB } from "src/infra/mongodb/config";
-import { ICliente, IEndereco } from "tpdb-lib";
+import { ICliente } from "tpdb-lib";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ff, ffid, serializeMongo } from "tpdb-lib";
 import { ClientesModel } from "tpdb-lib";
-import { EnderecosModel } from "tpdb-lib";
-import { RespType, salvarCookie } from "@util/api";
+import { RespType } from "@util/api";
 import mongoose, { Types } from "mongoose";
-import { DistanciasModel } from "tpdb-lib";
-import { encontrarTaxa } from "@util/distancias";
 import { obterEnderecosExtras } from "@routes/enderecos/extras";
 
 // Função handler da rota
@@ -33,8 +30,7 @@ export default async function handler(
   } else if (req.method === "POST") {
     const cliente = req.body.cliente;
     const data = await loginCliente(cliente);
-    salvarCookie("clienteId", data.id, res, 60 * 60 * 24 * 30);
-    res.end();
+    res.status(200).send(data);
   } else {
     res.status(405).end(); // Método não permitido
   }

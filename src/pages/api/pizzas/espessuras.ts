@@ -20,12 +20,12 @@ export default async function handler(
     if (req.query.id) {
       data = await obterEspessura({
         id: req.query.id as string,
-        _cliente: req.cookies.clienteId,
+        _cliente: req.query.clienteId as any,
         deveEstar: req.query.deveEstar as any,
       });
     } else {
       data = await obterEspessuras({
-        _cliente: req.cookies.clienteId,
+        _cliente: req.query.clienteId as any,
         deveEstar: req.query.deveEstar as any,
       });
     }

@@ -1,32 +1,31 @@
 import { ICupom } from "tpdb-lib";
 import { analisarCodigoCupom } from "@util/cupons";
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import { TipoView } from "src/views/pedido/tipo";
 import { useEffect, useState } from "react";
 import { useAuth } from "@util/hooks/auth";
 import Loading from "@components/loading";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { ICookies } from "@models/cookies";
 import { env } from "@config/env";
-import { obterCookies } from "@util/cookies";
 
-const TipoPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
+const TipoPage: NextPage = () => {
   const [cupom, setCupom] = useState<ICupom>();
   const [carregouCupom, setCarregouCupom] = useState(false);
 
   const { temClientePedido, authCarregado, pedido } = useAuth();
 
   useEffect(() => {
-    temClientePedido(clienteId, pedidoId, {
+    temClientePedido({
       comEnderecoCompleto: true,
+      verificarPixAguardando: true,
     });
   }, []);
 
   useEffect(() => {
     if (authCarregado) {
       axios
-        .get(`${env.apiURL}/cupons?clienteId=${clienteId}`)
+        .get(`${env.apiURL}/cupons?clienteId=${pedido.cliente.id}`)
         .then((res) => {
           if (!res.data || !Array.isArray(res.data) || !res.data.length) return;
 
@@ -56,13 +55,3 @@ const TipoPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
 };
 
 export default TipoPage;
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { clienteId, pedidoId } = obterCookies(ctx);
-  return {
-    props: {
-      clienteId,
-      pedidoId,
-    },
-  };
-};

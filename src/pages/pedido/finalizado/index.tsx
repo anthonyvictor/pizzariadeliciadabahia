@@ -1,17 +1,16 @@
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import { FinalizadoView } from "src/views/pedido/finalizado";
-import { obterCookies } from "@util/cookies";
 import { useAuth } from "@util/hooks/auth";
 import Loading from "@components/loading";
 import { useEffect } from "react";
-import { ICookies } from "@models/cookies";
 
-const FinaliadoPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
+const FinaliadoPage: NextPage = () => {
   const { temClientePedido, authCarregado, pedido } = useAuth();
 
   useEffect(() => {
-    temClientePedido(clienteId, pedidoId, {
+    temClientePedido({
       comEnderecoCompleto: true,
+      verificarPixAguardando: false,
     });
   }, []);
 
@@ -21,13 +20,3 @@ const FinaliadoPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
 };
 
 export default FinaliadoPage;
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { clienteId, pedidoId } = obterCookies(ctx);
-  return {
-    props: {
-      clienteId,
-      pedidoId,
-    },
-  };
-};

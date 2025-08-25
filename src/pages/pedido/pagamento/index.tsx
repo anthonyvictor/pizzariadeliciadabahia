@@ -1,9 +1,7 @@
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import { PagamentoView } from "src/views/pedido/pagamento";
 import { ICupom } from "tpdb-lib";
 import { analisarCodigoCupom } from "@util/cupons";
-import { obterCookies } from "@util/cookies";
-import { ICookies } from "@models/cookies";
 import { useEffect, useState } from "react";
 import { useAuth } from "@util/hooks/auth";
 import axios from "axios";
@@ -11,20 +9,20 @@ import { env } from "@config/env";
 import { toast } from "react-toastify";
 import Loading from "@components/loading";
 
-const PagamentoPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
+const PagamentoPage: NextPage = () => {
   const [cupom, setCupom] = useState<ICupom>();
   const [carregouCupom, setCarregouCupom] = useState(false);
 
   const { temClientePedido, authCarregado, pedido } = useAuth();
 
   useEffect(() => {
-    temClientePedido(clienteId, pedidoId);
+    temClientePedido();
   }, []);
 
   useEffect(() => {
     if (authCarregado) {
       axios
-        .get(`${env.apiURL}/cupons?clienteId=${clienteId}`)
+        .get(`${env.apiURL}/cupons?clienteId=${pedido.cliente.id}`)
         .then((res) => {
           if (!res.data || !Array.isArray(res.data) || !res.data.length) return;
 
@@ -56,13 +54,3 @@ const PagamentoPage: NextPage = ({ clienteId, pedidoId }: ICookies) => {
 };
 
 export default PagamentoPage;
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { clienteId, pedidoId } = obterCookies(ctx);
-  return {
-    props: {
-      clienteId,
-      pedidoId,
-    },
-  };
-};

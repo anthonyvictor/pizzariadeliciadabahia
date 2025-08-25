@@ -1,6 +1,6 @@
 import Loading from "@components/loading";
 import { env } from "@config/env";
-import { ICookies } from "@models/cookies";
+import { IAuth } from "@models/auth";
 import { useAuth } from "@util/hooks/auth";
 import axios from "axios";
 import {
@@ -40,29 +40,28 @@ const PedidoPageContext = createContext<IPedidoPageContext>(
 
 export const PedidoPageProvider = ({
   children,
-  clienteId,
-  pedidoId,
-}: { children: ReactNode } & ICookies) => {
+  pedido,
+}: {
+  children: ReactNode;
+  pedido: IPedido;
+}) => {
   const [home, setHome] = useState<IHome>();
-  const { temClientePedido, authCarregado, pedido, fechado } = useAuth();
+  const [carregandoHome, setCarregandoHome] = useState(true);
 
   useEffect(() => {
-    temClientePedido(clienteId, pedidoId);
+    axios
+      .get(`${env.apiURL}/pages/home?clienteId=${pedido.cliente.id}`)
+      .then((res) => {
+        setHome(res.data);
+      })
+      .catch((err) => {
+        toast.error("Erro ao carregar dados");
+        console.error(err);
+      })
+      .finally(() => {
+        setCarregandoHome(false);
+      });
   }, []);
-
-  useEffect(() => {
-    if (authCarregado) {
-      axios
-        .get(`${env.apiURL}/pages/home?clienteId=${clienteId}`)
-        .then((res) => {
-          setHome(res.data);
-        })
-        .catch((err) => {
-          toast.error("Erro ao carregar dados");
-          console.error(err);
-        });
-    }
-  }, [authCarregado]);
 
   const maxDestaques = 6;
   function fmv<T>(arr: T[], max = 2) {
@@ -86,8 +85,8 @@ export const PedidoPageProvider = ({
       })()
     : [];
 
-  if (!authCarregado || !home) return <Loading />;
-  if (fechado) return <div>Estamos fechados no momento</div>;
+  if (carregandoHome) return <Loading />;
+  if (!home) return <div>Oops, tivemos um erro ao carregar os dados!</div>;
 
   return (
     <PedidoPageContext.Provider
