@@ -28,7 +28,7 @@ export default async function handler(
   } else if (req.method === "POST") {
     const { clienteId } = req.body;
     const data = await novoPedido(clienteId);
-    res.end();
+    res.status(200).send(data);
   } else if (req.method === "PATCH") {
     const { pedidoId, pedido } = req.body;
     await patchPedido(pedidoId, pedido);

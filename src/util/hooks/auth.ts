@@ -13,7 +13,7 @@ const pages = {
 export const useAuth = () => {
   const router = useRouter();
 
-  const [fechado, setFechado] = useState(false);
+  const [fechado, setFechado] = useState(true);
   const [authCarregado, setAuthCarregado] = useState(false);
   const [cliente, setCliente] = useState<ICliente>();
   const [pedido, setPedido] = useState<IPedido>();
@@ -56,6 +56,7 @@ export const useAuth = () => {
 
     const novoPedido = async () => {
       const res = await axios.post(`${env.apiURL}/pedidos`, { clienteId });
+      console.log("novoPedido", res);
       localStorage.setItem("pedidoId", res.data.id);
       return res.data as IPedido;
     };
