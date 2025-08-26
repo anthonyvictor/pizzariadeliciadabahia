@@ -8,17 +8,12 @@ import axios from "axios";
 import { env } from "@config/env";
 import { toast } from "react-toastify";
 import Loading from "@components/loading";
+import { useRouter } from "next/router";
 
-const ItemBuilderPage: NextPage = ({
-  id,
-  tipo,
-}: {
-  id: string;
-  tipo: string;
-  pedido: IPedido;
-}) => {
+const ItemBuilderPage: NextPage = () => {
   const [builder, setBuilder] = useState<IItemBuilder>();
   const { temClientePedido, authCarregado, pedido } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     temClientePedido();
@@ -28,7 +23,7 @@ const ItemBuilderPage: NextPage = ({
     if (authCarregado) {
       axios
         .get(
-          `${env.apiURL}/pages/item-builder?id=${id}&clienteId=${pedido.cliente.id}&tipo=${tipo}`
+          `${env.apiURL}/pages/item-builder?id=${router.query.id}&clienteId=${pedido.cliente.id}&tipo=${router.query.tipo}`
         )
         .then((res) => {
           setBuilder(res.data);
