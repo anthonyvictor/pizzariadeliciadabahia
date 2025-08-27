@@ -84,25 +84,27 @@ export const Item = ({
 
       <aside>
         <h6 className="item-price">
-          {!!item.valor && (
-            <>
-              <span
-                className="price"
-                style={{
-                  color: item.desconto ? colors.checkedLight : undefined,
-                }}
-              >
-                <span>{formatCurrency(item.valor - (item.desconto ?? 0))}</span>
-              </span>
-              {!!item.desconto && (
-                <span
-                  className="original-price"
-                  style={{ textDecoration: "line-through" }}
-                >
-                  {formatCurrency(item.valor)}
-                </span>
+          <span
+            className="price"
+            style={{
+              color:
+                item.desconto || !item.valor ? colors.checkedLight : undefined,
+            }}
+          >
+            <span>
+              {formatCurrency(
+                (item.valor ?? 0) - (item.desconto ?? 0) ||
+                  ("GRÁTIS!" as unknown as number)
               )}
-            </>
+            </span>
+          </span>
+          {!!item.desconto && (
+            <span
+              className="original-price"
+              style={{ textDecoration: "line-through" }}
+            >
+              {formatCurrency(item.valor)}
+            </span>
           )}
         </h6>
       </aside>

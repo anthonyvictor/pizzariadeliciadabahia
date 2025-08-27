@@ -30,7 +30,10 @@ export const ItensView = ({ pedido }: { pedido: IPedido }) => {
 
   return (
     <ItensStyle>
-      <TextContainer title="Meu carrinho" />
+      <TextContainer
+        title="Meus itens"
+        description="Produtos adicionados no seu pedido"
+      />
 
       <ul className="itens no-scroll">
         {itens.map((item) => {
@@ -116,15 +119,7 @@ export const ItensView = ({ pedido }: { pedido: IPedido }) => {
           ))}
         </ul>
       </div> */}
-      <BottomControls
-        backButton
-        primaryButton={{
-          click: () => {
-            router.push(`/pedido/tipo`);
-          },
-          disabled: (pedido?.itens?.length ?? 0) < 1,
-        }}
-      />
+      <BottomControls backButton />
       {showModalRemoverItem.show && (
         <Modal
           label="Excluir item?"

@@ -1,8 +1,10 @@
 import { IEndereco } from "tpdb-lib";
-import axios from "axios";
-import { logJson } from "./logs";
-import { axiosOk } from "./axios";
-import { normalizarOrdinal, removeAccents } from "./format";
+import { logJson } from "../logs";
+import { axiosOk } from "../axios";
+import { normalizarOrdinal, removeAccents } from "../format";
+import { randomUUID } from "crypto";
+import axios, { AxiosError } from "axios";
+import { bboxSalvador } from "@util/dados";
 
 // const viaCep = async (cep: string, rua?: string, _bairro?: string) => {
 //   let data: any;

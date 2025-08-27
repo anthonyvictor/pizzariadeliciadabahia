@@ -290,13 +290,15 @@ export const ChecklistItemInfo = ({
         item.description
       )}
       <b style={{ fontSize: "0.7rem" }}>
-        {item.minPrice != null &&
-          `À partir de ${formatCurrency(item.minPrice)}`}
-        {item.price != null
+        {item.minPrice != null
+          ? `À partir de ${formatCurrency(item.minPrice)}`
+          : item.price != null
           ? item.isSum && item.price === 0
-            ? ""
-            : `${item.isSum ? "+" : ""}${formatCurrency(item.price)}`
-          : ""}
+            ? "+R$ 0,00"
+            : `${item.isSum && item.price >= 0 ? "+" : ""}${formatCurrency(
+                item.price
+              )}`
+          : "+R$ 0,00"}
       </b>
     </ChecklistItemInfoStyle>
   );
@@ -389,11 +391,13 @@ export const ChecklistStyle = styled.section.attrs(
     flex-direction: column;
     min-height: 55px;
 
+    gap: 5px;
+
     li {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 5px 10px;
+      padding: 10px 10px;
       border: none;
       border-bottom: 1px solid ${colors.backgroundDark}70;
       color: #fff;

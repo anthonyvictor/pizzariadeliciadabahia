@@ -1,4 +1,4 @@
-import { IPizzaPedido } from "tpdb-lib";
+import { ICombo, IPizzaPedido } from "tpdb-lib";
 import { IItemBuilderPizza } from "tpdb-lib";
 import {
   IPizzaBorda,
@@ -57,13 +57,16 @@ export const PizzaBuilder = ({
     ponto: IPizzaPonto | undefined;
     acoes?: IAcaoProdutoPizza[];
   }) => {
-    let valorSabores = (sabores ?? []).length
-      ? sabores
-          .map((x) => x.valores)
-          .flat()
-          .filter((x) => x.tamanhoId === tamanho.id)
-          .reduce((acc, curr) => acc + curr.valor, 0) / sabores.length
-      : 0;
+    const valoresSabores = (sabores ?? [])
+      .map((x) => x.valores)
+      .flat()
+      .filter((x) => x.tamanhoId === tamanho.id)
+      .map((x) => x.valor, 0);
+
+    let valorSabores = !valoresSabores?.length
+      ? 0
+      : valoresSabores.reduce((acc, curr) => acc + curr, 0) / sabores.length;
+
     let valorBorda =
       borda?.valores?.find?.((x) => x.tamanhoId === tamanho.id)?.valor ?? 0;
     let valorEspessura = espessura?.valor ?? 0;
@@ -85,6 +88,7 @@ export const PizzaBuilder = ({
             break;
           case "desconto_percentual":
             const valorRealDesconto = valorSabores * (acao.valor / 100);
+
             valorSabores =
               valorSabores -
               (acao.maxDesconto != null
@@ -99,12 +103,19 @@ export const PizzaBuilder = ({
             break;
           case "valor_fixo":
             (() => {
-              valorSabores =
-                acao.maxValor != null
-                  ? valorSabores <= acao.maxValor
-                    ? acao.valor
-                    : acao.valor + (valorSabores - acao.maxValor)
-                  : acao.valor;
+              if (acao.maxValor !== null) {
+                if (valoresSabores.every((x) => x <= acao.maxValor)) {
+                  valorSabores = acao.valor;
+                } else {
+                  const valorSaboresExtra = valoresSabores
+                    .filter((x) => x > acao.maxValor)
+                    .reduce((acc, curr) => acc + curr - acao.maxValor, 0);
+                  // const valorSaboresExtra =valorSabores - acao.maxValor
+                  valorSabores = acao.valor + valorSaboresExtra;
+                }
+              } else {
+                valorSabores = acao.valor;
+              }
             })();
 
             break;
@@ -117,40 +128,6 @@ export const PizzaBuilder = ({
     return valorFinal;
   };
 
-  /**
-   * Obtem o valor máximo dos sabores antes de aplicar valor extra
-   * Por ex: a ação do produto prevê valor fixo, e caso ultrapasse R$ x,xx
-   * o valor do sabor será: valorFixo + (valorSabor - valorFixo)
-   */
-  const obterValorMax = (acoes: IAcaoProdutoPizza[] | undefined) => {
-    let valorMax = -1;
-    (acoes ?? []).forEach((acao) => {
-      switch (acao.tipo) {
-        case "desconto_percentual":
-          // const valorRealDesconto = valorSabores * (acao.valor / 100);
-          // valorSabores =
-          //   valorSabores -
-          //   (acao.maxDesconto != null
-          //     ? valorRealDesconto > acao.maxDesconto
-          //       ? acao.maxDesconto
-          //       : valorRealDesconto
-          //     : valorRealDesconto);
-          break;
-        case "desconto_fixo":
-          // valorSabores =
-          //   valorSabores - acao.valor >= 0 ? valorSabores - acao.valor : 0;
-          break;
-        case "valor_fixo":
-          valorMax = acao.maxValor != null ? acao.maxValor : -1;
-
-          break;
-      }
-    });
-
-    return valorMax;
-  };
-
-  const valorMax = obterValorMax(builder.acoes);
   const { setItensFinais } = useItemBuilder();
   useEffect(() => {
     setItensFinais((_prev) => {
@@ -180,28 +157,7 @@ export const PizzaBuilder = ({
   const pontosDisp = (builder.pontos ?? []).filter((x) => x.disponivel);
   const espDisp = (builder.espessuras ?? []).filter((x) => x.disponivel);
   const extrasDisp = (builder.espessuras ?? []).filter((x) => x.disponivel);
-  // type SubBuilder = (
-  //     | {tipo: 'espessura', nome: string,arr: IPizzaEspessura[], visivel:boolean}
-  //     | {tipo: 'ponto', nome:string,arr: IPizzaPonto[], visivel:boolean}
-  //     | {tipo: 'borda', nome:string,arr: IPizzaBorda[], visivel:boolean})
-  //   const [subBuilders, setSubBuilders] = useState<SubBuilder[]>([])
-  //   useEffect(() => {
-  //     const _sb:SubBuilder[] = []
-  //     _sb.push({tipo:'borda', nome:`espessura-${builder.id}`, arr: bordasDisp, visivel: bordasDisp.length > 1})
-  //     _sb.push({tipo:'ponto', nome:`ponto-${builder.id}`, arr: pontosDisp, visivel: pontosDisp.length > 1})
-  //     _sb.push({tipo:'espessura', nome:`espessura-${builder.id}`, arr: espDisp, visivel: espDisp.length > 1})
 
-  //     const obj:any = {}
-  //     _sb.forEach(x => {
-  //       if(!x.visivel){
-  //         obj[x.tipo] = x.arr[0]
-  //       }
-  //     })
-
-  //    setSubBuilders(_sb)
-  //       setPizza((prev) => ({ ...prev, ...obj }));
-
-  //   }, []);
   useEffect(() => {
     if (bordasDisp.length && pontosDisp.length && espDisp.length) {
       const obj: IPizzaPedido = {} as IPizzaPedido;
@@ -222,7 +178,7 @@ export const PizzaBuilder = ({
 
   return (
     <PizzaBuilderStyle id={`builder-${builder.id}`}>
-      {!isCombo && (
+      {/* {!isCombo && (
         <Checklist
           name={`tamanho-${builder.id}`}
           label={`Tamanho ${pizzaNumberStr}📐`}
@@ -242,7 +198,7 @@ export const PizzaBuilder = ({
             rolarEl(`checklist-sabores-${builder.id}`);
           }}
         />
-      )}
+      )} */}
 
       <MultiChecklist
         name={`sabores-${builder.id}`}
@@ -250,21 +206,32 @@ export const PizzaBuilder = ({
         min={1}
         max={pizza.tamanho.maxSabores}
         description={`Selecione até ${pizza.tamanho.maxSabores} sabores`}
-        items={builder.sabores.map((x) => ({
-          id: x.id,
-          imageUrl: x.imagemUrl,
-          group: x.categoria,
-          title: x.nome,
-          description: x.descricao,
-          disabled: !x.disponivel,
-          price: x.valores
+        items={builder.sabores.map((sab) => ({
+          id: sab.id,
+          imageUrl: sab.imagemUrl,
+          group: sab.categoria,
+          title: sab.nome,
+          description: sab.descricao,
+          disabled: !sab.disponivel,
+          price: sab.valores
             .filter((x) => x.tamanhoId === builder.tamanho.id)
-            .map((x) => {
-              return valorMax > -1
-                ? x.valor > valorMax
-                  ? x.valor - valorMax
-                  : 0
-                : x.valor;
+            .map((v) => {
+              let valorExtra = v.valor;
+
+              const valorSaboresAntes = calcularValor({
+                ...pizza,
+                sabores: pizza.sabores,
+                acoes: builder.acoes,
+              });
+              const valorSaboresDepois = calcularValor({
+                ...pizza,
+                sabores: [...pizza.sabores, sab],
+                acoes: builder.acoes,
+              });
+
+              valorExtra = valorSaboresDepois - valorSaboresAntes;
+
+              return valorExtra;
             })[0],
           isSum: isCombo,
         }))}

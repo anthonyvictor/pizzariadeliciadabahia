@@ -27,7 +27,7 @@ export const Destaque = ({ prod }: { prod: IProdutoHome }) => {
         <Image
           src={prod.imagemUrl}
           objectFit={
-            "tipo" in prod && prod.tipo === "bebida" ? "scale-down" : "contain"
+            "tipo" in prod && prod.tipo === "bebida" ? "scale-down" : "cover"
           }
           layout="fill"
           priority

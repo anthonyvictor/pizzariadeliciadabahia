@@ -40,31 +40,6 @@ export const aplicarValorMinCombo = (
               )
             )
           : obterValorMin(sabores);
-
-      (produto.acoes ?? []).forEach((acao) => {
-        switch (acao.tipo) {
-          case "valor_fixo":
-            produto.valorMin = acao.valor;
-            break;
-          case "desconto_fixo":
-            produto.valorMin =
-              produto.valorMin - acao.valor >= 0
-                ? produto.valorMin - acao.valor
-                : 0;
-            break;
-          case "desconto_percentual":
-            const valorRealDesconto = produto.valorMin * (acao.valor / 100);
-            produto.valorMin =
-              produto.valorMin -
-              (acao.maxDesconto != null
-                ? valorRealDesconto > acao.maxDesconto
-                  ? acao.maxDesconto
-                  : valorRealDesconto
-                : valorRealDesconto);
-
-            break;
-        }
-      });
     } else if (produto.tipo === "bebida") {
       produto.valorMin = Math.min(
         ...bebidas
@@ -86,6 +61,31 @@ export const aplicarValorMinCombo = (
           .map((x) => x.valor)
       );
     }
+
+    (produto.acoes ?? []).forEach((acao) => {
+      switch (acao.tipo) {
+        case "valor_fixo":
+          produto.valorMin = acao.valor;
+          break;
+        case "desconto_fixo":
+          produto.valorMin =
+            produto.valorMin - acao.valor >= 0
+              ? produto.valorMin - acao.valor
+              : 0;
+          break;
+        case "desconto_percentual":
+          const valorRealDesconto = produto.valorMin * (acao.valor / 100);
+          produto.valorMin =
+            produto.valorMin -
+            (acao.maxDesconto != null
+              ? valorRealDesconto > acao.maxDesconto
+                ? acao.maxDesconto
+                : valorRealDesconto
+              : valorRealDesconto);
+
+          break;
+      }
+    });
   });
 
   combo.valorMin = combo.produtos.reduce((acc, curr) => acc + curr.valorMin, 0);

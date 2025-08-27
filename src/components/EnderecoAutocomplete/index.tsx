@@ -57,6 +57,7 @@ export default function LocalizacaoCliente({
   useEffect(() => {
     if (!position) return;
     const [lat, lon] = position;
+
     axios
       .get(
         `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
@@ -78,9 +79,7 @@ export default function LocalizacaoCliente({
   const [itemClicked, setItemClicked] = useState("");
 
   const sugestoesUnicas = suggestions.filter(
-    (item, index, self) =>
-      index ===
-      self.findIndex((obj) => obj.properties?.name === item.properties?.name)
+    (item, index, self) => index === self.findIndex((e) => e.rua === item.rua)
   );
 
   return (
@@ -107,6 +106,7 @@ export default function LocalizacaoCliente({
                   eventHandlers={{
                     dragend: (e) => {
                       const { lat, lng } = e.target.getLatLng();
+                      console.log("mudou position manualmente");
                       setPosition([lat, lng]);
                     },
                   }}
@@ -130,46 +130,32 @@ export default function LocalizacaoCliente({
         ) : (
           <ul>
             {sugestoesUnicas.map((sug, idx) => {
-              const props = sug.properties;
-              const cep =
-                sug?.properties?.postcode?.replace?.(/\D+/g, "") ?? "";
+              const bairro = sug.bairro;
+
               return (
                 <li
                   className={`sugestao ${
-                    !!cep && itemClicked === props.osm_id ? "clicked" : ""
+                    itemClicked === sug.id ? "clicked" : ""
                   }`}
                   key={idx}
                   onClick={() => {
-                    if (cep) {
-                      const rua = sug?.properties?.name ?? "";
+                    if (itemClicked !== sug.id) {
+                      setItemClicked(sug.id);
+                      setPosition([sug.lat, sug.lon]);
+                      setHiddenInput({ value: sug.rua, showSuggestions: true });
 
-                      const bairro =
-                        sug?.properties?.locality ||
-                        sug?.properties?.suburb ||
-                        sug?.properties?.district ||
-                        "";
-                      if (itemClicked !== props.osm_id) {
-                        setItemClicked(props.osm_id);
-                        const [lon, lat] = sug.geometry.coordinates;
-                        setPosition([lat, lon]);
-                        setHiddenInput(sug.properties.name);
-
-                        sessionStorage.setItem(
-                          "endereco",
-                          JSON.stringify({ cep, rua, bairro, lat, lon })
-                        );
-                        router.push("/cliente/novo-endereco/complemento");
-                      }
+                      sessionStorage.setItem("endereco", JSON.stringify(sug));
+                      router.push("/cliente/novo-endereco/complemento");
                     }
                   }}
                 >
-                  <h4>{sug.properties.formatted || sug.properties.name}</h4>
+                  <h4>{sug.rua}</h4>
                   <small>
                     {[
-                      props?.locality || props?.suburb || props?.district,
+                      bairro,
                       ...(env.environment === "production"
                         ? []
-                        : [props.city, props.postcode]),
+                        : [sug.cidade, sug.cep]),
                     ]
                       .filter(Boolean)
                       .join(" - ")}

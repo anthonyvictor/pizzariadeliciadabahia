@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
+import { IEndereco } from "tpdb-lib";
 import axios from "axios";
+import { env } from "@config/env";
+import { axiosOk } from "@util/axios";
 
 export function useEnderecoAutocomplete({
   bairro,
@@ -15,37 +18,52 @@ export function useEnderecoAutocomplete({
     value: defaultValue ?? "",
     showSuggestions: false,
   });
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<IEndereco[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadedFirstPosition, setLoadedFirstPosition] = useState(false);
+
+  const sortByBairros = (arr: IEndereco[]) => {
+    return arr.sort((a, b) =>
+      a.bairro.toLowerCase().includes(bairro.toLowerCase()) ? -1 : 1
+    );
+  };
 
   const fetchEnderecosQuery = async (value: string) => {
     if (!value || value.length < 4) return [];
     setLoading(true);
-    const query = `https://photon.komoot.io/api/?q=${encodeURIComponent(
-      value + ` ${bairro}`
-    )}&bbox=-38.573,-13.071,-38.327,-12.809&limit=5&lang=en&layer=street`;
-    const res = await axios.get(query);
 
-    const data = res.data;
+    const res = await axios.get(`${env.apiURL}/enderecos/autocomplete`, {
+      params: { query: value },
+    });
 
+    if (!axiosOk(res.status))
+      console.error("Erro na pesquisa de endereços pela api");
+
+    const enderecos = res.data as IEndereco[];
     setLoading(false);
-    return data.features || [];
+    return sortByBairros(enderecos);
   };
 
   const fetchEnderecosPosicao = async (pos: [number, number]) => {
-    const query = `https://photon.komoot.io/reverse?lat=${pos[0]}&lon=${pos[1]}&limit=5`;
-    console.time(`Photon Position ${pos}`);
-    const res = await axios.get(query);
-    console.timeEnd(`Photon Position ${pos}`);
-    const data = await res.data;
-    return data.features || [];
+    setLoading(true);
+
+    const res = await axios.get(`${env.apiURL}/enderecos/reverse`, {
+      params: { lat: pos[0], lon: pos[1] },
+    });
+
+    if (!axiosOk(res.status))
+      console.error("Erro na pesquisa de endereços pela api");
+
+    const enderecos = res.data as IEndereco[];
+    setLoading(false);
+
+    return sortByBairros(enderecos);
   };
 
   const debouncedFetchRef = useRef(
     debounce((value: string) => {
       fetchEnderecosQuery(value).then((res) => {
-        setSuggestions(res);
+        setSuggestions(res as IEndereco[]);
       });
     }, 600)
   );
@@ -54,9 +72,9 @@ export function useEnderecoAutocomplete({
     if (inputValue.showSuggestions && loadedFirstPosition)
       debouncedFetchRef.current(inputValue.value);
   }, [inputValue]);
-
   useEffect(() => {
     if (defaultPosition) {
+      console.log("mudou default position");
       fetchEnderecosPosicao(defaultPosition).then((data) => {
         setLoadedFirstPosition(true);
         setSuggestions(data);

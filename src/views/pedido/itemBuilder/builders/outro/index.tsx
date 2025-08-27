@@ -71,6 +71,49 @@ export const OutroBuilder = ({
   const valorMax = obterValorMax(builder.acoes);
   const { setItensFinais } = useItemBuilder();
 
+  const calcularValor = () => {
+    const valorBase = outro?.valor ?? 0;
+    let valorFinal = valorBase;
+
+    if (valorBase > 0)
+      (builder.acoes ?? []).forEach((acao) => {
+        switch (acao.tipo) {
+          case "desconto_percentual":
+            const valorRealDesconto = valorBase * (acao.valor / 100);
+
+            valorFinal =
+              valorBase -
+              (acao.maxDesconto != null
+                ? valorRealDesconto > acao.maxDesconto
+                  ? acao.maxDesconto
+                  : valorRealDesconto
+                : valorRealDesconto);
+            break;
+          case "desconto_fixo":
+            valorFinal =
+              valorBase - acao.valor >= 0 ? valorBase - acao.valor : 0;
+            break;
+          case "valor_fixo":
+            (() => {
+              if (acao.maxValor !== null) {
+                if (valorBase <= acao.maxValor) {
+                  valorFinal = acao.valor;
+                } else {
+                  const valorSaboresExtra = valorBase - acao.maxValor;
+                  valorFinal = acao.valor + valorSaboresExtra;
+                }
+              } else {
+                valorFinal = acao.valor;
+              }
+            })();
+
+            break;
+        }
+      });
+
+    return valorFinal;
+  };
+
   useEffect(() => {
     if (outro) {
       setItensFinais((_prev) => {
@@ -90,7 +133,7 @@ export const OutroBuilder = ({
           builderId: builder.id,
           tipo: builder.tipo,
           ...(_obj as any),
-          valor: outro?.valor ?? 0,
+          valor: calcularValor(),
           observacoes,
         };
 

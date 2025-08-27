@@ -6,3 +6,5 @@ export const enderecoPizzaria = {
   lat: -13.009801299765948,
   lon: -38.503880939626626,
 };
+
+export const bboxSalvador = `-38.573,-13.071,-38.327,-12.809`;
