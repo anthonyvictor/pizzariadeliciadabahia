@@ -2,13 +2,16 @@ import { colors } from "@styles/colors";
 import { sizes } from "@styles/sizes";
 import styled from "styled-components";
 
-export const InputAndList = styled.header`
+export const InputAndList = styled.div.attrs(
+  (props: { expand: boolean }) => props
+)`
   display: flex;
   flex-direction: column;
   gap: 5px;
   /* flex-grow: 1; */
-  height: 100%;
   min-height: 0;
+
+  /* height: 100%; */
 
   input {
     width: 100%;
@@ -18,14 +21,12 @@ export const InputAndList = styled.header`
   }
 
   ul {
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
     gap: 5px;
+    flex-grow: 1;
     padding: 0 5px 0 3px;
     list-style: none;
-    min-height: 0;
-    overflow-y: auto;
 
     .sugestao {
       padding: 15px 10px;
@@ -45,7 +46,7 @@ export const MapaStyle = styled.div`
   /* flex: 1;
   height: 100%; */
 
-  height: 100%;
+  /* height: 100%; */
   background-color: ${colors.background};
   width: 100%;
   display: flex;
@@ -66,12 +67,13 @@ export const MapaStyle = styled.div`
 // `;
 export const EnderecoAutocompleteStyle = styled.div`
   display: grid;
-  grid-template-rows: 200px 1fr; //min(300px, 1fr)
+  grid-template-rows: 80% 1fr; //min(300px, 1fr)
+  overflow-y: auto;
   padding: 5px;
   gap: 5px;
   flex: 1;
   /* height: 100% - ${sizes.header}; */
-  overflow: hidden;
+  /* overflow: hidden; */
 `;
 
 export const ModalStyle = styled.div`

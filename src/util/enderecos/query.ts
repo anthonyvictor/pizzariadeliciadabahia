@@ -53,7 +53,7 @@ export const query_nominatim = async (value: string, limit = 5) => {
       throw new Error(`Requisição Nominatim falhou, \nurl:${res.config.url}`);
 
     const data = format_nominatim(res.data);
-    console.log("query_nominatim", res.config.url, data);
+    console.log("query_nominatim", res.config.url, data, res.data);
     return data;
   } catch (err) {
     console.error(`Erro na pesquisa Nominatim`, err.message, err.stack);
@@ -65,6 +65,13 @@ export const query_photon = async (value: string, limit = 5) => {
     const v = (value ?? "").trim();
     if (!v.replace(/\s/g, "").length) return [];
     if (v.replace(/\D/g, "").length === 8) return [];
+    console.log({
+      q: v,
+      limit,
+      bbox: bboxSalvador,
+      lang: "en",
+      layer: "street",
+    });
     const res = await axios.get(`https://photon.komoot.io/api`, {
       params: {
         q: v,
@@ -73,13 +80,16 @@ export const query_photon = async (value: string, limit = 5) => {
         lang: "en",
         layer: "street",
       },
+      headers: {
+        "User-Agent": "site-pdb/1.0.0",
+      },
     });
 
     if (!axiosOk(res.status))
       throw new Error(`Requisição Photon falhou, \nurl:${res.config.url}`);
 
     const data = format_photon(res.data);
-    console.log("query_photon", res.config.url, data);
+    console.log("query_photon", res.config.url, data, res.data);
     return data;
   } catch (err) {
     console.error(`Erro na pesquisa Photon`, err.message, err.stack);

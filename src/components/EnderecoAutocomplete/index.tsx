@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { EnderecoAutocompleteStyle, InputAndList, MapaStyle } from "./styles";
@@ -6,8 +5,8 @@ import { IBairro } from "tpdb-lib";
 import { MyInput } from "@components/pedido/myInput";
 import { useRouter } from "next/router";
 import { useEnderecoAutocomplete } from "@util/hooks/debouncedFunction";
-import axios from "axios";
 import { env } from "@config/env";
+import { useState } from "react";
 
 const markerIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -39,48 +38,25 @@ export default function LocalizacaoCliente({
   posicaoCliente: [number, number];
   posicaoLoja: [number, number];
 }) {
-  const [input, setInput] = useState("");
-  // const [hiddenInput, setHiddenInput] = useState("");
   const {
-    setInputValue: setHiddenInput,
+    inputValue,
     suggestions,
     loading,
+    position,
+    handleDragEnd,
+    handleInputChange,
   } = useEnderecoAutocomplete({
     bairro: bairro.nome,
-    defaultPosition: posicaoCliente,
+    defaultPosition: posicaoCliente ?? posicaoLoja,
   });
 
-  const [position, setPosition] = useState<[number, number] | null>(
-    posicaoCliente ?? posicaoLoja
-  );
-
-  useEffect(() => {
-    if (!position) return;
-    const [lat, lon] = position;
-
-    axios
-      .get(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
-      )
-      .then((res) => {
-        if (res?.data?.address?.postcode) {
-          const rua = res?.data?.address?.road;
-          if (rua) setHiddenInput({ value: rua, showSuggestions: true });
-        }
-      });
-  }, [position]);
-
-  useEffect(() => {
-    setHiddenInput({ value: input, showSuggestions: true });
-  }, [input]);
-
   const router = useRouter();
-
-  const [itemClicked, setItemClicked] = useState("");
 
   const sugestoesUnicas = suggestions.filter(
     (item, index, self) => index === self.findIndex((e) => e.rua === item.rua)
   );
+
+  const [expandSearch, setExpandSearch] = useState(false);
 
   return (
     <EnderecoAutocompleteStyle>
@@ -98,7 +74,12 @@ export default function LocalizacaoCliente({
                   // url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                   // url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                 />
-                <MapClickHandler setPosition={setPosition} />
+                <MapClickHandler
+                  setPosition={([lat, lon]) => {
+                    // setPosition
+                    handleDragEnd(lat, lon);
+                  }}
+                />
                 <Marker
                   position={position}
                   icon={markerIcon}
@@ -106,8 +87,7 @@ export default function LocalizacaoCliente({
                   eventHandlers={{
                     dragend: (e) => {
                       const { lat, lng } = e.target.getLatLng();
-                      console.log("mudou position manualmente");
-                      setPosition([lat, lng]);
+                      handleDragEnd(lat, lng);
                     },
                   }}
                 />
@@ -117,13 +97,13 @@ export default function LocalizacaoCliente({
         )}
       </MapaStyle>
 
-      <InputAndList>
+      <InputAndList expand={expandSearch}>
         <MyInput
           type="address"
           name=""
           placeholder="Digite seu endereço ou cep..."
-          value={input}
-          setValue={(value) => setInput(value as string)}
+          value={inputValue}
+          setValue={(value) => handleInputChange(value as string)}
         />
         {loading ? (
           <h3>Carregando...</h3>
@@ -134,19 +114,11 @@ export default function LocalizacaoCliente({
 
               return (
                 <li
-                  className={`sugestao ${
-                    itemClicked === sug.id ? "clicked" : ""
-                  }`}
+                  className={`sugestao`}
                   key={idx}
                   onClick={() => {
-                    if (itemClicked !== sug.id) {
-                      setItemClicked(sug.id);
-                      setPosition([sug.lat, sug.lon]);
-                      setHiddenInput({ value: sug.rua, showSuggestions: true });
-
-                      sessionStorage.setItem("endereco", JSON.stringify(sug));
-                      router.push("/cliente/novo-endereco/complemento");
-                    }
+                    sessionStorage.setItem("endereco", JSON.stringify(sug));
+                    router.push("/cliente/novo-endereco/complemento");
                   }}
                 >
                   <h4>{sug.rua}</h4>

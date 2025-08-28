@@ -1,14 +1,13 @@
+import { normalizarOrdinal } from "@util/format";
 import { randomUUID } from "crypto";
 import { IEndereco } from "tpdb-lib";
 
 export const format_photon = (data: any) => {
-  data = Array.isArray(data) ? data : [data];
-
   const _enderecos = ((data.features as any[]) || [])
     .filter((e) => !!e?.properties?.postcode && !!e?.geometry)
     .map((e) => ({
       id: e.properties.osm_id,
-      rua: e.properties.formatted || e.properties.name,
+      rua: normalizarOrdinal(e.properties.formatted || e.properties.name),
       cep: e.properties.postcode.replace(/\D/g, ""),
       bairro:
         e.properties.locality || e.properties.suburb || e.properties.district,
@@ -28,7 +27,7 @@ export const format_nominatim = (data: any) => {
     .filter((e) => !!e?.address?.postcode && !!e?.lat)
     .map((e) => ({
       id: e.osm_id ?? randomUUID(),
-      rua: e.address.road || e.name,
+      rua: normalizarOrdinal(e.address.road || e.name),
       cep: e.address.postcode.replace(/\D/g, ""),
       bairro:
         e.address.suburb ||
@@ -50,7 +49,7 @@ export const format_viaCEP = (data: any) => {
     .filter((e) => !!e?.cep)
     .map((e) => ({
       cep: e.cep.replace(/\D/g, ""),
-      rua: e.logradouro,
+      rua: normalizarOrdinal(e.logradouro),
       bairro: e.bairro,
       cidade: e.localidade,
       estado: e.estado,
@@ -79,7 +78,7 @@ export const format_brasilApi = (data: any) => {
     .filter((e) => !!e?.cep)
     .map((e) => ({
       cep: e.cep.replace(/\D/g, ""),
-      rua: e.street,
+      rua: normalizarOrdinal(e.street),
       bairro: e.neighborhood,
       cidade: e.city,
       estado: e.estado,
@@ -97,7 +96,7 @@ export const format_cepAberto = (data: any) => {
     .filter((e) => !!e?.cep)
     .map((e) => ({
       cep: e.cep.replace(/\D/g, ""),
-      rua: e.logradouro,
+      rua: normalizarOrdinal(e.logradouro),
       bairro: e.bairro,
       cidade: e.cidade.nome,
       estado: e.estado.nome ?? e.estado.sigla,

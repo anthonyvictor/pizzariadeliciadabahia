@@ -8,6 +8,7 @@ export const GeolocalizacaoStyle = styled.main`
   align-items: center;
   text-align: center;
   gap: 10px;
+  padding: 20px;
 
   color: #fff;
 

@@ -1,5 +1,5 @@
 import { formatCEP, formatPhoneNumber } from "@util/format";
-import { FC, HTMLProps, useEffect, useState } from "react";
+import { EventHandler, FC, HTMLProps, useEffect, useState } from "react";
 import { MyInputStyle } from "./styles";
 import CurrencyInput from "react-currency-input-field";
 import "react-phone-number-input/style.css";
@@ -34,6 +34,7 @@ export const MyInput: FC<{
   maxLength?: number;
   tag?: string;
   autoFocus?: boolean;
+  onClick?: (e: Event) => void;
 }> = ({
   className = "",
   disabled = false,
@@ -51,12 +52,14 @@ export const MyInput: FC<{
   maxLength,
   setValue,
   setChecked,
+  onClick,
   tag,
   autoFocus = false,
 }) => {
   const inputPropsText = {
     value: value || "",
     onChange: (e) => setValue(e.target.value),
+    onCLick: (e) => onClick?.(e),
     placeholder: placeholder,
     autoCorrect: "off",
     spellCheck: false,
@@ -157,7 +160,7 @@ export const MyInput: FC<{
   if (!PhoneInput) return <></>;
 
   return (
-    <MyInputStyle className={`myInput ${className}`}>
+    <MyInputStyle id={`myInput-${name}`} className={`myInput ${className}`}>
       <div
         className="input-label"
         style={{ flexDirection: type === "checkbox" ? "row" : "column" }}
