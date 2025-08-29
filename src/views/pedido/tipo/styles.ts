@@ -5,7 +5,14 @@ export const TipoViewStyle = styled.main`
   display: flex;
   flex-direction: column;
   padding: 10px 20px 50px 20px;
-  gap: 10px;
+  gap: 15px;
+
+  .metodos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 5px;
+  }
 
   .tipos {
     flex: 1;

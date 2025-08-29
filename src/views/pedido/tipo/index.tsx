@@ -1,22 +1,23 @@
 import { TipoViewStyle } from "./styles";
 import TextContainer from "@components/textContainer";
 import { useRouter } from "next/router";
-import { ICliente } from "tpdb-lib";
-import { formatCurrency } from "@util/format";
 import BottomControls from "@components/pedido/bottomControls";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { env } from "@config/env";
 import { toast } from "react-toastify";
-import { IEndereco } from "tpdb-lib";
-import { Checker } from "@components/checker";
 import { ICupom } from "tpdb-lib";
-import { obterDescontos, obterValorDescontoReal } from "@util/cupons";
 import { IPedido } from "tpdb-lib";
 import { Endereco } from "./endereco";
 import { Tipo } from "./types";
 import { EnderecoStyle } from "./endereco/styles";
 import { colors } from "@styles/colors";
+import Modal from "@components/modal";
+import { MdDeliveryDining } from "react-icons/md";
+import { GiStairsGoal } from "react-icons/gi";
+import { ButtonSecondary } from "@styles/components/buttons";
+import { Metodo } from "./components/metodo";
+
 export const TipoView = ({
   pedido,
   cupomEntrega,
@@ -52,37 +53,32 @@ export const TipoView = ({
         </aside>
       </EnderecoStyle>
 
-      <button
-        className="cadastrar-endereco"
+      <EnderecoStyle
         onClick={() => router.push("/cliente/novo-endereco")}
+        className={`item`}
       >
-        Cadastrar um novo endereço
-      </button>
+        <aside className="item-left">
+          <h2 className="item-type">Novo endereço 🛵</h2>
+
+          <small className="item-description">
+            {"Cadastre seu endereço clicando aqui".toUpperCase()}
+          </small>
+        </aside>
+        <aside className="item-right">
+          <p className="item-price"></p>
+        </aside>
+      </EnderecoStyle>
 
       <ul className="tipos no-scroll">
-        {!!pedido.cliente?.enderecos?.length && (
-          <>
-            <h2
-              className="item-type"
-              style={{
-                fontSize: "1rem",
-                color: colors.elements,
-                padding: "10px",
-              }}
-            >
-              Entrega 🛵
-            </h2>
-            {pedido.cliente.enderecos.map((e) => (
-              <Endereco
-                key={e.id}
-                e={e}
-                tipo={tipo}
-                setTipo={setTipo}
-                cupomEntrega={cupomEntrega}
-              />
-            ))}
-          </>
-        )}
+        {(pedido?.cliente?.enderecos ?? []).map((e) => (
+          <Endereco
+            key={e.id}
+            e={e}
+            tipo={tipo}
+            setTipo={setTipo}
+            cupomEntrega={cupomEntrega}
+          />
+        ))}
       </ul>
 
       <BottomControls
@@ -117,6 +113,36 @@ export const TipoView = ({
           text: "Continuar",
         }}
       />
+
+      {tipo?.type === "entrega" && !!tipo.endereco && (
+        <Modal
+          label="Método de entrega"
+          description="Como você quer sua entrega?"
+          type="custom"
+          buttons={
+            <ButtonSecondary onClick={() => setTipo(null)}>
+              Voltar
+            </ButtonSecondary>
+          }
+        >
+          <div className="metodos">
+            <Metodo
+              nome="Na rua principal"
+              descricao="Vou encontrar o entregador na rua principal, em local acessível para moto/bicicleta."
+              Icone={MdDeliveryDining}
+              taxa={tipo.endereco?.taxa ?? 0}
+              desconto={tipo.endereco.desconto ?? 0}
+            />
+            <Metodo
+              nome="Com trecho a pé"
+              descricao="Quero que  entregador desembarque do veículo e se desloque à pé até o local da entrega"
+              Icone={GiStairsGoal}
+              taxa={(tipo.endereco?.taxa ?? 0) * 3}
+              desconto={0}
+            />
+          </div>
+        </Modal>
+      )}
     </TipoViewStyle>
   );
 };

@@ -1,10 +1,10 @@
 import { colors } from "@styles/colors";
 import styled from "styled-components";
 
-export const ComplementoViewStyle = styled.main`
+export const RegrasViewStyle = styled.main`
   height: 100%;
   gap: 10px;
-  padding: 20px 10px 50px 10px;
+  padding: 10px 0 50px 0;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -15,22 +15,10 @@ export const ComplementoViewStyle = styled.main`
     min-height: 0;
     display: flex;
     flex-direction: column;
+    gap: 20px;
 
     overflow-y: auto;
-  }
 
-  .complemento-numero {
-    display: grid;
-    grid-template-columns: 1fr 80px;
-  }
-
-  .metodos {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    padding: 5px;
-  }
-  .regras {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -53,5 +41,10 @@ export const ComplementoViewStyle = styled.main`
         color: ${colors.elements};
       }
     }
+  }
+
+  .complemento-numero {
+    display: grid;
+    grid-template-columns: 1fr 80px;
   }
 `;

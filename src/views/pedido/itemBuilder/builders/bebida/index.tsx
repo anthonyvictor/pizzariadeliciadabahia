@@ -28,7 +28,7 @@ export const BebidaBuilder = ({
       setItensFinais((_prev) => {
         const prev = [..._prev];
         const i = prev.findIndex((x) => x.builderId === builder.id);
-
+        console.log(prod);
         if (i > -1) {
           prev[i] = prod as any;
         } else {

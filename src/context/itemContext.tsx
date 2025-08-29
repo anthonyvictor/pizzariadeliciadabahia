@@ -18,8 +18,6 @@ export type ItemComBuilder = IItemPedidoIds & { builderId: string };
 interface IItemBuilderContext {
   itensFinais: ItemComBuilder[];
   setItensFinais: SetState<ItemComBuilder[]>;
-  observacoes: string;
-  setObservacoes: SetState<string>;
   builder: IItemBuilder | null;
   continuar: (qtd: number) => Promise<void>;
 }
@@ -37,7 +35,6 @@ export const ItemBuilderProvider = ({
   pedido: IPedido;
 }) => {
   const [itensFinais, setItensFinais] = useState<ItemComBuilder[]>([]);
-  const [observacoes, setObservacoes] = useState("");
   const router = useRouter();
 
   const continuar = async (qtd: number) => {
@@ -49,7 +46,7 @@ export const ItemBuilderProvider = ({
       arr.forEach(() => {
         const grupoId = builder.tipo === "combo" ? uuidv4() : undefined;
         const _itens = itensFinais.map((x) => {
-          const obj: IItemPedidoIds = { ...x, observacoes };
+          const obj: IItemPedidoIds = { ...x };
           obj.comboId = comboId;
           obj.grupoId = grupoId;
           return obj;
@@ -74,8 +71,6 @@ export const ItemBuilderProvider = ({
         itensFinais,
         setItensFinais,
         builder,
-        observacoes,
-        setObservacoes,
         continuar,
       }}
     >

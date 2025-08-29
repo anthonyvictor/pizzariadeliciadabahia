@@ -12,27 +12,32 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<RespType<ICliente>>
 ) {
-  if (req.method === "GET") {
-    let data: ICliente | ICliente[];
-    if (req.query.id) {
-      data = await obterCliente(
-        req.query.id as string,
-        req.query.comEnderecoCompleto as unknown as boolean
-      );
+  try {
+    if (req.method === "GET") {
+      let data: ICliente | ICliente[];
+      if (req.query.id) {
+        data = await obterCliente(
+          req.query.id as string,
+          req.query.comEnderecoCompleto as unknown as boolean
+        );
+      } else {
+        const { ids, comEnderecoCompleto } = req.query as {
+          ids: any;
+          comEnderecoCompleto: any;
+        };
+        data = await obterClientes({ ids, comEnderecoCompleto });
+      }
+      res.status(200).json(data);
+    } else if (req.method === "POST") {
+      const cliente = req.body.cliente;
+      const data = await loginCliente(cliente);
+      res.status(200).send(data);
     } else {
-      const { ids, comEnderecoCompleto } = req.query as {
-        ids: any;
-        comEnderecoCompleto: any;
-      };
-      data = await obterClientes({ ids, comEnderecoCompleto });
+      res.status(405).end(); // Método não permitido
     }
-    res.status(200).json(data);
-  } else if (req.method === "POST") {
-    const cliente = req.body.cliente;
-    const data = await loginCliente(cliente);
-    res.status(200).send(data);
-  } else {
-    res.status(405).end(); // Método não permitido
+  } catch (err) {
+    console.error(err);
+    res.status(500).end();
   }
 }
 

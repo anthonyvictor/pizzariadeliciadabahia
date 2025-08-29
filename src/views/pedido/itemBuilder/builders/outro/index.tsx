@@ -146,7 +146,7 @@ export const OutroBuilder = ({
         return prev;
       });
     }
-  }, [outro]);
+  }, [outro, observacoes]);
 
   const outroNumberStr = `${outroNumber ? `da ${outroNumber}ª outro ` : ""}`;
   const prods = builder.tipo === "bebida" ? builder.bebidas : builder.lanches;

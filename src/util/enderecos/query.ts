@@ -25,7 +25,6 @@ export const query_viaCep = async (value: string) => {
       throw new Error(`Requisição ViaCEP falhou, \nurl:${res.config.url}`);
 
     const data = format_viaCEP(res.data);
-    console.log("query_viaCep", res.config.url, data);
     return data;
   } catch (err) {
     console.error(`Erro na pesquisa ViaCEP`, err.message, err.stack);
@@ -53,7 +52,6 @@ export const query_nominatim = async (value: string, limit = 5) => {
       throw new Error(`Requisição Nominatim falhou, \nurl:${res.config.url}`);
 
     const data = format_nominatim(res.data);
-    console.log("query_nominatim", res.config.url, data, res.data);
     return data;
   } catch (err) {
     console.error(`Erro na pesquisa Nominatim`, err.message, err.stack);
@@ -65,13 +63,6 @@ export const query_photon = async (value: string, limit = 5) => {
     const v = (value ?? "").trim();
     if (!v.replace(/\s/g, "").length) return [];
     if (v.replace(/\D/g, "").length === 8) return [];
-    console.log({
-      q: v,
-      limit,
-      bbox: bboxSalvador,
-      lang: "en",
-      layer: "street",
-    });
     const res = await axios.get(`https://photon.komoot.io/api`, {
       params: {
         q: v,
@@ -89,7 +80,6 @@ export const query_photon = async (value: string, limit = 5) => {
       throw new Error(`Requisição Photon falhou, \nurl:${res.config.url}`);
 
     const data = format_photon(res.data);
-    console.log("query_photon", res.config.url, data, res.data);
     return data;
   } catch (err) {
     console.error(`Erro na pesquisa Photon`, err.message, err.stack);
@@ -97,7 +87,11 @@ export const query_photon = async (value: string, limit = 5) => {
   }
 };
 
-export const query_cepaberto = async (value: string, limit = 5) => {
+export const query_cepaberto = async (
+  value: string,
+  bairro?: string,
+  limit = 5
+) => {
   try {
     const v = (value ?? "").trim();
 
@@ -108,6 +102,7 @@ export const query_cepaberto = async (value: string, limit = 5) => {
       params: {
         estado: "BA",
         cidade: "Salvador",
+        bairro: bairro,
         logradouro: v,
       },
       headers: {
@@ -119,7 +114,6 @@ export const query_cepaberto = async (value: string, limit = 5) => {
       throw new Error(`Requisição CepAberto falhou, \nurl:${res.config.url}`);
 
     const data = format_cepAberto(res.data);
-    console.log("query_cepAberto", res.config.url, data);
     return data;
   } catch (err) {
     console.error(`Erro na pesquisa CepAberto`, err.message, err.stack);

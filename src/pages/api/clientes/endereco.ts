@@ -1,10 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ClientesModel } from "tpdb-lib";
+import { ClientesModel, ff } from "tpdb-lib";
 import { conectarDB } from "src/infra/mongodb/config";
 import { IEndereco } from "tpdb-lib";
 import { EnderecosModel } from "tpdb-lib";
-import { obterEnderecoComDistancia } from "@util/enderecos";
+import {
+  obterDistancia,
+  obterEnderecoComDistancia,
+  obterEnderecoExtra,
+} from "@util/enderecos";
 import { enderecoPizzaria } from "@util/dados";
+import { normalizarOrdinal } from "@util/format";
+import { HTTPError } from "@models/error";
+import { obterCliente } from ".";
 
 export default async function handler(
   req: NextApiRequest,
@@ -23,9 +30,9 @@ export default async function handler(
         .json({ error: "clienteId e endereco são obrigatórios" });
     }
 
-    const cliente = await adicionarEnderecoAoCliente(clienteId, novoEndereco);
+    await adicionarEnderecoAoCliente(clienteId, novoEndereco);
 
-    return res.status(200).json(cliente);
+    return res.status(200).end();
   } catch (error) {
     console.error("Erro ao adicionar endereço:", error);
     return res.status(500).json({ error: "Erro interno no servidor" });
@@ -38,61 +45,35 @@ export async function adicionarEnderecoAoCliente(
 ) {
   await conectarDB();
 
-  const cepRaw = novoEndereco.cep || "";
-  let cepLimpo = cepRaw.replace(/\D/g, ""); // Apenas dígitos do CEP
+  const enderecosEncontrados = await ff({
+    m: EnderecosModel,
+    q: { rua: normalizarOrdinal(novoEndereco.rua) },
+  });
 
-  // Verifica se o cep já existe
-  const existente = await EnderecosModel.findOne({
-    rua: novoEndereco.rua,
-  }).lean();
+  let enderecoExtra = enderecosEncontrados?.[0];
 
-  if (!existente) {
-    try {
-      const info = await obterEnderecoComDistancia(
-        cepLimpo,
-        enderecoPizzaria.lat, // sua origem, pode ser ajustável
-        enderecoPizzaria.lon,
-        "driving-hgv",
-        novoEndereco.rua,
-        novoEndereco.bairro
-      );
+  if (!enderecoExtra) {
+    enderecoExtra = await obterEnderecoExtra(novoEndereco);
 
-      cepLimpo = info?.cep?.replace?.(/\D/g, "") ?? cepLimpo;
-      const result = await EnderecosModel.create({
-        ...info,
-        cep: cepLimpo,
-      });
+    await EnderecosModel.create(enderecoExtra);
 
-      console.info(
-        `📦 Novo endereço salvo: ${cepLimpo} - ${novoEndereco.rua} - ${novoEndereco.bairro}`
-      );
-    } catch (err) {
-      console.error(`❌ Erro ao salvar endereço ${cepLimpo}:`, err);
-    }
-  } else {
-    cepLimpo = existente?.cep?.replace(/\D/g, "") ?? cepLimpo;
+    console.info(
+      `📦 Novo endereço salvo: ${enderecoExtra.cep} - ${enderecoExtra.rua} - ${enderecoExtra.bairro}`
+    );
   }
 
-  const enderecoCliente = {
-    cep: cepLimpo,
-    numero: novoEndereco.numero,
-    local: novoEndereco.local,
-    referencia: novoEndereco.referencia,
-  };
+  if (!enderecoExtra)
+    throw new HTTPError(
+      "Dados extras do endereço não encontrados para salvar no cliente",
+      404,
+      novoEndereco
+    );
 
-  const clienteAtualizado = await ClientesModel.findByIdAndUpdate(
-    clienteId,
-    {
-      $push: { enderecos: enderecoCliente },
-    },
-    {
-      new: true, // retorna o cliente atualizado
-    }
-  ).lean();
+  const enderecoFinal = { ...novoEndereco, ...enderecoExtra };
 
-  if (!clienteAtualizado) {
-    throw new Error("Cliente não encontrado.");
-  }
+  const { cep, numero, local, referencia } = enderecoFinal;
 
-  return clienteAtualizado;
+  await ClientesModel.findByIdAndUpdate(clienteId, {
+    $push: { enderecos: { cep, numero, local, referencia } },
+  });
 }

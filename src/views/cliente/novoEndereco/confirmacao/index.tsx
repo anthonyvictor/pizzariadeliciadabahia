@@ -111,8 +111,8 @@ export const ConfirmacaoComplementoView = ({
                   );
 
                   if (axiosOk(res.status)) {
-                    const data = await res.data;
-                    localStorage.setItem("cliente", JSON.stringify(data));
+                    // const data = await res.data;
+                    // localStorage.setItem("cliente", JSON.stringify(data));
                     router.replace("/pedido/tipo");
                   }
                 } catch (err) {

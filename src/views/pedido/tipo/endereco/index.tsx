@@ -7,6 +7,7 @@ import { obterValorDescontoReal } from "@util/cupons";
 import { useState } from "react";
 import { colors } from "@styles/colors";
 import { EnderecoStyle } from "./styles";
+import { cupomAplicavel } from "@util/enderecos/cupomAplicave";
 
 export const Endereco = ({
   e,
@@ -19,59 +20,8 @@ export const Endereco = ({
   tipo: Tipo;
   setTipo: SetState<Tipo>;
 }) => {
-  const cupomAplicavel = () => {
-    if (!cupomEntrega) return false;
-    for (let cond of cupomEntrega?.condicoes ?? []) {
-      if (
-        cond.tipo === "bairros" &&
-        !cond.valor.some((x) => x.toLowerCase() === e.bairro.toLowerCase())
-      )
-        return false;
-      if (
-        cond.tipo === "ceps" &&
-        !cond.valor.some(
-          (x) => x.replace(/\D+/g, "") === e.cep.replace(/\D+/g, "")
-        )
-      )
-        return false;
-      if (
-        cond.tipo === "max_distancia" &&
-        cond.valor > (e.distancia_metros ?? 0)
-      )
-        return false;
-      if (
-        cond.tipo === "min_distancia" &&
-        cond.valor < (e.distancia_metros ?? 1000000000)
-      )
-        return false;
-    }
-    for (let exc of cupomEntrega.excecoes ?? []) {
-      if (
-        exc.tipo === "bairros" &&
-        exc.valor.some((x) => x.toLowerCase() === e.bairro.toLowerCase())
-      )
-        return false;
-      if (
-        exc.tipo === "ceps" &&
-        exc.valor.some(
-          (x) => x.replace(/\D+/g, "") === e.cep.replace(/\D+/g, "")
-        )
-      )
-        return false;
-      if (exc.tipo === "max_distancia" && exc.valor < (e.distancia_metros ?? 0))
-        return false;
-      if (
-        exc.tipo === "min_distancia" &&
-        exc.valor > (e.distancia_metros ?? 1000000000)
-      )
-        return false;
-    }
-
-    return true;
-  };
-
   const [descontoReal] = useState<number>(
-    cupomAplicavel()
+    cupomAplicavel(cupomEntrega, e)
       ? obterValorDescontoReal(
           e.taxa ?? 0,
           cupomEntrega.valor,

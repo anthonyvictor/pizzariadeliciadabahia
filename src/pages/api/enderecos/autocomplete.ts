@@ -18,9 +18,12 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const { query } = req.query;
+    const { rua, bairro } = req.query;
 
-    const results = await autoCompleteEnderecos(query as string);
+    const results = await autoCompleteEnderecos(
+      rua as string,
+      bairro as string
+    );
     res.json(results);
   } catch (err) {
     console.error(err.message, err.stack);
@@ -32,13 +35,15 @@ export default async function handler(
   }
 }
 
-export async function autoCompleteEnderecos(termo: string) {
+export async function autoCompleteEnderecos(rua: string, bairro?: string) {
   const [c_cepAberto, q_cepAberto, q_nominatim, q_photon] = await Promise.all([
-    cep_cepAberto(termo),
-    query_cepaberto(termo),
-    query_nominatim(termo),
-    query_photon(termo),
+    cep_cepAberto(rua),
+    query_cepaberto(rua, bairro),
+    query_nominatim(rua),
+    query_photon((rua + ", " + (bairro ?? "")).trim()),
   ]);
+  //
+
   const enderecos: IEndereco[] = [
     ...c_cepAberto,
     ...q_cepAberto,

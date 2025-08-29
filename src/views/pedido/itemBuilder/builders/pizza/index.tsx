@@ -143,6 +143,7 @@ export const PizzaBuilder = ({
         extras: pizza.extras.map((x) => x.id),
         builderId: builder.id,
         tipo: "pizza" as "pizza",
+        observacoes: pizza.observacoes,
       };
       if (i > -1) {
         prev[i] = obj;

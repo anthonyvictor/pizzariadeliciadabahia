@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 export const EnderecoStyle = styled.li`
   list-style: none;
-  /* background-color: ${colors.backgroundDark}; */
+  background-color: ${colors.backgroundDark}80;
   color: #fff;
   padding: 10px;
   display: grid;

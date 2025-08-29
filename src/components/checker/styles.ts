@@ -5,13 +5,13 @@ export const CheckerStyle = styled.div.attrs(
   (props: { checked: boolean }) => props
 )`
   .checker {
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     background-color: transparent;
     border-radius: 50%;
-    border: 2px solid ${colors.background};
+    border: 2px solid ${colors.elements};
     display: flex;
-    padding: 1px;
+    padding: 2px;
     span {
       border-radius: 50%;
       flex: 1;
@@ -23,7 +23,7 @@ export const CheckerStyle = styled.div.attrs(
     css`
       .checker {
         span {
-          background-color: ${colors.checkedLight};
+          background-color: ${colors.elements};
         }
       }
     `}

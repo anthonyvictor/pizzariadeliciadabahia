@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { ConfirmacaoComplementoView } from "src/views/cliente/novoEndereco/complemento/confirmacao";
+import { ConfirmacaoComplementoView } from "src/views/cliente/novoEndereco/confirmacao";
 import { useEffect } from "react";
 import { useAuth } from "@util/hooks/auth";
 import Loading from "@components/loading";

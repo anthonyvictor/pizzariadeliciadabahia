@@ -6,8 +6,10 @@ export class NoLogError extends Error {
 
 export class HTTPError extends Error {
   code: number;
-  constructor(err: string | undefined, code: number) {
+  data?: any;
+  constructor(err: string | undefined, code: number, data?: any) {
     super(err);
     this.code = code;
+    this.data = data;
   }
 }

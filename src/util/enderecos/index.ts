@@ -2,10 +2,13 @@ import { IEndereco } from "tpdb-lib";
 import { logJson } from "../logs";
 import { axiosOk } from "../axios";
 import { normalizarOrdinal, removeAccents } from "../format";
-import { randomUUID } from "crypto";
-import axios, { AxiosError } from "axios";
-import { bboxSalvador } from "@util/dados";
-
+import axios from "axios";
+import { enderecoPizzaria } from "@util/dados";
+import { query_cepaberto, query_nominatim, query_photon } from "./query";
+import { cep_cepAberto } from "./cep";
+import { semelhanca } from "@util/misc";
+import { HTTPError } from "@models/error";
+import { enderecosParecidos } from "./comparar";
 // const viaCep = async (cep: string, rua?: string, _bairro?: string) => {
 //   let data: any;
 //   try {
@@ -143,7 +146,7 @@ export async function obterEnderecoComDistancia(
     let res;
     // res = await brasilApi(cep, 2);
     // if (!res) res = await brasilApi(cep, 1);
-    if (!res) res = await viaCep(_cep, _rua, _bairro);
+    if (!res) res = await viaCep(_cep.replace(/\D/g, ""), _rua, _bairro);
 
     cep = res.cep;
     rua = res.rua;
@@ -214,4 +217,175 @@ export async function obterEnderecoComDistancia(
     duracao_segundos: duracao,
   };
   return obj as IEndereco;
+}
+
+type ModoORS =
+  | "cycling-regular"
+  | "cycling-electric"
+  | "driving-motorcycle"
+  | "driving-car"
+  | "driving-hgv"
+  | "foot-walking";
+
+export async function obterDistancia(
+  lat: number | string,
+  lon: number | string,
+  modo: ModoORS = "driving-car"
+) {
+  const ORS_API_KEY = process.env.ORS_API_KEY!;
+  const rotaResp = await axios.post(
+    `https://api.openrouteservice.org/v2/directions/${modo}`,
+    {
+      coordinates: [
+        [enderecoPizzaria.lon, enderecoPizzaria.lat],
+        [lon, lat],
+      ],
+    },
+    {
+      headers: {
+        Authorization: ORS_API_KEY,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const rota = rotaResp.data.routes?.[0];
+  if (!rota)
+    throw new HTTPError("Oops, não foi possível obter a distância", 404, {
+      lat,
+      lon,
+    });
+  const distancia_metros = rota.summary.distance;
+  const duracao_segundos = rota.summary.duration;
+
+  return { distancia_metros, duracao_segundos };
+}
+
+export async function obterEnderecoExtra(
+  enderecoOriginal: IEndereco
+): Promise<IEndereco> {
+  // 1. Buscar endereço no BrasilAPI
+
+  const compararSemelhanca = (
+    endOrig: IEndereco,
+    endFin: IEndereco,
+    metodo: string
+  ) => {
+    if (!endFin) return null;
+    const ehIgual = enderecosParecidos(endOrig.rua, endFin.rua);
+    if (!ehIgual) {
+      console.info(
+        `[ metodo: ${metodo} ] Ruas diferentes:`,
+
+        `\n- ${endOrig.rua}`,
+        `\n- ${endFin.rua}`
+      );
+      return null;
+    } else {
+      return endFin;
+    }
+  };
+
+  if (enderecoOriginal.lat && enderecoOriginal.lon) {
+    if (enderecoOriginal.distancia_metros) {
+      return enderecoOriginal;
+    } else {
+      return {
+        ...enderecoOriginal,
+        ...(await obterDistancia(enderecoOriginal.lat, enderecoOriginal.lon)),
+      };
+    }
+  } else if (!enderecoOriginal?.cep || !enderecoOriginal.rua) {
+    throw new HTTPError(
+      "Endereço não especificado para obter dados extras! Faltando cep ou nome da rua",
+      400,
+      enderecoOriginal
+    );
+  }
+
+  let enderecoExtra: IEndereco = null;
+
+  const obterGeoLoc = async () => {
+    if (!enderecoExtra) {
+      enderecoExtra = await query_cepaberto(
+        enderecoOriginal.rua,
+        enderecoOriginal.bairro
+      )?.[0];
+
+      enderecoExtra = compararSemelhanca(
+        enderecoExtra,
+        enderecoOriginal,
+        "query_cepAberto"
+      );
+    }
+
+    if (!enderecoExtra) {
+      enderecoExtra = await cep_cepAberto(enderecoOriginal.cep)?.[0];
+      enderecoExtra = compararSemelhanca(
+        enderecoExtra,
+        enderecoOriginal,
+        "cep_cepAberto"
+      );
+    }
+
+    const qnom = async (str: string) => {
+      enderecoExtra = await query_nominatim(str)?.[0];
+      enderecoExtra = compararSemelhanca(
+        enderecoExtra,
+        enderecoOriginal,
+        `query_nominatim`
+      );
+    };
+    const qpho = async (str: string) => {
+      enderecoExtra = await query_photon(str)?.[0];
+      enderecoExtra = compararSemelhanca(
+        enderecoExtra,
+        enderecoOriginal,
+        `query_photon`
+      );
+    };
+
+    if (!enderecoExtra) {
+      await qnom(`${enderecoOriginal.rua}, ${enderecoOriginal.bairro}`);
+    }
+
+    if (!enderecoExtra) {
+      await qnom(enderecoOriginal.rua);
+    }
+    if (!enderecoExtra) {
+      await qpho(`${enderecoOriginal.rua}, ${enderecoOriginal.bairro}`);
+    }
+
+    if (!enderecoExtra) {
+      await qpho(enderecoOriginal.rua);
+    }
+
+    if (!enderecoExtra)
+      throw new HTTPError(
+        "Coordenadas não encontradas para o endereço.",
+        404,
+        enderecoOriginal
+      );
+  };
+
+  await obterGeoLoc();
+
+  const { distancia_metros, duracao_segundos } = await obterDistancia(
+    enderecoExtra.lat,
+    enderecoExtra.lon
+  );
+
+  const cep = (enderecoExtra?.cep ?? enderecoOriginal.cep)?.replace?.(
+    /\D/g,
+    ""
+  );
+
+  const enderecoFinal = {
+    ...enderecoOriginal,
+    ...enderecoExtra,
+    distancia_metros,
+    duracao_segundos,
+    cep,
+  };
+
+  return enderecoFinal;
 }

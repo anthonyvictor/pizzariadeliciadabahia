@@ -1,3 +1,5 @@
+import jaroWinkler from "jaro-winkler";
+
 export function sleep(time?: number) {
   return new Promise((resolve) => setTimeout(resolve, time ?? 200));
 }
@@ -45,3 +47,7 @@ export function getPeriod(): {
 export function startsWith(str: string, valuesToFind: Array<string>): boolean {
   return valuesToFind.some((value) => str.startsWith(value));
 }
+
+export const semelhanca = (str1: string, str2: string) => {
+  return jaroWinkler(str1, str2);
+};

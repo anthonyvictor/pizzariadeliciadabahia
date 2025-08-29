@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import { ItemStyle } from "./styles";
 import { colors } from "@styles/colors";
 import { formatCurrency } from "@util/format";
+import { abreviarBebida } from "@util/bebidas";
+import { abreviarLanche } from "@util/lanches";
 
 export const Item = ({
   item,
@@ -71,14 +73,18 @@ export const Item = ({
           </>
         ) : item.tipo === "bebida" ? (
           <>
-            <h3 className="nome">{item.bebidaOriginal.nome}</h3>
-            <p className="descricao">{item.bebidaOriginal.descricao}</p>
+            <h3 className="nome">{abreviarBebida(item.bebidaOriginal.nome)}</h3>
+            {/* <p className="descricao">{item.bebidaOriginal.descricao}</p> */}
           </>
         ) : (
           <>
-            <h3 className="nome">{item.lancheOriginal.nome}</h3>
-            <p className="descricao">{item.lancheOriginal.descricao}</p>
+            <h3 className="nome">{abreviarLanche(item.lancheOriginal.nome)}</h3>
+            {/* <p className="descricao">{item.lancheOriginal.descricao}</p> */}
           </>
+        )}
+
+        {!!item.observacoes && (
+          <p className="observacoes">{item.observacoes}</p>
         )}
       </aside>
 

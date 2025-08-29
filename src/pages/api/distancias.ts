@@ -22,14 +22,18 @@ export default async function handler(
   }
 }
 
-const obterDistancias = async () => {
+export const obterDistancias = async () => {
   await conectarDB();
 
   const data = await ff({ m: DistanciasModel });
   return data;
 };
 
-const createDistancia = async (de: number, ate: number, taxa: number) => {
+export const createDistancia = async (
+  de: number,
+  ate: number,
+  taxa: number
+) => {
   const data = await DistanciasModel.create({ de, ate, taxa });
   return data;
 };

@@ -29,7 +29,7 @@ const BairroPage: NextPage = () => {
     }
   }, [authCarregado]);
 
-  if (!authCarregado || !bairros) return <Loading />;
+  if (!authCarregado || !bairros?.length) return <Loading />;
 
   return <BairroView bairros={bairros} />;
 };

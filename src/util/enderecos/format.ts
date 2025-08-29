@@ -13,8 +13,8 @@ export const format_photon = (data: any) => {
         e.properties.locality || e.properties.suburb || e.properties.district,
       cidade: e.properties.city,
       estado: e.properties.state,
-      lon: e.geometry[0],
-      lat: e.geometry[1],
+      lon: e.geometry.coordinates[0],
+      lat: e.geometry.coordinates[1],
     })) as IEndereco[];
 
   return _enderecos;
@@ -36,8 +36,8 @@ export const format_nominatim = (data: any) => {
         e.address.city_district,
       cidade: e.address.city,
       estado: e.address.state,
-      lon: e.lon,
-      lat: e.lat,
+      lon: e.lon ? Number(e.lon) : undefined,
+      lat: e.lat ? Number(e.lat) : undefined,
     })) as IEndereco[];
 
   return _enderecos;
