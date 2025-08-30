@@ -118,7 +118,6 @@ export const obterPedido = async (id: string) => {
   });
 
   const distancias = await obterDistancias();
-  console.log(pedido.endereco);
 
   const r = {
     ...pedido,
