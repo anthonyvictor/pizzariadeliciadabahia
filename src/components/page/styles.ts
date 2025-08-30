@@ -2,38 +2,23 @@ import styled from "styled-components";
 import { sizes } from "@styles/sizes";
 
 export const PageStyle = styled.main`
-  /* flex-grow: 1; */
-  /* z-index: 1; */
-  flex: 1;
-  /* height: calc(100% - ${sizes.header}px - ${sizes.footer}px); */
+  flex-grow: 1;
+  z-index: 1;
+  height: calc(100% - ${sizes.header}px - ${sizes.footer}px);
   width: 100%;
-  /* top: ${sizes.header}px; */
+  top: ${sizes.header}px;
   /* padding-bottom: ${sizes.footer}px;
   padding-top: ${sizes.header}px; */
-  /* position: fixed; */
+  position: fixed;
   /* background-color: blue; */
-  min-height: 0;
 `;
 
 export const PageStyleWithoutElements = styled.main`
-  /* z-index: 1;
-
+  z-index: 1;
   height: 100vh;
   width: 100vw;
   left: 0;
   top: 0;
   position: fixed;
-  padding: 1rem; */
-
-  /* flex-grow: 1; */
-  /* z-index: 1; */
-  flex: 1;
-  /* height: calc(100% - ${sizes.header}px - ${sizes.footer}px); */
-  width: 100%;
-  /* top: ${sizes.header}px; */
-  /* padding-bottom: ${sizes.footer}px;
-  padding-top: ${sizes.header}px; */
-  /* position: fixed; */
-  /* background-color: blue; */
-  min-height: 0;
+  padding: 1rem;
 `;
