@@ -55,7 +55,7 @@ export const obterCliente = async (id: string | ICliente | undefined) => {
 
   return {
     ...cliente,
-    enderecos: cliente.enderecos.map((endereco) => {
+    enderecos: (cliente?.enderecos ?? []).map((endereco) => {
       const taxa = encontrarTaxa(
         endereco.enderecoOriginal.distancia_metros,
         distancias
@@ -98,7 +98,7 @@ export const obterClientes = async ({ ids }: { ids?: string[] }) => {
   return clientes.map((cliente) => {
     return {
       ...cliente,
-      enderecos: cliente.enderecos.map((endereco) => {
+      enderecos: (cliente?.enderecos ?? []).map((endereco) => {
         const taxa = encontrarTaxa(
           endereco.enderecoOriginal.distancia_metros,
           distancias

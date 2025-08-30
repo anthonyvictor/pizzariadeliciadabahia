@@ -64,7 +64,7 @@ export const obterPedidos = async ({
       ...pedido,
       cliente: {
         ...pedido.cliente,
-        enderecos: pedido.cliente.enderecos.map((endereco) => {
+        enderecos: (pedido?.cliente?.enderecos ?? []).map((endereco) => {
           const taxa = encontrarTaxa(
             endereco.enderecoOriginal.distancia_metros,
             distancias
@@ -124,7 +124,7 @@ export const obterPedido = async (id: string) => {
     ...pedido,
     cliente: {
       ...pedido.cliente,
-      enderecos: pedido.cliente.enderecos.map((endereco) => {
+      enderecos: (pedido?.cliente?.enderecos ?? []).map((endereco) => {
         const taxa = encontrarTaxa(
           endereco.enderecoOriginal.distancia_metros,
           distancias
