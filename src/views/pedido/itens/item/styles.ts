@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 export const ItemStyle = styled.li`
   display: flex;
-  /* background-color: ${colors.backgroundDark}; */
+  background-color: ${colors.backgroundDark}80;
   padding: 10px;
   color: #fff;
   gap: 10px;
