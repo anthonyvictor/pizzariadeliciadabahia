@@ -1,5 +1,6 @@
 import { normalizarOrdinal } from "@util/format";
 import { randomUUID } from "crypto";
+import parsePhoneNumberFromString, { CountryCode } from "libphonenumber-js";
 import { IEndereco } from "tpdb-lib";
 
 export const format_photon = (data: any) => {
@@ -107,3 +108,9 @@ export const format_cepAberto = (data: any) => {
 
   return _enderecos;
 };
+
+export function normalizePhone(phone: string) {
+  //, country: CountryCode = "BR"
+  const parsed = parsePhoneNumberFromString(phone); //, country
+  return parsed ? parsed.number : null; // +5571999999999
+}

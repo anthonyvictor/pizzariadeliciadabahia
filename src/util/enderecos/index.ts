@@ -1,12 +1,10 @@
 import { IEndereco } from "tpdb-lib";
-import { logJson } from "../logs";
 import { axiosOk } from "../axios";
 import { normalizarOrdinal, removeAccents } from "../format";
 import axios from "axios";
 import { enderecoPizzaria } from "@util/dados";
 import { query_cepaberto, query_nominatim, query_photon } from "./query";
 import { cep_cepAberto } from "./cep";
-import { semelhanca } from "@util/misc";
 import { HTTPError } from "@models/error";
 import { enderecosParecidos } from "./comparar";
 // const viaCep = async (cep: string, rua?: string, _bairro?: string) => {

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ffid } from "tpdb-lib";
+import { ffid, populates } from "tpdb-lib";
 import { ClientesModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { IHome } from "tpdb-lib";
@@ -27,7 +27,11 @@ export default async function handler(
 
 export const obterHome = async (clienteId: string | undefined) => {
   await conectarDB();
-  const cliente = await ffid({ m: ClientesModel, id: clienteId });
+  const cliente = await ffid({
+    m: ClientesModel,
+    id: clienteId,
+    populates: populates.clientes,
+  });
   const _cliente = cliente;
 
   const bebidas = await obterBebidas({ _cliente });

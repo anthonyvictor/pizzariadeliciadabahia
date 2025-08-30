@@ -1,7 +1,7 @@
 import TextContainer from "@components/textContainer";
 import { useRouter } from "next/router";
 import { ConfirmacaoComplementoViewStyle } from "./styles";
-import { IEndereco } from "tpdb-lib";
+import { IEnderecoCliente } from "tpdb-lib";
 import { useEffect, useState } from "react";
 import BottomControls from "@components/pedido/bottomControls";
 import { formatCEP } from "@util/format";
@@ -18,18 +18,15 @@ export const ConfirmacaoComplementoView = ({
   cliente: ICliente;
 }) => {
   const router = useRouter();
-  const [endereco, setEndereco] = useState<IEndereco>({
-    rua: "",
-    cep: "",
-    bairro: "",
-    numero: "",
-    referencia: "",
-  } as IEndereco);
+  const [endereco, setEndereco] = useState<IEnderecoCliente>();
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const _endereco = JSON.parse(sessionStorage.getItem("endereco") ?? "{}");
-    if (!_endereco?.cep) {
+    const _endereco = JSON.parse(
+      sessionStorage.getItem("endereco") ?? "{}"
+    ) as IEnderecoCliente;
+    if (!_endereco?.enderecoOriginal?.cep) {
       router.back();
     } else {
       setEndereco(_endereco);
@@ -41,7 +38,7 @@ export const ConfirmacaoComplementoView = ({
 
   return (
     <ConfirmacaoComplementoViewStyle>
-      {!!endereco?.cep && (
+      {!!endereco?.enderecoOriginal?.cep && (
         <>
           <TextContainer title="Confirma o endereço?" />
 
@@ -51,10 +48,10 @@ export const ConfirmacaoComplementoView = ({
               id="gmap_canvas"
               // src={`https://maps.google.com/maps?q=pizzaria delicia da bahia&t=&z=18&ie=UTF8&iwloc=A&output=embed`}
               src={`https://www.google.com/maps?q=${
-                endereco.lat && endereco.lon
-                  ? `${endereco.lat},${endereco.lon}`
+                endereco.enderecoOriginal.lat && endereco.enderecoOriginal.lon
+                  ? `${endereco.enderecoOriginal.lat},${endereco.enderecoOriginal.lon}`
                   : `${encodeURI(
-                      `${endereco.rua} ${endereco.numero} cep ${endereco.cep}`
+                      `${endereco.enderecoOriginal.rua} ${endereco.numero}, ${endereco.enderecoOriginal.bairro}`
                     )}`
               }&z=15&output=embed&ie=UTF8&iwloc=A`}
               frameBorder="0"
@@ -66,7 +63,7 @@ export const ConfirmacaoComplementoView = ({
           </div>
 
           <h4 className="endereco">
-            {[endereco.rua, endereco.numero]
+            {[endereco.enderecoOriginal.rua, endereco.numero]
               .filter(Boolean)
               .map((x) => x.toUpperCase())
               .join(", ")}
@@ -80,7 +77,10 @@ export const ConfirmacaoComplementoView = ({
           </p>
 
           <small>
-            {[endereco.bairro, formatCEP(endereco.cep)]
+            {[
+              endereco.enderecoOriginal.bairro,
+              formatCEP(endereco.enderecoOriginal.cep),
+            ]
               .filter(Boolean)
               .map((x) => x.toUpperCase())
               .join(", ")}

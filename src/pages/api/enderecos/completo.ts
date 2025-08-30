@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { conectarDB } from "src/infra/mongodb/config";
 import { IEndereco } from "tpdb-lib";
-import { obterDistancia } from "@util/enderecos";
+import { obterDistancia, obterEnderecoExtra } from "@util/enderecos";
 import { enderecoPizzaria } from "@util/dados";
 import { query_cepaberto, query_nominatim } from "@util/enderecos/query";
 import { cep_cepAberto } from "@util/enderecos/cep";
@@ -38,45 +38,46 @@ export async function obterEnderecoCompleto(
 ): Promise<IEndereco> {
   await conectarDB();
 
-  const temCoords = (e: IEndereco) => !!(e?.lat && e?.lon);
+  // const temCoords = (e: IEndereco) => !!(e?.lat && e?.lon);
 
-  endereco = temCoords(endereco)
-    ? endereco
-    : await query_cepaberto(
-        normalizarOrdinal(endereco.rua),
-        endereco.bairro
-      )?.[0];
+  // endereco = temCoords(endereco)
+  //   ? endereco
+  //   : await query_cepaberto(
+  //       normalizarOrdinal(endereco.rua),
+  //       endereco.bairro
+  //     )?.[0];
 
-  if (!temCoords(endereco))
-    endereco = await query_nominatim(
-      `${normalizarOrdinal(endereco.rua)} ${endereco.bairro}`
-    )?.[0];
+  // if (!temCoords(endereco))
+  //   endereco = await query_nominatim(
+  //     `${normalizarOrdinal(endereco.rua)} ${endereco.bairro}`
+  //   )?.[0];
 
-  if (!temCoords(endereco)) endereco = await cep_cepAberto(endereco.cep)?.[0];
+  // if (!temCoords(endereco)) endereco = await cep_cepAberto(endereco.cep)?.[0];
 
-  if (!temCoords(endereco))
-    throw new HTTPError(
-      "Oops, não foi possível carregar a taxa de entrega",
-      404,
-      {
-        message: "Coordenadas do endereço não encontradas",
-        endereco,
-      }
-    );
+  // if (!temCoords(endereco))
+  //   throw new HTTPError(
+  //     "Oops, não foi possível carregar a taxa de entrega",
+  //     404,
+  //     {
+  //       message: "Coordenadas do endereço não encontradas",
+  //       endereco,
+  //     }
+  //   );
 
-  const { distancia_metros, duracao_segundos } = await obterDistancia(
-    endereco.lat,
-    endereco.lon
-  );
+  // const { distancia_metros, duracao_segundos } = await obterDistancia(
+  //   endereco.lat,
+  //   endereco.lon
+  // );
+
+  const enderecoExtra = await obterEnderecoExtra(endereco);
 
   const distancias = await obterDistancias();
 
-  const taxa = encontrarTaxa(distancia_metros, distancias);
+  const taxa = encontrarTaxa(enderecoExtra.distancia_metros, distancias);
 
   return {
     ...endereco,
+    ...enderecoExtra,
     taxa,
-    distancia_metros,
-    duracao_segundos,
   };
 }

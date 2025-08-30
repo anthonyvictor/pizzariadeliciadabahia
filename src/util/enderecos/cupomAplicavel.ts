@@ -1,7 +1,9 @@
 import { ICupom, IEndereco } from "tpdb-lib";
 
 export const cupomAplicavel = (cupom: ICupom | null, endereco: IEndereco) => {
-  if (!cupom) return false;
+  console.log("cupom", cupom, "\n\n\n\nendereco", endereco);
+  if (!cupom || !endereco) return false;
+
   for (let cond of cupom?.condicoes ?? []) {
     if (
       cond.tipo === "bairros" &&
@@ -26,6 +28,7 @@ export const cupomAplicavel = (cupom: ICupom | null, endereco: IEndereco) => {
     )
       return false;
   }
+  console.log("passou condicoes");
   for (let exc of cupom.excecoes ?? []) {
     if (
       exc.tipo === "bairros" &&
@@ -50,6 +53,7 @@ export const cupomAplicavel = (cupom: ICupom | null, endereco: IEndereco) => {
     )
       return false;
   }
+  console.log("passou excecoes");
 
   return true;
 };

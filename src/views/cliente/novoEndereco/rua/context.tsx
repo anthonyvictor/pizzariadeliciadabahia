@@ -1,12 +1,6 @@
-import Loading from "@components/loading";
-import { env } from "@config/env";
 import { SetState } from "@config/react";
-import { IAuth } from "@models/auth";
 import { enderecoPizzaria } from "@util/dados";
-import { useAuth } from "@util/hooks/auth";
 import { useEnderecoAutocomplete } from "@util/hooks/debouncedFunction";
-import axios from "axios";
-import { useRouter } from "next/router";
 import {
   createContext,
   ReactNode,
@@ -14,7 +8,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { toast } from "react-toastify";
 import { IBairro, IEndereco } from "tpdb-lib";
 
 interface IRuaPageContext {

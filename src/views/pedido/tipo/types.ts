@@ -1,5 +1,5 @@
-import { IEndereco } from "tpdb-lib";
+import { IEnderecoPedido } from "tpdb-lib";
 
 export type Tipo =
-  | { type: "entrega"; endereco: IEndereco }
+  | { type: "entrega"; endereco: IEnderecoPedido }
   | { type: "retirada" };

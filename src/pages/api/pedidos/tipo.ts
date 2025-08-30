@@ -1,10 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ffid } from "tpdb-lib";
-import { PedidosModel } from "tpdb-lib";
+import { IEnderecoPedido, PedidosModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
-import { IItemPedido, IPedido, IPedidoTipo } from "tpdb-lib";
-import { IEndereco } from "tpdb-lib";
+import { IPedido, IPedidoTipo } from "tpdb-lib";
 
 // Função handler da rota
 export default async function handler(
@@ -21,11 +19,15 @@ export default async function handler(
 export const mudarTipoEEndereco = async (
   pedidoId: string,
   novoTipo: IPedidoTipo,
-  novoEndereco: IEndereco
+  novoEndereco: IEnderecoPedido
 ) => {
   await conectarDB();
+  const endereco =
+    novoTipo === "entrega"
+      ? { ...novoEndereco, enderecoOriginal: novoEndereco.enderecoOriginal.id }
+      : undefined;
   await PedidosModel.findByIdAndUpdate(
     pedidoId,
-    { tipo: novoTipo, endereco: novoEndereco } // Só adiciona se não existir
+    { tipo: novoTipo, endereco } // Só adiciona se não existir
   );
 };

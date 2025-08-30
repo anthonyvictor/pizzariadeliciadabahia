@@ -49,7 +49,7 @@ export const Metodo = ({
     for (let cond of cupom?.condicoes ?? []) {
       if (
         cond.tipo in ["bairros", "ceps", "max_distancia", "min_distancia"] &&
-        !pedido.endereco?.cep
+        !pedido.endereco?.enderecoOriginal?.cep
       )
         return false;
       if (
@@ -60,7 +60,9 @@ export const Metodo = ({
       if (
         cond.tipo === "bairros" &&
         !cond.valor.some(
-          (x) => x.toLowerCase() === pedido.endereco.bairro.toLowerCase()
+          (x) =>
+            x.toLowerCase() ===
+            pedido.endereco?.enderecoOriginal?.bairro?.toLowerCase?.()
         )
       )
         return false;
@@ -68,23 +70,25 @@ export const Metodo = ({
         cond.tipo === "ceps" &&
         !cond.valor.some(
           (x) =>
-            x.replace(/\D+/g, "") === pedido.endereco.cep.replace(/\D+/g, "")
+            x.replace(/\D+/g, "") ===
+            pedido.endereco?.enderecoOriginal?.cep?.replace?.(/\D+/g, "")
         )
       )
         return false;
       if (
         cond.tipo === "max_distancia" &&
-        cond.valor > (pedido.endereco?.distancia_metros ?? 0)
+        cond.valor > (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
       )
         return false;
       if (
         cond.tipo === "min_distancia" &&
-        cond.valor < (pedido.endereco?.distancia_metros ?? 1000000000)
+        cond.valor <
+          (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
       )
         return false;
     }
     for (let exc of cupom.excecoes ?? []) {
-      if (!pedido.endereco?.cep) return true;
+      if (!pedido.endereco?.enderecoOriginal?.cep) return true;
       if (
         exc.tipo === "metodo_pagamento" &&
         exc.valor.some((x) => x === m.tipo)
@@ -93,7 +97,9 @@ export const Metodo = ({
       if (
         exc.tipo === "bairros" &&
         exc.valor.some(
-          (x) => x.toLowerCase() === pedido.endereco?.bairro.toLowerCase()
+          (x) =>
+            x.toLowerCase() ===
+            pedido.endereco?.enderecoOriginal?.bairro.toLowerCase()
         )
       )
         return false;
@@ -101,18 +107,20 @@ export const Metodo = ({
         exc.tipo === "ceps" &&
         exc.valor.some(
           (x) =>
-            x.replace(/\D+/g, "") === pedido.endereco.cep.replace(/\D+/g, "")
+            x.replace(/\D+/g, "") ===
+            pedido.endereco?.enderecoOriginal?.cep?.replace?.(/\D+/g, "")
         )
       )
         return false;
       if (
         exc.tipo === "max_distancia" &&
-        exc.valor < (pedido.endereco?.distancia_metros ?? 0)
+        exc.valor < (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
       )
         return false;
       if (
         exc.tipo === "min_distancia" &&
-        exc.valor > (pedido.endereco?.distancia_metros ?? 1000000000)
+        exc.valor >
+          (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
       )
         return false;
     }

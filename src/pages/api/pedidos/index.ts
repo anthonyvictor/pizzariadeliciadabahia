@@ -1,4 +1,4 @@
-import { IPedido } from "tpdb-lib";
+import { IEndereco, IPedido } from "tpdb-lib";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ff, ffid } from "tpdb-lib";
 import { PedidosModel } from "tpdb-lib";
@@ -7,6 +7,8 @@ import { conectarDB } from "src/infra/mongodb/config";
 import { populates } from "tpdb-lib";
 import mongoose, { Types } from "mongoose";
 import { obterCliente, obterClientes } from "@routes/clientes";
+import { obterDistancias } from "@routes/distancias";
+import { encontrarTaxa } from "@util/distancias";
 
 // Função handler da rota
 export default async function handler(
@@ -15,13 +17,12 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     let data;
-    const { id, comEnderecoCompleto, ids } = req.query;
+    const { id, ids } = req.query;
     if (id) {
-      data = await obterPedido(id as string, comEnderecoCompleto as any);
+      data = await obterPedido(id as string);
     } else {
       data = await obterPedidos({
         ids: ids as any,
-        comEnderecoCompleto: comEnderecoCompleto as any,
       });
     }
     res.status(200).json(data);
@@ -40,11 +41,9 @@ export default async function handler(
 
 export const obterPedidos = async ({
   ids,
-  comEnderecoCompleto = true,
 }: {
   ids?: string[];
   clientesIds?: string[];
-  comEnderecoCompleto?: boolean;
 }) => {
   await conectarDB();
 
@@ -55,32 +54,58 @@ export const obterPedidos = async ({
   let pedidos = await ff({
     m: PedidosModel,
     q,
-    populates: populates.pedidos.filter((x) => x.path !== "cliente"),
+    populates: populates.pedidos,
   });
 
-  if (!pedidos) return [];
+  const distancias = await obterDistancias();
 
-  const clientes = await obterClientes({
-    ids: pedidos.map((x) => x.cliente.id),
-    comEnderecoCompleto,
+  const r = pedidos.map((pedido) => {
+    return {
+      ...pedido,
+      cliente: {
+        ...pedido.cliente,
+        enderecos: pedido.cliente.enderecos.map((endereco) => {
+          const taxa = encontrarTaxa(
+            endereco.enderecoOriginal.distancia_metros,
+            distancias
+          );
+
+          console.log("taxaaaaaaaaaaaaaaaaaaaaa", taxa);
+          return {
+            ...endereco,
+            enderecoOriginal: {
+              ...endereco.enderecoOriginal,
+              taxa:
+                endereco.enderecoOriginal.taxa != null
+                  ? endereco.enderecoOriginal.taxa
+                  : taxa,
+            },
+          };
+        }),
+      },
+      endereco:
+        pedido.tipo === "retirada"
+          ? undefined
+          : {
+              ...pedido.endereco,
+              enderecoOriginal: {
+                ...pedido.endereco.enderecoOriginal,
+                taxa:
+                  pedido.endereco.enderecoOriginal.taxa != null
+                    ? pedido.endereco.enderecoOriginal.taxa
+                    : encontrarTaxa(
+                        pedido.endereco.enderecoOriginal.distancia_metros,
+                        distancias
+                      ),
+              },
+            },
+    };
   });
 
-  return pedidos.map((pedido) => {
-    const cliente = clientes.find((x) => x.id === pedido.cliente.id);
-    const endereco =
-      pedido.tipo === "entrega" && pedido.endereco?.cep
-        ? {
-            ...((cliente.enderecos ?? []).find(
-              (e) => e.cep === pedido.endereco.cep
-            ) ?? {}),
-            ...pedido.endereco,
-          }
-        : null;
-    return { ...pedido, endereco, cliente };
-  });
+  return r;
 };
 
-export const obterPedido = async (id: string, comEnderecoCompleto = true) => {
+export const obterPedido = async (id: string) => {
   if (!Types.ObjectId.isValid(id)) {
     throw new Error("ID inválido");
   }
@@ -89,26 +114,54 @@ export const obterPedido = async (id: string, comEnderecoCompleto = true) => {
   const pedido = await ffid({
     m: PedidosModel,
     id: id,
-    populates: populates.pedidos.filter((x) => x.path !== "cliente"),
+    populates: populates.pedidos,
   });
-  if (!pedido) return null;
 
-  const cliente = await obterCliente(pedido.cliente.id, comEnderecoCompleto);
+  const distancias = await obterDistancias();
+  console.log(pedido.endereco);
 
-  return {
+  const r = {
     ...pedido,
-    cliente,
+    cliente: {
+      ...pedido.cliente,
+      enderecos: pedido.cliente.enderecos.map((endereco) => {
+        const taxa = encontrarTaxa(
+          endereco.enderecoOriginal.distancia_metros,
+          distancias
+        );
+
+        return {
+          ...endereco,
+          enderecoOriginal: {
+            ...endereco.enderecoOriginal,
+            taxa:
+              endereco.enderecoOriginal.taxa != null
+                ? endereco.enderecoOriginal.taxa
+                : taxa,
+          },
+        };
+      }),
+    },
     endereco:
-      pedido.tipo === "entrega"
-        ? {
-            ...((cliente.enderecos ?? []).find(
-              (x) => x.cep === pedido.endereco.cep
-            ) ?? {}),
+      pedido.tipo === "retirada"
+        ? undefined
+        : {
             ...pedido.endereco,
-            desconto: pedido.endereco.desconto ?? 0,
-          }
-        : null,
+            enderecoOriginal: {
+              ...pedido.endereco.enderecoOriginal,
+              taxa:
+                pedido.endereco.enderecoOriginal.taxa != null
+                  ? pedido.endereco.enderecoOriginal.taxa
+                  : encontrarTaxa(
+                      pedido.endereco.enderecoOriginal.distancia_metros,
+                      distancias
+                    ),
+            },
+          },
   };
+
+  console.log(r);
+  return r;
 };
 
 export const novoPedido = async (cliente: string) => {

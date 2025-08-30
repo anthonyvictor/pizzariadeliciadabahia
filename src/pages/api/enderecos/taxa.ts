@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { conectarDB } from "src/infra/mongodb/config";
 import { IEndereco } from "tpdb-lib";
 import { obterDistancia } from "@util/enderecos";
-import { enderecoPizzaria } from "@util/dados";
 import { query_cepaberto, query_nominatim } from "@util/enderecos/query";
 import { cep_cepAberto } from "@util/enderecos/cep";
 import { normalizarOrdinal } from "@util/format";

@@ -1,22 +1,19 @@
-import { IEndereco } from "tpdb-lib";
-import { ICupom } from "tpdb-lib";
+import { IEnderecoCliente, IEnderecoPedido } from "tpdb-lib";
 import { formatCurrency } from "@util/format";
-import { Tipo } from "../types";
-import { SetState } from "@config/react";
 import { obterValorDescontoReal } from "@util/cupons";
 import { useState } from "react";
 import { colors } from "@styles/colors";
 import { EnderecoStyle } from "./styles";
-import { cupomAplicavel } from "@util/enderecos/cupomAplicave";
-import { useTipoPage } from "../context";
+import { cupomAplicavel } from "@util/enderecos/cupomAplicavel";
+import { useTipoPage } from "../../context";
 
-export const Endereco = ({ e }: { e: IEndereco }) => {
+export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   const { cupomEntrega, tipo, setTipo } = useTipoPage();
 
   const [descontoReal] = useState<number>(
-    cupomAplicavel(cupomEntrega, e)
+    cupomAplicavel(cupomEntrega, e.enderecoOriginal)
       ? obterValorDescontoReal(
-          e.taxa ?? 0,
+          e.enderecoOriginal.taxa ?? 0,
           cupomEntrega.valor,
           cupomEntrega.tipo,
           cupomEntrega.maxDesconto
@@ -29,14 +26,19 @@ export const Endereco = ({ e }: { e: IEndereco }) => {
     (tipo?.type === "entrega" && tipo.endereco.metodo === "basico");
 
   const taxaComDesconto =
-    descontoReal && metodoBasico ? (e.taxa ?? 0) - descontoReal : e.taxa ?? 0;
+    descontoReal && metodoBasico
+      ? (e.enderecoOriginal.taxa ?? 0) - descontoReal
+      : e.enderecoOriginal.taxa ?? 0;
 
   return (
     <EnderecoStyle
       onClick={async () => {
         setTipo({
           type: "entrega",
-          endereco: { ...e, desconto: descontoReal },
+          endereco: {
+            ...e,
+            desconto: descontoReal,
+          } as unknown as IEnderecoPedido,
         });
       }}
       className={`item ${
@@ -45,7 +47,10 @@ export const Endereco = ({ e }: { e: IEndereco }) => {
     >
       <aside className="item-left">
         <h4 className="item-title">
-          {[e.rua, e.numero, e.bairro].filter(Boolean).join(", ").toUpperCase()}
+          {[e?.enderecoOriginal?.rua, e.numero, e?.enderecoOriginal?.bairro]
+            .filter(Boolean)
+            .join(", ")
+            .toUpperCase()}
         </h4>
 
         <p className="item-description">
@@ -61,9 +66,9 @@ export const Endereco = ({ e }: { e: IEndereco }) => {
                 color: colors.elements,
               }}
             >
-              {formatCurrency(tipo.endereco.taxa)}
+              {formatCurrency(tipo.endereco.enderecoOriginal.taxa)}
             </span>
-          ) : e.taxa ? (
+          ) : e.enderecoOriginal.taxa ? (
             <>
               {
                 <span
@@ -86,7 +91,7 @@ export const Endereco = ({ e }: { e: IEndereco }) => {
                   className="original-price"
                   style={{ textDecoration: "line-through" }}
                 >
-                  {formatCurrency(e.taxa ?? 0)}
+                  {formatCurrency(e.enderecoOriginal.taxa ?? 0)}
                 </span>
               )}
             </>

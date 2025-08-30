@@ -1,4 +1,4 @@
-import { ICliente } from "tpdb-lib";
+import { ICliente, populates } from "tpdb-lib";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ffid } from "tpdb-lib";
 import { ClientesModel } from "tpdb-lib";
@@ -51,6 +51,7 @@ export const obterItemBuilder = async (
   const cliente = (await ffid({
     m: ClientesModel,
     id: clienteId,
+    populates: populates.clientes,
   })) as unknown as ICliente;
   const _cliente = cliente;
 

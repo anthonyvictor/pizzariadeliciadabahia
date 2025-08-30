@@ -37,7 +37,6 @@ export async function reverseEnderecos(lat: number, lon: number) {
     pos_photon([lat, lon]),
   ]);
   const enderecos: IEndereco[] = [...osm, ...photon];
-  console.log(enderecos);
 
   return enderecos;
 }

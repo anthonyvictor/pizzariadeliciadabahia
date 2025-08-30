@@ -13,7 +13,7 @@ const pages = {
 export const useAuth = () => {
   const router = useRouter();
 
-  const [fechado, setFechado] = useState(true);
+  const [fechado, setFechado] = useState(false);
   const [authCarregado, setAuthCarregado] = useState(false);
   const [cliente, setCliente] = useState<ICliente>();
   const [pedido, setPedido] = useState<IPedido>();
@@ -21,10 +21,8 @@ export const useAuth = () => {
 
   const temClientePedido = async (
     opcoes: {
-      comEnderecoCompleto?: boolean;
       verificarPixAguardando?: boolean;
     } = {
-      comEnderecoCompleto: false,
       verificarPixAguardando: true,
     }
   ) => {
@@ -33,9 +31,7 @@ export const useAuth = () => {
 
     const obterCliente = async () => {
       if (!clienteId) return null;
-      const res = await axios.get(
-        `${env.apiURL}/clientes?id=${clienteId}&comEnderecoCompleto=${opcoes.comEnderecoCompleto}`
-      );
+      const res = await axios.get(`${env.apiURL}/clientes?id=${clienteId}`);
       return res.data as ICliente;
     };
 
@@ -48,9 +44,7 @@ export const useAuth = () => {
 
     const obterPedido = async () => {
       if (!pedidoId) return null;
-      const res = await axios.get(
-        `${env.apiURL}/pedidos?id=${pedidoId}&comEnderecoCompleto=${opcoes?.comEnderecoCompleto}`
-      );
+      const res = await axios.get(`${env.apiURL}/pedidos?id=${pedidoId}`);
       return res.data as IPedido;
     };
 

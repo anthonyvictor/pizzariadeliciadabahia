@@ -4,6 +4,7 @@ import { useRuaPage } from "../../context";
 import { useRouter } from "next/router";
 import { env } from "@config/env";
 import { createRef } from "react";
+import { IEnderecoCliente } from "tpdb-lib";
 
 export const InputAndList = () => {
   const {
@@ -56,7 +57,16 @@ export const InputAndList = () => {
                   className={`sugestao`}
                   key={idx}
                   onClick={() => {
-                    sessionStorage.setItem("endereco", JSON.stringify(sug));
+                    const endereco: IEnderecoCliente = {
+                      visivel: true,
+                      enderecoOriginal: sug,
+                    } as IEnderecoCliente;
+
+                    console.log("⚠️⚠️⚠️ vai salvar no session", endereco);
+                    sessionStorage.setItem(
+                      "endereco",
+                      JSON.stringify(endereco)
+                    );
                     router.push("/cliente/novo-endereco/regras");
                   }}
                 >

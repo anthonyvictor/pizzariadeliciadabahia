@@ -4,63 +4,24 @@ import { useEffect, useState } from "react";
 import { ComplementoViewStyle } from "./styles";
 import BottomControls from "@components/pedido/bottomControls";
 import { MyInput } from "@components/pedido/myInput";
-import { ICupom, IEndereco } from "tpdb-lib";
+import { IEnderecoCliente } from "tpdb-lib";
 import Loading from "@components/loading";
-import { MyInputStyle } from "@components/pedido/myInput/styles";
-import { GiStairsGoal } from "react-icons/gi";
-import { MdDeliveryDining } from "react-icons/md";
-import { IconType } from "react-icons";
-import { formatCurrency } from "@util/format";
-import { toast } from "react-toastify";
-import axios from "axios";
-import { env } from "@config/env";
-import { obterValorDescontoReal } from "@util/cupons";
-import { cupomAplicavel } from "@util/enderecos/cupomAplicave";
-import { colors } from "@styles/colors";
 
-export const ComplementoView = ({ cupom }: { cupom: ICupom | null }) => {
+export const ComplementoView = ({
+  endereco: _endereco,
+}: {
+  endereco: IEnderecoCliente;
+}) => {
   const router = useRouter();
 
-  const [endereco, setEndereco] = useState<IEndereco>();
+  const [endereco, setEndereco] = useState<IEnderecoCliente>(_endereco);
 
-  const [loading, setLoading] = useState(true);
-  const [descontoReal, setDescontoReal] = useState<number>(0);
-
-  useEffect(() => {
-    const _endereco = JSON.parse(sessionStorage.getItem("endereco") ?? "{}");
-    if (!_endereco?.cep) {
-      router.back();
-    } else {
-      axios
-        .post(`${env.apiURL}/enderecos/completo`, {
-          endereco: _endereco,
-        })
-        .then((res) => {
-          const enderecoCompleto = res.data;
-          setEndereco(enderecoCompleto);
-
-          if (cupomAplicavel(cupom, enderecoCompleto)) {
-            const _descontoReal = obterValorDescontoReal(
-              enderecoCompleto.taxa ?? 0,
-              cupom.valor,
-              cupom.tipo,
-              cupom.maxDesconto
-            );
-
-            setDescontoReal(_descontoReal);
-          }
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Não foi possível obter a taxa de entrega");
-          setEndereco(_endereco);
-          setLoading(false);
-        });
-    }
-  }, []);
-
-  if (loading) return <Loading />;
-  if (!endereco.cep) return <></>;
+  if (!endereco?.enderecoOriginal?.cep)
+    return (
+      <ComplementoViewStyle>
+        <h3 style={{ color: "#ffd000" }}>Erro ao carregar endereço</h3>
+      </ComplementoViewStyle>
+    );
 
   return (
     <ComplementoViewStyle>

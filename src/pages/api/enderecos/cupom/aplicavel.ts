@@ -1,6 +1,5 @@
-import { cupomAplicavel } from "@util/enderecos";
+import { cupomAplicavel } from "@util/enderecos/cupomAplicavel";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ICupom, IEndereco } from "tpdb-lib";
 
 export default async function handler(
   req: NextApiRequest,

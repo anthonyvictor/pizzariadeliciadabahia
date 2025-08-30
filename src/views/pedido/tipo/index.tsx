@@ -7,8 +7,8 @@ import { env } from "@config/env";
 import { toast } from "react-toastify";
 import { ICupom } from "tpdb-lib";
 import { IPedido } from "tpdb-lib";
-import { Endereco } from "./endereco";
-import { EnderecoStyle } from "./endereco/styles";
+import { Endereco } from "./components/endereco";
+import { EnderecoStyle } from "./components/endereco/styles";
 import Modal from "@components/modal";
 import { MdDeliveryDining } from "react-icons/md";
 import { GiStairsGoal } from "react-icons/gi";
@@ -24,6 +24,10 @@ export const TipoView = () => {
   useEffect(() => {
     console.log(tipo);
   }, [tipo]);
+
+  useEffect(() => {
+    console.log(pedido.cliente);
+  }, []);
   return (
     <TipoViewStyle>
       <menu className="no-scroll">
@@ -67,9 +71,10 @@ export const TipoView = () => {
         </EnderecoStyle>
 
         <ul className="tipos">
-          {(pedido?.cliente?.enderecos ?? []).map((e) => (
-            <Endereco key={e.id} e={e} />
-          ))}
+          {(pedido?.cliente?.enderecos ?? []).map((e) => {
+            console.log(">>>>", e);
+            return <Endereco key={e.id} e={e} />;
+          })}
         </ul>
       </menu>
 
@@ -123,7 +128,7 @@ export const TipoView = () => {
               nome="Na rua principal"
               descricao="Vou encontrar o entregador na rua principal, em local acessível para moto/bicicleta."
               Icone={MdDeliveryDining}
-              taxa={tipo.endereco?.taxa ?? 0}
+              taxa={tipo.endereco?.enderecoOriginal?.taxa ?? 0}
               desconto={tipo.endereco.desconto ?? 0}
             />
             <Metodo
@@ -131,7 +136,7 @@ export const TipoView = () => {
               nome="Com trecho a pé"
               descricao="Quero que  entregador desembarque do veículo e se desloque à pé até o local da entrega"
               Icone={GiStairsGoal}
-              taxa={(tipo.endereco?.taxa ?? 0) * 3}
+              taxa={(tipo.endereco?.enderecoOriginal?.taxa ?? 0) * 3}
               desconto={0}
             />
           </div>

@@ -1,10 +1,16 @@
-import { IEndereco } from "tpdb-lib";
+import { IEnderecoPedido } from "tpdb-lib";
 import { formatCurrency } from "@util/format";
 import { colors } from "@styles/colors";
-import { EnderecoStyle } from "../../tipo/endereco/styles";
+import { EnderecoStyle } from "../../tipo/components/endereco/styles";
 import { IPedidoTipo } from "tpdb-lib";
 
-export const Endereco = ({ e, tipo }: { e: IEndereco; tipo: IPedidoTipo }) => {
+export const Endereco = ({
+  e,
+  tipo,
+}: {
+  e: IEnderecoPedido;
+  tipo: IPedidoTipo;
+}) => {
   return (
     <EnderecoStyle className={`item`}>
       {tipo === "retirada" ? (
@@ -26,7 +32,7 @@ export const Endereco = ({ e, tipo }: { e: IEndereco; tipo: IPedidoTipo }) => {
           <aside className="item-left">
             <h2 className="item-type">Entrega 🛵</h2>
             <h4 className="item-title">
-              {[e.rua, e.numero, e.bairro]
+              {[e?.enderecoOriginal?.rua, e.numero, e?.enderecoOriginal?.bairro]
                 .filter(Boolean)
                 .join(", ")
                 .toUpperCase()}

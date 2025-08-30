@@ -4,12 +4,11 @@ import { useAuth } from "@util/hooks/auth";
 import Loading from "@components/loading";
 import { useEffect } from "react";
 
-const FinaliadoPage: NextPage = () => {
+const FinalizadoPage: NextPage = () => {
   const { temClientePedido, authCarregado, pedido } = useAuth();
 
   useEffect(() => {
     temClientePedido({
-      comEnderecoCompleto: true,
       verificarPixAguardando: false,
     });
   }, []);
@@ -19,4 +18,4 @@ const FinaliadoPage: NextPage = () => {
   return <FinalizadoView pedido={pedido} />;
 };
 
-export default FinaliadoPage;
+export default FinalizadoPage;

@@ -1,11 +1,13 @@
 import { conectarDB } from "src/infra/mongodb/config";
-import { ICliente } from "tpdb-lib";
+import { ICliente, populates } from "tpdb-lib";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ff, ffid, serializeMongo } from "tpdb-lib";
 import { ClientesModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import mongoose, { Types } from "mongoose";
-import { obterEnderecosExtras } from "@routes/enderecos/extras";
+import { normalizePhone } from "@util/enderecos/format";
+import { obterDistancias } from "@routes/distancias";
+import { encontrarTaxa } from "@util/distancias";
 
 // Função handler da rota
 export default async function handler(
@@ -16,16 +18,12 @@ export default async function handler(
     if (req.method === "GET") {
       let data: ICliente | ICliente[];
       if (req.query.id) {
-        data = await obterCliente(
-          req.query.id as string,
-          req.query.comEnderecoCompleto as unknown as boolean
-        );
+        data = await obterCliente(req.query.id as string);
       } else {
-        const { ids, comEnderecoCompleto } = req.query as {
+        const { ids } = req.query as {
           ids: any;
-          comEnderecoCompleto: any;
         };
-        data = await obterClientes({ ids, comEnderecoCompleto });
+        data = await obterClientes({ ids });
       }
       res.status(200).json(data);
     } else if (req.method === "POST") {
@@ -41,62 +39,83 @@ export default async function handler(
   }
 }
 
-export const obterCliente = async (
-  id: string | ICliente | undefined,
-  comEnderecoCompleto = false
-) => {
+export const obterCliente = async (id: string | ICliente | undefined) => {
   if (!id) return null;
   if ((id as ICliente)?.id) return id as ICliente;
 
   await conectarDB();
 
-  const cliente = await ffid({ m: ClientesModel, id: id as unknown as string });
-  if (!cliente) return null;
+  const cliente = await ffid({
+    m: ClientesModel,
+    id: id as unknown as string,
+    populates: populates.clientes,
+  });
 
-  if (!cliente.enderecos || cliente.enderecos.length === 0) return cliente;
-  let enderecos = cliente.enderecos;
+  const distancias = await obterDistancias();
 
-  if (comEnderecoCompleto)
-    enderecos = (await obterEnderecosExtras(enderecos)) as any[];
+  return {
+    ...cliente,
+    enderecos: cliente.enderecos.map((endereco) => {
+      const taxa = encontrarTaxa(
+        endereco.enderecoOriginal.distancia_metros,
+        distancias
+      );
 
-  return { ...cliente, enderecos } as ICliente;
+      console.log(
+        "taxaaaaaaa",
+        taxa,
+        endereco.enderecoOriginal.taxa != null
+          ? endereco.enderecoOriginal.taxa
+          : taxa
+      );
+
+      return {
+        ...endereco,
+        enderecoOriginal: {
+          ...endereco.enderecoOriginal,
+          taxa:
+            endereco.enderecoOriginal.taxa != null
+              ? endereco.enderecoOriginal.taxa
+              : taxa,
+        },
+      };
+    }),
+  };
 };
-export const obterClientes = async ({
-  ids,
-  comEnderecoCompleto = false,
-}: {
-  ids?: string[];
-  comEnderecoCompleto?: boolean;
-}) => {
+export const obterClientes = async ({ ids }: { ids?: string[] }) => {
   await conectarDB();
   const q: any = {};
   if (ids && ids.length)
     q._id = { $in: ids.map((x) => new mongoose.Types.ObjectId(x)) };
-  let clientes = await ff({ m: ClientesModel, q });
-  let enderecosBase = clientes
-    .map((x) => x.enderecos ?? [])
-    .flat()
-    .filter(
-      (item, index, self) => index === self.findIndex((x) => x.cep === item.cep)
-    );
+  let clientes = await ff({
+    m: ClientesModel,
+    q,
+    populates: populates.clientes,
+  });
 
-  if (comEnderecoCompleto) {
-    const enderecosExtras = (await obterEnderecosExtras(
-      enderecosBase
-    )) as any[];
+  const distancias = await obterDistancias();
 
-    clientes = clientes.map((cliente) => {
-      return {
-        ...cliente,
-        enderecos: (cliente.enderecos ?? []).map((endereco) => ({
-          ...(enderecosExtras.find((x) => x.cep === endereco.cep) ?? {}),
+  return clientes.map((cliente) => {
+    return {
+      ...cliente,
+      enderecos: cliente.enderecos.map((endereco) => {
+        const taxa = encontrarTaxa(
+          endereco.enderecoOriginal.distancia_metros,
+          distancias
+        );
+        return {
           ...endereco,
-        })),
-      };
-    });
-  }
-
-  return clientes;
+          enderecoOriginal: {
+            ...endereco.enderecoOriginal,
+            taxa:
+              endereco.enderecoOriginal.taxa != null
+                ? endereco.enderecoOriginal.taxa
+                : taxa,
+          },
+        };
+      }),
+    };
+  });
 };
 
 export const loginCliente = async (cliente: ICliente) => {
@@ -104,7 +123,7 @@ export const loginCliente = async (cliente: ICliente) => {
 
   const { nome, whatsapp, dadosExtras } = cliente as ICliente;
 
-  const filter = { whatsapp: cliente.whatsapp };
+  const filter = { whatsapp: normalizePhone(whatsapp) };
 
   const clienteEncontrado = await ClientesModel.findOne(filter).lean();
 
@@ -113,44 +132,44 @@ export const loginCliente = async (cliente: ICliente) => {
 
   const result = await ClientesModel.create({
     nome,
-    whatsapp,
+    whatsapp: normalizePhone(whatsapp),
     dadosExtras: dadosExtras ?? [],
   });
 
   return await obterCliente(result._id.toString());
 };
-export const upsertCliente = async (cliente: ICliente) => {
-  await conectarDB();
+// export const upsertCliente = async (cliente: ICliente) => {
+//   await conectarDB();
 
-  const { id, enderecos: _enderecos, ...rest } = cliente as ICliente;
+//   const { id, enderecos: _enderecos, ...rest } = cliente as ICliente;
 
-  const filter = id
-    ? { _id: new Types.ObjectId(id) }
-    : !!cliente.cpf
-    ? { cpf: cliente.cpf }
-    : { whatsapp: cliente.whatsapp };
+//   const filter = id
+//     ? { _id: new Types.ObjectId(id) }
+//     : !!cliente.cpf
+//     ? { cpf: cliente.cpf }
+//     : { whatsapp: cliente.whatsapp };
 
-  const update = {
-    $set: {
-      ...rest,
-      enderecos: _enderecos?.length
-        ? _enderecos.map((x) => ({
-            cep: x.cep,
-            numero: x.numero,
-            local: x.local,
-            referencia: x.referencia,
-          }))
-        : [],
-    },
-  };
+//   const update = {
+//     $set: {
+//       ...rest,
+//       enderecos: _enderecos?.length
+//         ? _enderecos.map((x) => ({
+//             cep: x.cep,
+//             numero: x.numero,
+//             local: x.local,
+//             referencia: x.referencia,
+//           }))
+//         : [],
+//     },
+//   };
 
-  const result = serializeMongo(
-    await ClientesModel.findOneAndUpdate(filter, update, {
-      new: true,
-      upsert: true,
-      setDefaultsOnInsert: true,
-    }).lean()
-  );
+//   const result = serializeMongo(
+//     await ClientesModel.findOneAndUpdate(filter, update, {
+//       new: true,
+//       upsert: true,
+//       setDefaultsOnInsert: true,
+//     }).lean()
+//   );
 
-  return result as unknown as ICliente;
-};
+//   return result as unknown as ICliente;
+// };

@@ -18,7 +18,6 @@ const TipoPage: NextPage = () => {
 
   useEffect(() => {
     temClientePedido({
-      comEnderecoCompleto: true,
       verificarPixAguardando: true,
     });
   }, []);
@@ -50,7 +49,12 @@ const TipoPage: NextPage = () => {
     }
   }, [authCarregado]);
 
-  if (!authCarregado || !carregouCupom) return <Loading />;
+  useEffect(() => {
+    console.log("authCarregado", authCarregado);
+    console.log("carregouCupom", carregouCupom);
+  }, [authCarregado, carregouCupom]);
+
+  if (!authCarregado || !carregouCupom || !pedido) return <Loading />;
 
   return (
     <TipoPageProvider pedido={pedido} cupomEntrega={cupom}>

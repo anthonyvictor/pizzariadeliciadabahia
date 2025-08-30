@@ -45,7 +45,7 @@ export const PixView = ({
           router.push("/pedido/finalizado");
         }
       }
-    }, 1000 * 15);
+    }, 1000 * 60 * 1.5);
 
     return () => {
       clearInterval(interval);

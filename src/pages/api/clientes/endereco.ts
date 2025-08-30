@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ClientesModel, ff } from "tpdb-lib";
+import { ClientesModel, ff, ffid, IEnderecoCliente } from "tpdb-lib";
 import { conectarDB } from "src/infra/mongodb/config";
-import { IEndereco } from "tpdb-lib";
 import { EnderecosModel } from "tpdb-lib";
 import { obterEnderecoExtra } from "@util/enderecos";
 import { normalizarOrdinal } from "@util/format";
@@ -18,10 +17,10 @@ export default async function handler(
   try {
     const { clienteId, novoEndereco } = req.body;
 
-    if (!clienteId || !novoEndereco) {
-      return res
-        .status(400)
-        .json({ error: "clienteId e endereco são obrigatórios" });
+    if (!clienteId || !novoEndereco || !novoEndereco?.enderecoOriginal?.rua) {
+      return res.status(400).json({
+        error: "clienteId e endereço, com endereço original são obrigatórios",
+      });
     }
 
     await adicionarEnderecoAoCliente(clienteId, novoEndereco);
@@ -35,39 +34,56 @@ export default async function handler(
 
 export async function adicionarEnderecoAoCliente(
   clienteId: string,
-  novoEndereco: IEndereco
+  novoEndereco: IEnderecoCliente
 ) {
   await conectarDB();
 
   const enderecosEncontrados = await ff({
     m: EnderecosModel,
-    q: { rua: normalizarOrdinal(novoEndereco.rua) },
+    q: {
+      rua: normalizarOrdinal(novoEndereco.enderecoOriginal.rua),
+    },
   });
 
-  let enderecoExtra = enderecosEncontrados?.[0];
+  let enderecoOriginal = enderecosEncontrados?.[0];
 
-  if (!enderecoExtra) {
-    enderecoExtra = await obterEnderecoExtra(novoEndereco);
+  if (!enderecoOriginal) {
+    const enderecoExtra = await obterEnderecoExtra(
+      novoEndereco.enderecoOriginal
+    );
 
-    await EnderecosModel.create({ ...enderecoExtra, taxa: undefined });
+    const res = await EnderecosModel.create({
+      ...enderecoExtra,
+      taxa: undefined,
+    });
+
+    enderecoOriginal = await ffid({
+      m: EnderecosModel,
+      id: res._id.toString(),
+    });
 
     console.info(
-      `📦 Novo endereço salvo: ${enderecoExtra.cep} - ${enderecoExtra.rua} - ${enderecoExtra.bairro}`
+      `📦 Novo endereço salvo: ${enderecoOriginal.cep} - ${enderecoOriginal.rua} - ${enderecoOriginal.bairro}`
     );
   }
 
-  if (!enderecoExtra)
+  if (!enderecoOriginal)
     throw new HTTPError(
       "Dados extras do endereço não encontrados para salvar no cliente",
       404,
       novoEndereco
     );
 
-  const enderecoFinal = { ...novoEndereco, ...enderecoExtra };
-
-  const { cep, numero, local, referencia } = enderecoFinal;
+  const { numero, local, referencia } = novoEndereco;
 
   await ClientesModel.findByIdAndUpdate(clienteId, {
-    $push: { enderecos: { cep, numero, local, referencia } },
+    $push: {
+      enderecos: {
+        numero,
+        local,
+        referencia,
+        enderecoOriginal: enderecoOriginal.id,
+      },
+    },
   });
 }

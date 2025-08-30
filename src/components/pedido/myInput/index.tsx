@@ -1,9 +1,8 @@
-import { formatCEP, formatPhoneNumber } from "@util/format";
 import {
-  EventHandler,
-  FC,
+  FocusEvent,
   forwardRef,
   HTMLProps,
+  KeyboardEvent,
   useEffect,
   useState,
 } from "react";
@@ -41,6 +40,8 @@ type IMyInput = {
   autoFocus?: boolean;
   onFocus?: (e: Event) => void;
   onClick?: (e: Event) => void;
+  onKeyUp?: (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 };
 
 export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
@@ -64,6 +65,8 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
       setChecked,
       onClick,
       onFocus,
+      onBlur,
+      onKeyUp,
       tag,
       autoFocus = false,
     },
@@ -82,6 +85,8 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
       minLength: minLength ?? undefined,
       max: max ?? undefined,
       step: type === "number" ? 0.5 : undefined,
+      onBlur,
+      onKeyUp,
       onKeyDown: (e) => {
         if (
           [..."+-.".split("")].some(
@@ -169,11 +174,14 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
               placeholder="(71) 9xxxx-xxxx"
               defaultCountry="BR"
               limitMaxLength={true}
+              countryCallingCodeEditable={false}
+              international={false}
               countrySelectProps={{ tabIndex: -1 }}
               value={(value as string | undefined) || ""}
               onChange={(value) => {
                 setValue(value);
               }}
+              onBlur={onBlur}
             />
           ) : type === "currency" ? (
             <CurrencyInput
