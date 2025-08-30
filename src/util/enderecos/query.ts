@@ -114,6 +114,7 @@ export const query_cepaberto = async (
       throw new Error(`Requisição CepAberto falhou, \nurl:${res.config.url}`);
 
     const data = format_cepAberto(res.data);
+
     return data;
   } catch (err) {
     console.error(`Erro na pesquisa CepAberto`, err.message, err.stack);

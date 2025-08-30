@@ -8,6 +8,7 @@ import Loading from "@components/loading";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { env } from "@config/env";
+import { TipoPageProvider } from "src/views/pedido/tipo/context";
 
 const TipoPage: NextPage = () => {
   const [cupom, setCupom] = useState<ICupom>();
@@ -51,7 +52,11 @@ const TipoPage: NextPage = () => {
 
   if (!authCarregado || !carregouCupom) return <Loading />;
 
-  return <TipoView pedido={pedido} cupomEntrega={cupom} />;
+  return (
+    <TipoPageProvider pedido={pedido} cupomEntrega={cupom}>
+      <TipoView />
+    </TipoPageProvider>
+  );
 };
 
 export default TipoPage;

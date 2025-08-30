@@ -26,6 +26,7 @@ export const pos_photon = async (pos: [number, number], limit = 5) => {
 
 export const pos_cepaberto = async (pos: [number, number], limit = 5) => {
   try {
+    console.log(`⚠️⚠️⚠️  EXECUTOU`, pos);
     const res = await axios.get(`https://www.cepaberto.com/api/v3/nearest`, {
       params: {
         lat: pos[0],
@@ -33,6 +34,7 @@ export const pos_cepaberto = async (pos: [number, number], limit = 5) => {
       },
       headers: {
         Authorization: `Token token=${process.env.CEPABERTO_TOKEN}`,
+        "User-Agent": "site-pdb/1.0.0",
       },
     });
 

@@ -4,8 +4,9 @@ import styled from "styled-components";
 export const EnderecoStyle = styled.li`
   list-style: none;
   background-color: ${colors.backgroundDark}80;
+  border-radius: 5px;
   color: #fff;
-  padding: 10px;
+  padding: 15px 10px;
   display: grid;
   grid-template-columns: 1fr 80px;
   gap: 10px;
@@ -49,6 +50,7 @@ export const EnderecoStyle = styled.li`
   }
 
   &.checked {
-    background-color: ${colors.backgroundDark}95;
+    background-color: ${colors.backgroundDark};
+    border: 2px solid #000;
   }
 `;

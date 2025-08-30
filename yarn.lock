@@ -5101,9 +5101,9 @@ to-regex-range@^5.0.1:
     is-number "^7.0.0"
 
 tpdb-lib@^1.0.0:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/tpdb-lib/-/tpdb-lib-1.0.3.tgz#85b25f32c69a5e5ba8c42aad56dd124847be5c88"
-  integrity sha512-59gANsefeRPVpMUv54rug075lb71ugRRpFGVAzghoaRPnlJsFTzYCxm7TPYCoCtnFLq7LGdOopcL+TsB+IJ55w==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/tpdb-lib/-/tpdb-lib-1.0.4.tgz#accfc59f67d464dbe3a022f4bab7b8b38a93031a"
+  integrity sha512-9zOY/CcDmm/GrqhbR7RUWThjDKj96l89md4w0aCFzwa4CDHXKoNMk5IYNzPsfNLQ5O4+ZcxEDlpMY0wUSybI9A==
 
 tr46@^1.0.1:
   version "1.0.1"

@@ -45,11 +45,19 @@ export const InputAndList = () => {
 
               return (
                 <li
+                  // onMouseEnter={(ev) => {
+                  //   ev.preventDefault();
+                  //   if (env.environment === "development") {
+                  //     navigator?.clipboard?.writeText?.(
+                  //       JSON.stringify(sug, null, 2)
+                  //     );
+                  //   }
+                  // }}
                   className={`sugestao`}
                   key={idx}
                   onClick={() => {
                     sessionStorage.setItem("endereco", JSON.stringify(sug));
-                    router.push("/cliente/novo-endereco/complemento");
+                    router.push("/cliente/novo-endereco/regras");
                   }}
                 >
                   <h4>{sug.rua}</h4>
@@ -63,6 +71,13 @@ export const InputAndList = () => {
                       .filter(Boolean)
                       .join(" - ")}
                   </small>
+                  {env.environment === "development" && (
+                    <p style={{ fontSize: "0.7rem" }}>
+                      <span>
+                        lat: {sug.lat}, lon: {sug.lon}
+                      </span>
+                    </p>
+                  )}
                 </li>
               );
             })}

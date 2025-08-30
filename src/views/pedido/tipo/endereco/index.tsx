@@ -8,18 +8,11 @@ import { useState } from "react";
 import { colors } from "@styles/colors";
 import { EnderecoStyle } from "./styles";
 import { cupomAplicavel } from "@util/enderecos/cupomAplicave";
+import { useTipoPage } from "../context";
 
-export const Endereco = ({
-  e,
-  cupomEntrega,
-  tipo,
-  setTipo,
-}: {
-  e: IEndereco;
-  cupomEntrega: ICupom | null;
-  tipo: Tipo;
-  setTipo: SetState<Tipo>;
-}) => {
+export const Endereco = ({ e }: { e: IEndereco }) => {
+  const { cupomEntrega, tipo, setTipo } = useTipoPage();
+
   const [descontoReal] = useState<number>(
     cupomAplicavel(cupomEntrega, e)
       ? obterValorDescontoReal(
@@ -31,9 +24,12 @@ export const Endereco = ({
       : 0
   );
 
-  const taxaComDesconto = descontoReal
-    ? (e.taxa ?? 0) - descontoReal
-    : e.taxa ?? 0;
+  const metodoBasico =
+    !tipo?.type ||
+    (tipo?.type === "entrega" && tipo.endereco.metodo === "basico");
+
+  const taxaComDesconto =
+    descontoReal && metodoBasico ? (e.taxa ?? 0) - descontoReal : e.taxa ?? 0;
 
   return (
     <EnderecoStyle
@@ -58,17 +54,34 @@ export const Endereco = ({
       </aside>
       <aside className="item-right">
         <h6 className="item-price">
-          {e.taxa ? (
+          {tipo?.type === "entrega" && tipo.endereco?.id === e.id ? (
+            <span
+              className="price"
+              style={{
+                color: colors.elements,
+              }}
+            >
+              {formatCurrency(tipo.endereco.taxa)}
+            </span>
+          ) : e.taxa ? (
             <>
-              <span
-                className="price"
-                style={{
-                  color: descontoReal ? colors.checkedLight : undefined,
-                }}
-              >
-                {taxaComDesconto ? formatCurrency(taxaComDesconto) : "GRÁTIS!"}
-              </span>
-              {!!descontoReal && (
+              {
+                <span
+                  className="price"
+                  style={{
+                    color:
+                      descontoReal && metodoBasico
+                        ? colors.checkedLight
+                        : undefined,
+                  }}
+                >
+                  {taxaComDesconto
+                    ? formatCurrency(taxaComDesconto)
+                    : "GRÁTIS!"}
+                </span>
+              }
+
+              {!!descontoReal && !!metodoBasico && (
                 <span
                   className="original-price"
                   style={{ textDecoration: "line-through" }}

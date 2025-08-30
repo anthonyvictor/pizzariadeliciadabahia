@@ -66,6 +66,11 @@ export const RuaPageProvider = ({
     (item, index, self) => index === self.findIndex((e) => e.rua === item.rua)
   );
 
+  useEffect(() => {
+    console.log({ t: "todos", _enderecos });
+    console.log({ t: "filtrados", enderecos });
+  }, [_enderecos]);
+
   //   if (loading) return <Loading />;
   return (
     <RuaPageContext.Provider

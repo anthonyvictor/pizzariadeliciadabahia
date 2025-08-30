@@ -115,7 +115,7 @@ export const ComplementoView = ({ cupom }: { cupom: ICupom | null }) => {
           disabled: !endereco.referencia,
           click: () => {
             sessionStorage.setItem("endereco", JSON.stringify(endereco));
-            router.push("/cliente/novo-endereco/regras");
+            router.push("/cliente/novo-endereco/confirmacao");
           },
         }}
       />

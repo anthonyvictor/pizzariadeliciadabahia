@@ -120,104 +120,104 @@ export const viaCep = async (
   }
 };
 
-export async function obterEnderecoComDistancia(
-  _cep: string,
-  origemLat: number,
-  origemLon: number,
-  modo:
-    | "cycling-regular"
-    | "cycling-electric"
-    | "driving-motorcycle"
-    | "driving-car"
-    | "driving-hgv"
-    | "foot-walking" = "driving-car",
-  // = "cycling-regular",
-  _rua?: string,
-  _bairro?: string
-): Promise<IEndereco> {
-  // 1. Buscar endereço no BrasilAPI
+// export async function obterEnderecoComDistancia(
+//   _cep: string,
+//   origemLat: number,
+//   origemLon: number,
+//   modo:
+//     | "cycling-regular"
+//     | "cycling-electric"
+//     | "driving-motorcycle"
+//     | "driving-car"
+//     | "driving-hgv"
+//     | "foot-walking" = "driving-car",
+//   // = "cycling-regular",
+//   _rua?: string,
+//   _bairro?: string
+// ): Promise<IEndereco> {
+//   // 1. Buscar endereço no BrasilAPI
 
-  let rua: string;
-  let bairro: string;
-  let cidade: string;
-  let estado: string;
-  let cep: string;
-  try {
-    let res;
-    // res = await brasilApi(cep, 2);
-    // if (!res) res = await brasilApi(cep, 1);
-    if (!res) res = await viaCep(_cep.replace(/\D/g, ""), _rua, _bairro);
+//   let rua: string;
+//   let bairro: string;
+//   let cidade: string;
+//   let estado: string;
+//   let cep: string;
+//   try {
+//     let res;
+//     // res = await brasilApi(cep, 2);
+//     // if (!res) res = await brasilApi(cep, 1);
+//     if (!res) res = await viaCep(_cep.replace(/\D/g, ""), _rua, _bairro);
 
-    cep = res.cep;
-    rua = res.rua;
-    bairro = res.bairro;
-    cidade = res.cidade;
-    estado = res.estado;
+//     cep = res.cep;
+//     rua = res.rua;
+//     bairro = res.bairro;
+//     cidade = res.cidade;
+//     estado = res.estado;
 
-    if (!res) throw new Error("APIs de CEP falharam!");
-  } catch (err) {
-    console.error(err.message, err.stack);
-    throw new Error("CEP inválido");
-  }
+//     if (!res) throw new Error("APIs de CEP falharam!");
+//   } catch (err) {
+//     console.error(err.message, err.stack);
+//     throw new Error("CEP inválido");
+//   }
 
-  // 2. Buscar coordenadas no Nominatim
-  const fullAddress = `${rua}, ${bairro}, ${cidade} - ${estado}`;
+//   // 2. Buscar coordenadas no Nominatim
+//   const fullAddress = `${rua}, ${bairro}, ${cidade} - ${estado}`;
 
-  const locationResp = await axios.get(
-    "https://nominatim.openstreetmap.org/search",
-    {
-      params: {
-        q: fullAddress,
-        format: "json",
-        limit: 1,
-      },
-      headers: {
-        "User-Agent": "cep-coordenadas-app/1.0",
-      },
-    }
-  );
+//   const locationResp = await axios.get(
+//     "https://nominatim.openstreetmap.org/search",
+//     {
+//       params: {
+//         q: fullAddress,
+//         format: "json",
+//         limit: 1,
+//       },
+//       headers: {
+//         "User-Agent": "cep-coordenadas-app/1.0",
+//       },
+//     }
+//   );
 
-  if (!locationResp.data?.length) {
-    throw new Error("Coordenadas não encontradas para o endereço.");
-  }
+//   if (!locationResp.data?.length) {
+//     throw new Error("Coordenadas não encontradas para o endereço.");
+//   }
 
-  const destinoLat = parseFloat(locationResp.data[0].lat);
-  const destinoLon = parseFloat(locationResp.data[0].lon);
+//   const destinoLat = parseFloat(locationResp.data[0].lat);
+//   const destinoLon = parseFloat(locationResp.data[0].lon);
 
-  // 3. Calcular rota com OpenRouteService
-  const ORS_API_KEY = process.env.ORS_API_KEY!;
-  const rotaResp = await axios.post(
-    `https://api.openrouteservice.org/v2/directions/${modo}`,
-    {
-      coordinates: [
-        [origemLon, origemLat],
-        [destinoLon, destinoLat],
-      ],
-    },
-    {
-      headers: {
-        Authorization: ORS_API_KEY,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  logJson(rotaResp.data);
-  const rota = rotaResp.data.routes[0];
-  const distancia = rota.summary.distance;
-  const duracao = rota.summary.duration;
-  const obj = {
-    cep,
-    rua,
-    bairro,
-    cidade,
-    estado,
-    lat: destinoLat,
-    lon: destinoLon,
-    distancia_metros: distancia,
-    duracao_segundos: duracao,
-  };
-  return obj as IEndereco;
-}
+//   // 3. Calcular rota com OpenRouteService
+//   const ORS_API_KEY = process.env.ORS_API_KEY!;
+//   const rotaResp = await axios.post(
+//     `https://api.openrouteservice.org/v2/directions/${modo}`,
+//     {
+//       coordinates: [
+//         [origemLon, origemLat],
+//         [destinoLon, destinoLat],
+//       ],
+//     },
+//     {
+//       headers: {
+//         Authorization: ORS_API_KEY,
+//         "Content-Type": "application/json",
+//       },
+//     }
+//   );
+//   logJson(rotaResp.data);
+//   const rota = rotaResp.data.routes[0];
+//   const distancia = rota.summary.distance;
+//   const duracao = rota.summary.duration;
+//   const obj = {
+//     cep,
+//     rua,
+//     bairro,
+//     cidade,
+//     estado,
+//     lat: destinoLat,
+//     lon: destinoLon,
+//     distancia_metros: distancia,
+//     duracao_segundos: duracao,
+//   };
+//   return obj as IEndereco;
+// }
 
 type ModoORS =
   | "cycling-regular"
@@ -230,7 +230,7 @@ type ModoORS =
 export async function obterDistancia(
   lat: number | string,
   lon: number | string,
-  modo: ModoORS = "driving-car"
+  modo: ModoORS = "foot-walking"
 ) {
   const ORS_API_KEY = process.env.ORS_API_KEY!;
   const rotaResp = await axios.post(

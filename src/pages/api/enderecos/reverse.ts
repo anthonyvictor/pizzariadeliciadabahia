@@ -3,7 +3,11 @@ import { IEndereco } from "tpdb-lib";
 import NodeCache from "node-cache";
 import { HTTPError } from "@models/error";
 
-import { pos_nominatim, pos_photon } from "@util/enderecos/reverse";
+import {
+  pos_cepaberto,
+  pos_nominatim,
+  pos_photon,
+} from "@util/enderecos/reverse";
 
 const memoryCache = new NodeCache({ stdTTL: 3600 }); // 1h
 
@@ -28,10 +32,12 @@ export default async function handler(
 
 export async function reverseEnderecos(lat: number, lon: number) {
   const [osm, photon] = await Promise.all([
+    pos_cepaberto([lat, lon]),
     pos_nominatim([lat, lon]),
     pos_photon([lat, lon]),
   ]);
   const enderecos: IEndereco[] = [...osm, ...photon];
+  console.log(enderecos);
 
   return enderecos;
 }

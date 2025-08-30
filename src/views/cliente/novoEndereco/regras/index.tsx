@@ -171,7 +171,7 @@ export const RegrasView = () => {
         primaryButton={{
           text: "Confirmar",
           click: () => {
-            router.push("/cliente/novo-endereco/confirmacao");
+            router.push("/cliente/novo-endereco/complemento");
           },
         }}
       />

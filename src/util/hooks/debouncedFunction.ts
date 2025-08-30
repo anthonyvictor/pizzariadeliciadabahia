@@ -53,6 +53,15 @@ export function useEnderecoAutocomplete({
   const fetchEnderecosPosicao = async (pos: [number, number]) => {
     setCarregEnderecos(true);
 
+    const sugestoesSalvas = JSON.parse(
+      sessionStorage.getItem("sugestoes-posicao") ?? "{}"
+    ) as { key: string; sugestoes: IEndereco[] };
+
+    if (sugestoesSalvas?.key === pos.toString()) {
+      setCarregEnderecos(false);
+      return sugestoesSalvas.sugestoes;
+    }
+
     const res = await axios.get(`${env.apiURL}/enderecos/reverse`, {
       params: { lat: pos[0], lon: pos[1] },
     });
@@ -61,6 +70,11 @@ export function useEnderecoAutocomplete({
       console.error("Erro na pesquisa de endereços pela api");
 
     const enderecos = res.data as IEndereco[];
+
+    sessionStorage.setItem(
+      "sugestoes-posicao",
+      JSON.stringify({ key: pos.toString(), sugestoes: enderecos })
+    );
     setCarregEnderecos(false);
 
     return enderecos;

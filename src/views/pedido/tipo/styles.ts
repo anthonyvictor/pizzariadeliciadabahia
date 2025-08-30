@@ -5,7 +5,17 @@ export const TipoViewStyle = styled.main`
   display: flex;
   flex-direction: column;
   padding: 10px 20px 50px 20px;
+  /* margin-bottom: 50px; */
   gap: 15px;
+
+  menu {
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
 
   .metodos {
     display: flex;
@@ -15,13 +25,12 @@ export const TipoViewStyle = styled.main`
   }
 
   .tipos {
-    flex: 1;
-    min-height: 0;
+    /* flex: 1; */
+    height: max-content;
     display: flex;
     flex-direction: column;
     list-style: none;
-    overflow-y: auto;
-    gap: 5px;
+    gap: 10px;
   }
 
   .sem-enderecos {

@@ -3,15 +3,9 @@ import { ClientesModel, ff } from "tpdb-lib";
 import { conectarDB } from "src/infra/mongodb/config";
 import { IEndereco } from "tpdb-lib";
 import { EnderecosModel } from "tpdb-lib";
-import {
-  obterDistancia,
-  obterEnderecoComDistancia,
-  obterEnderecoExtra,
-} from "@util/enderecos";
-import { enderecoPizzaria } from "@util/dados";
+import { obterEnderecoExtra } from "@util/enderecos";
 import { normalizarOrdinal } from "@util/format";
 import { HTTPError } from "@models/error";
-import { obterCliente } from ".";
 
 export default async function handler(
   req: NextApiRequest,
@@ -55,7 +49,7 @@ export async function adicionarEnderecoAoCliente(
   if (!enderecoExtra) {
     enderecoExtra = await obterEnderecoExtra(novoEndereco);
 
-    await EnderecosModel.create(enderecoExtra);
+    await EnderecosModel.create({ ...enderecoExtra, taxa: undefined });
 
     console.info(
       `📦 Novo endereço salvo: ${enderecoExtra.cep} - ${enderecoExtra.rua} - ${enderecoExtra.bairro}`
