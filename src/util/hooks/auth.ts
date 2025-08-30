@@ -56,20 +56,15 @@ export const useAuth = () => {
 
     let _pedido = await obterPedido();
 
-    if (
-      !!_pedido &&
-      !!_pedido?.enviadoEm &&
-      router.pathname !== pages.finalizado
-    ) {
+    if (!_pedido || _pedido.cliente?.id !== _cliente.id) {
       _pedido = await novoPedido();
       return router.push(pages.pedido);
     }
 
-    if (!_pedido || _pedido.cliente?.id !== _cliente.id) {
+    if (!!_pedido?.enviadoEm && router.pathname !== pages.finalizado) {
       _pedido = await novoPedido();
-      router.push(pages.pedido);
+      return router.push(pages.pedido);
     }
-
     setPedido(_pedido);
 
     if (

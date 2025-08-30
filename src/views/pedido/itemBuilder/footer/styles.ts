@@ -2,7 +2,7 @@ import { colors } from "@styles/colors";
 import styled from "styled-components";
 
 export const ItemBuilderFooterStyle = styled.footer`
-  padding: 20px 10px;
+  padding: 10px;
   display: flex;
   gap: 10px;
   border-top: 2px solid ${colors.backgroundDark};
