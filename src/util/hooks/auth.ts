@@ -56,7 +56,11 @@ export const useAuth = () => {
 
     let _pedido = await obterPedido();
 
-    if (!!_pedido?.enviadoEm && router.pathname !== pages.finalizado) {
+    if (
+      !!_pedido &&
+      !!_pedido?.enviadoEm &&
+      router.pathname !== pages.finalizado
+    ) {
       _pedido = await novoPedido();
       return router.push(pages.pedido);
     }

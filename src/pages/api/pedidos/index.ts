@@ -57,32 +57,36 @@ export const obterPedidos = async ({
     populates: populates.pedidos,
   });
 
+  console.log(pedidos);
+
   const distancias = await obterDistancias();
 
   const r = pedidos.map((pedido) => {
     return {
       ...pedido,
-      cliente: {
-        ...pedido.cliente,
-        enderecos: (pedido?.cliente?.enderecos ?? []).map((endereco) => {
-          const taxa = encontrarTaxa(
-            endereco.enderecoOriginal.distancia_metros,
-            distancias
-          );
+      cliente: !pedido?.cliente
+        ? undefined
+        : {
+            ...pedido.cliente,
+            enderecos: (pedido?.cliente?.enderecos ?? []).map((endereco) => {
+              const taxa = encontrarTaxa(
+                endereco.enderecoOriginal.distancia_metros,
+                distancias
+              );
 
-          console.log("taxaaaaaaaaaaaaaaaaaaaaa", taxa);
-          return {
-            ...endereco,
-            enderecoOriginal: {
-              ...endereco.enderecoOriginal,
-              taxa:
-                endereco.enderecoOriginal.taxa != null
-                  ? endereco.enderecoOriginal.taxa
-                  : taxa,
-            },
-          };
-        }),
-      },
+              console.log("taxaaaaaaaaaaaaaaaaaaaaa", taxa);
+              return {
+                ...endereco,
+                enderecoOriginal: {
+                  ...endereco.enderecoOriginal,
+                  taxa:
+                    endereco.enderecoOriginal.taxa != null
+                      ? endereco.enderecoOriginal.taxa
+                      : taxa,
+                },
+              };
+            }),
+          },
       endereco:
         pedido.tipo === "retirada"
           ? undefined
@@ -118,29 +122,31 @@ export const obterPedido = async (id: string) => {
   });
 
   const distancias = await obterDistancias();
-
+  if (!pedido) return null;
   const r = {
     ...pedido,
-    cliente: {
-      ...pedido.cliente,
-      enderecos: (pedido?.cliente?.enderecos ?? []).map((endereco) => {
-        const taxa = encontrarTaxa(
-          endereco.enderecoOriginal.distancia_metros,
-          distancias
-        );
+    cliente: !pedido?.cliente
+      ? undefined
+      : {
+          ...pedido.cliente,
+          enderecos: (pedido?.cliente?.enderecos ?? []).map((endereco) => {
+            const taxa = encontrarTaxa(
+              endereco.enderecoOriginal.distancia_metros,
+              distancias
+            );
 
-        return {
-          ...endereco,
-          enderecoOriginal: {
-            ...endereco.enderecoOriginal,
-            taxa:
-              endereco.enderecoOriginal.taxa != null
-                ? endereco.enderecoOriginal.taxa
-                : taxa,
-          },
-        };
-      }),
-    },
+            return {
+              ...endereco,
+              enderecoOriginal: {
+                ...endereco.enderecoOriginal,
+                taxa:
+                  endereco.enderecoOriginal.taxa != null
+                    ? endereco.enderecoOriginal.taxa
+                    : taxa,
+              },
+            };
+          }),
+        },
     endereco:
       pedido.tipo === "retirada"
         ? undefined

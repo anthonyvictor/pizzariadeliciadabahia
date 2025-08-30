@@ -52,7 +52,7 @@ export const obterCliente = async (id: string | ICliente | undefined) => {
   });
 
   const distancias = await obterDistancias();
-
+  if (!cliente) return null;
   return {
     ...cliente,
     enderecos: (cliente?.enderecos ?? []).map((endereco) => {
