@@ -14,7 +14,7 @@ const pages = {
 export const useAuth = () => {
   const router = useRouter();
 
-  const [fechado, setFechado] = useState(true);
+  const [fechado, setFechado] = useState(false);
   const [authCarregado, setAuthCarregado] = useState(false);
   const [cliente, setCliente] = useState<ICliente>();
   const [pedido, setPedido] = useState<IPedido>();

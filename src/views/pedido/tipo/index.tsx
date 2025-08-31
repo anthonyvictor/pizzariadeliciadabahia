@@ -128,7 +128,7 @@ export const TipoView = () => {
               nome="Com trecho a pé"
               descricao="Quero que  entregador desembarque do veículo e se desloque à pé até o local da entrega"
               Icone={GiStairsGoal}
-              taxa={(tipo.endereco?.enderecoOriginal?.taxa ?? 0) * 3}
+              taxa={(tipo.endereco?.enderecoOriginal?.taxa ?? 0) * 2}
               desconto={0}
             />
           </div>

@@ -66,7 +66,10 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
                 color: colors.elements,
               }}
             >
-              {formatCurrency(tipo.endereco.enderecoOriginal.taxa)}
+              {formatCurrency(
+                tipo.endereco.enderecoOriginal.taxa -
+                  (tipo.endereco.desconto ?? 0)
+              )}
             </span>
           ) : e.enderecoOriginal.taxa ? (
             <>

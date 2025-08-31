@@ -28,7 +28,7 @@ export const Metodo = ({
           endereco: {
             ...prev["endereco"],
             metodo,
-            taxa: taxa - desconto,
+            taxa: taxa,
             desconto: metodo === "basico" ? desconto : 0,
           },
         }));
