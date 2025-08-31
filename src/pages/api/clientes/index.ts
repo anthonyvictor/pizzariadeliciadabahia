@@ -61,14 +61,6 @@ export const obterCliente = async (id: string | ICliente | undefined) => {
         distancias
       );
 
-      console.log(
-        "taxaaaaaaa",
-        taxa,
-        endereco.enderecoOriginal.taxa != null
-          ? endereco.enderecoOriginal.taxa
-          : taxa
-      );
-
       return {
         ...endereco,
         enderecoOriginal: {

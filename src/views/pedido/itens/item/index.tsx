@@ -13,15 +13,18 @@ import { abreviarLanche } from "@util/lanches";
 
 export const Item = ({
   item,
+  numero,
   pedido,
   excluirItem,
 }: {
   item: IItemPedido;
   pedido: IPedido;
+  numero: number;
   excluirItem?: (itemsIds: string[]) => void;
 }) => {
   return (
     <ItemStyle key={item.id} className="item">
+      <h6>{numero}º</h6>
       <aside className="imagem">
         <Image
           src={

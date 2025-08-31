@@ -62,7 +62,6 @@ export const InputAndList = () => {
                       enderecoOriginal: sug,
                     } as IEnderecoCliente;
 
-                    console.log("⚠️⚠️⚠️ vai salvar no session", endereco);
                     sessionStorage.setItem(
                       "endereco",
                       JSON.stringify(endereco)

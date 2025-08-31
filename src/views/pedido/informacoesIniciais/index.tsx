@@ -87,7 +87,6 @@ export const InformacoesIniciaisView = () => {
     .refine(
       (val) => {
         const ehValido = isValidPhoneNumber(val);
-        console.log("eh valido no click", ehValido, val);
         return ehValido;
       },
       {

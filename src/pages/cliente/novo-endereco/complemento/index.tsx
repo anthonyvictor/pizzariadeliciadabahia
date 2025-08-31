@@ -26,7 +26,6 @@ const ComplementoPage: NextPage = () => {
       sessionStorage.getItem("endereco") ?? "{}"
     ) as IEnderecoCliente;
 
-    console.log("_endereco", _endereco);
     setEndereco(_endereco);
     if (!_endereco?.enderecoOriginal?.cep) {
       router.back();
@@ -88,15 +87,6 @@ const ComplementoPage: NextPage = () => {
   //       });
   //   }
   // }, [authCarregado]);
-
-  useEffect(() => {
-    console.log(
-      "authCarregado, carregandoEndereco, endereco",
-      authCarregado,
-      carregandoEndereco,
-      endereco
-    );
-  }, [authCarregado, carregandoEndereco, endereco]);
 
   if (!authCarregado || carregandoEndereco || !endereco) return <Loading />;
 

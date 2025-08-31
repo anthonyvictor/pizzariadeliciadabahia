@@ -6,9 +6,9 @@ import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
 import { populates } from "tpdb-lib";
 import mongoose, { Types } from "mongoose";
-import { obterCliente, obterClientes } from "@routes/clientes";
 import { obterDistancias } from "@routes/distancias";
 import { encontrarTaxa } from "@util/distancias";
+import { toArray } from "@util/array";
 
 // Função handler da rota
 export default async function handler(
@@ -17,11 +17,13 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     let data;
-    const { id, ids } = req.query;
+    const { id, ids, clientesIds, status } = req.query;
     if (id) {
       data = await obterPedido(id as string);
     } else {
       data = await obterPedidos({
+        clientesIds,
+        status: status as any,
         ids: ids as any,
       });
     }
@@ -40,24 +42,31 @@ export default async function handler(
 }
 
 export const obterPedidos = async ({
-  ids,
+  ids: _ids,
+  status,
+  clientesIds: _clientesIds,
 }: {
-  ids?: string[];
-  clientesIds?: string[];
+  ids?: string | string[];
+  status?: "emAndamento" | "enviado";
+  clientesIds?: string | string[];
 }) => {
   await conectarDB();
+  const ids = toArray(_ids);
+  const clientesIds = toArray(_clientesIds);
 
   const q: any = {};
   if (ids && ids.length)
     q._id = { $in: ids.map((x) => new mongoose.Types.ObjectId(x)) };
+  if (clientesIds && clientesIds.length)
+    q.cliente = { $in: clientesIds.map((x) => new mongoose.Types.ObjectId(x)) };
+  if (status === "emAndamento") q.enviadoEm = null;
+  if (status === "enviado") q.enviadoEm = { $exists: true, $ne: null };
 
   let pedidos = await ff({
     m: PedidosModel,
     q,
     populates: populates.pedidos,
   });
-
-  console.log(pedidos);
 
   const distancias = await obterDistancias();
 
@@ -74,7 +83,6 @@ export const obterPedidos = async ({
                 distancias
               );
 
-              console.log("taxaaaaaaaaaaaaaaaaaaaaa", taxa);
               return {
                 ...endereco,
                 enderecoOriginal: {
@@ -165,7 +173,6 @@ export const obterPedido = async (id: string) => {
           },
   };
 
-  console.log(r);
   return r;
 };
 

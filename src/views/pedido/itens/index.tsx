@@ -13,6 +13,7 @@ import Image from "next/image";
 import TextContainer from "@components/textContainer";
 import { toast } from "react-toastify";
 import { Item } from "./item";
+import { agrupar } from "@util/array";
 
 export const ItensView = ({ pedido }: { pedido: IPedido }) => {
   const router = useRouter();
@@ -28,6 +29,15 @@ export const ItensView = ({ pedido }: { pedido: IPedido }) => {
     if (!itens.length) router.push("/pedido");
   }, [itens]);
 
+  // const pizzasAgrupadas = agrupar(
+  //   itens.filter((x) => x.tipo === "pizza"),
+  //   ["tamanho.id", "grupoId"]
+  // );
+  // const bebidasAgrupadas = agrupar(
+  //   itens.filter((x) => x.tipo === "bebida"),
+  //   ["bebidaOriginal.id", "grupoId"]
+  // );
+
   return (
     <ItensStyle>
       <TextContainer
@@ -36,10 +46,11 @@ export const ItensView = ({ pedido }: { pedido: IPedido }) => {
       />
 
       <ul className="itens no-scroll">
-        {itens.map((item) => {
+        {itens.map((item, i) => {
           return (
             <Item
               key={item.id}
+              numero={i + 1}
               item={item}
               pedido={pedido}
               excluirItem={(itemsIds) => {

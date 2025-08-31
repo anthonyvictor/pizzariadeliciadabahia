@@ -8,7 +8,7 @@ const nextConfig = withPWA({
   images: {
     domains: ["i.ibb.co"],
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
   compiler: {
     styledComponents: true,
   },

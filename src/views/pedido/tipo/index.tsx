@@ -21,13 +21,6 @@ export const TipoView = () => {
   const router = useRouter();
   const { tipo, setTipo, pedido } = useTipoPage();
 
-  useEffect(() => {
-    console.log(tipo);
-  }, [tipo]);
-
-  useEffect(() => {
-    console.log(pedido.cliente);
-  }, []);
   return (
     <TipoViewStyle>
       <menu className="no-scroll">
@@ -71,10 +64,9 @@ export const TipoView = () => {
         </EnderecoStyle>
 
         <ul className="tipos">
-          {(pedido?.cliente?.enderecos ?? []).map((e) => {
-            console.log(">>>>", e);
-            return <Endereco key={e.id} e={e} />;
-          })}
+          {(pedido?.cliente?.enderecos ?? []).map((e) => (
+            <Endereco key={e.id} e={e} />
+          ))}
         </ul>
       </menu>
 

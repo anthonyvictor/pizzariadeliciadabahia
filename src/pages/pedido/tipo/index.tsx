@@ -49,11 +49,6 @@ const TipoPage: NextPage = () => {
     }
   }, [authCarregado]);
 
-  useEffect(() => {
-    console.log("authCarregado", authCarregado);
-    console.log("carregouCupom", carregouCupom);
-  }, [authCarregado, carregouCupom]);
-
   if (!authCarregado || !carregouCupom || !pedido) return <Loading />;
 
   return (
