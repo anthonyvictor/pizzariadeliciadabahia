@@ -1,12 +1,20 @@
+import { removeAccents } from "@util/format";
 import { ICupom, IEndereco } from "tpdb-lib";
 
-export const cupomAplicavel = (cupom: ICupom | null, endereco: IEndereco) => {
+export const cupomAplicavelAoEndereco = (
+  cupom: ICupom | null,
+  endereco: IEndereco
+) => {
   if (!cupom || !endereco) return false;
 
   for (let cond of cupom?.condicoes ?? []) {
     if (
       cond.tipo === "bairros" &&
-      !cond.valor.some((x) => x.toLowerCase() === endereco.bairro.toLowerCase())
+      !cond.valor.some(
+        (x) =>
+          removeAccents(x.toLowerCase()) ===
+          removeAccents(endereco.bairro.toLowerCase())
+      )
     )
       return false;
     if (

@@ -1,4 +1,4 @@
-import { cupomAplicavel } from "@util/enderecos/cupomAplicavel";
+import { cupomAplicavelAoEndereco } from "@util/enderecos/cupomAplicavel";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -15,7 +15,7 @@ export default async function handler(
     if (!endereco?.cep || !endereco?.rua || !endereco?.bairro)
       return res.status(400).end();
 
-    const cliente = await cupomAplicavel(cupom, endereco);
+    const cliente = await cupomAplicavelAoEndereco(cupom, endereco);
 
     return res.status(200).json(cliente);
   } catch (error) {

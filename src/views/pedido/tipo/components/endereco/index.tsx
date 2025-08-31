@@ -4,14 +4,14 @@ import { obterValorDescontoReal } from "@util/cupons";
 import { useState } from "react";
 import { colors } from "@styles/colors";
 import { EnderecoStyle } from "./styles";
-import { cupomAplicavel } from "@util/enderecos/cupomAplicavel";
+import { cupomAplicavelAoEndereco } from "@util/enderecos/cupomAplicavel";
 import { useTipoPage } from "../../context";
 
 export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   const { cupomEntrega, tipo, setTipo } = useTipoPage();
 
   const [descontoReal] = useState<number>(
-    cupomAplicavel(cupomEntrega, e.enderecoOriginal)
+    cupomAplicavelAoEndereco(cupomEntrega, e.enderecoOriginal)
       ? obterValorDescontoReal(
           e.enderecoOriginal.taxa ?? 0,
           cupomEntrega.valor,
