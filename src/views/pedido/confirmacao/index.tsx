@@ -52,8 +52,10 @@ export const ConfirmacaoView = ({ pedido }: { pedido: IPedido }) => {
         />
 
         <ul className="itens no-scroll">
-          {pedido.itens.map((item) => {
-            return <Item key={item.id} item={item} pedido={pedido} />;
+          {pedido.itens.map((item, i) => {
+            return (
+              <Item numero={i + 1} key={item.id} item={item} pedido={pedido} />
+            );
           })}
         </ul>
 

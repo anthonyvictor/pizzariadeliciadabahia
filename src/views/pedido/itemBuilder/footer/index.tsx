@@ -108,7 +108,15 @@ export const ItemBuilderFooter = () => {
         value={qtd}
         setValue={setQtd}
         min={1}
-        max={20}
+        max={
+          (builder.tipo === "bebida"
+            ? builder.bebida.estoque
+            : builder.tipo === "lanche"
+            ? builder.lanche.estoque
+            : builder.tipo === "combo"
+            ? 1
+            : 1) ?? 5
+        }
         forceMin={true}
       />
       <button
