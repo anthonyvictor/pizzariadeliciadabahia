@@ -15,15 +15,15 @@ import { usePagamentoStore } from "src/infra/zustand/pagamentos";
 import axios from "axios";
 import { env } from "@config/env";
 import { toast } from "react-toastify";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
 export const PagamentoView = ({
-  pedido,
   cupomPagamento,
 }: {
-  pedido: IPedido;
   cupomPagamento: ICupom;
 }) => {
   const { pagamentos } = usePagamentoStore();
+  const { pedido } = usePedidoStore();
   const { valorTotalComDescontos, valorItensComDesconto } =
     obterValoresDoPedido(pedido);
   const valorDefinido = pagamentos
@@ -91,7 +91,6 @@ export const PagamentoView = ({
               valorItens={valorItensComDesconto}
               key={x}
               metodo={metodos[x as IPagamentoTipo]}
-              pedido={pedido}
               cupomPagamento={cupomPagamento}
             />
           ))}

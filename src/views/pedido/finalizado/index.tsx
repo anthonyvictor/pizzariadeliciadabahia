@@ -1,16 +1,16 @@
 import TextContainer from "@components/textContainer";
 import { ConfirmacaoViewStyle } from "./styles";
 import BottomControls from "@components/pedido/bottomControls";
-import { IPedido } from "tpdb-lib";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { env } from "@config/env";
 import { axiosOk } from "@util/axios";
 import { toast } from "react-toastify";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
-export const FinalizadoView = ({ pedido }: { pedido: IPedido }) => {
+export const FinalizadoView = () => {
   const router = useRouter();
-
+  const { pedido } = usePedidoStore();
   return (
     <ConfirmacaoViewStyle>
       <main className="menu">

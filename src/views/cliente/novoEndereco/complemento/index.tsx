@@ -1,11 +1,10 @@
 import TextContainer from "@components/textContainer";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ComplementoViewStyle } from "./styles";
 import BottomControls from "@components/pedido/bottomControls";
 import { MyInput } from "@components/pedido/myInput";
 import { IEnderecoCliente } from "tpdb-lib";
-import Loading from "@components/loading";
 
 export const ComplementoView = ({
   endereco: _endereco,

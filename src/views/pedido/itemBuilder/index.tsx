@@ -7,9 +7,12 @@ import { ItemBuilderObservacoes } from "./observacoes";
 import { ItemBuilderFooter } from "./footer";
 import { BebidaBuilder } from "./builders/bebida";
 import { LancheBuilder } from "./builders/lanche";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 export const ItemBuilderView = () => {
   const { builder } = useItemBuilder();
+  const router = useRouter();
 
   //   const { pedido } = usePedido();
   //   const router = useRouter();
@@ -46,6 +49,15 @@ export const ItemBuilderView = () => {
   //         <ButtonSecondary onClick={() => router.back()}>Voltar</ButtonSecondary>
   //       </>
   //     );
+
+  // Fecha modal com botão voltar do celular
+  useEffect(() => {
+    const handlePopState = () => {
+      router.replace("/pedido");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
   return (
     <>
       <ItemBuilderStyle>

@@ -1,7 +1,5 @@
 import Loading from "@components/loading";
 import { env } from "@config/env";
-import { IAuth } from "@models/auth";
-import { useAuth } from "@util/hooks/auth";
 import axios from "axios";
 import {
   createContext,
@@ -11,6 +9,7 @@ import {
   useState,
 } from "react";
 import { toast } from "react-toastify";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 import {
   IBebida,
   ICombo,
@@ -31,22 +30,16 @@ export type IProdutoHome =
 interface IPedidoPageContext {
   home: IHome;
   destaques: IProdutoHome[];
-  pedido: IPedido;
 }
 
 const PedidoPageContext = createContext<IPedidoPageContext>(
   {} as IPedidoPageContext
 );
 
-export const PedidoPageProvider = ({
-  children,
-  pedido,
-}: {
-  children: ReactNode;
-  pedido: IPedido;
-}) => {
+export const PedidoPageProvider = ({ children }: { children: ReactNode }) => {
   const [home, setHome] = useState<IHome>();
   const [carregandoHome, setCarregandoHome] = useState(true);
+  const { pedido } = usePedidoStore();
 
   useEffect(() => {
     axios
@@ -93,7 +86,6 @@ export const PedidoPageProvider = ({
       value={{
         home,
         destaques,
-        pedido,
       }}
     >
       {children}

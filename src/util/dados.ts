@@ -8,3 +8,5 @@ export const enderecoPizzaria = {
 };
 
 export const bboxSalvador = `-38.573,-13.071,-38.327,-12.809`;
+
+export const taxaAdicional = "* 2";

@@ -8,13 +8,14 @@ import axios from "axios";
 import { env } from "@config/env";
 import { toast } from "react-toastify";
 import Loading from "@components/loading";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
 const PagamentoPage: NextPage = () => {
   const [cupom, setCupom] = useState<ICupom>();
   const [carregouCupom, setCarregouCupom] = useState(false);
 
-  const { temClientePedido, authCarregado, pedido } = useAuth();
-
+  const { temClientePedido, authCarregado } = useAuth();
+  const { pedido } = usePedidoStore();
   useEffect(() => {
     temClientePedido();
   }, []);
@@ -50,7 +51,7 @@ const PagamentoPage: NextPage = () => {
 
   if (!authCarregado || !carregouCupom) return <Loading />;
 
-  return <PagamentoView pedido={pedido} cupomPagamento={cupom} />;
+  return <PagamentoView cupomPagamento={cupom} />;
 };
 
 export default PagamentoPage;

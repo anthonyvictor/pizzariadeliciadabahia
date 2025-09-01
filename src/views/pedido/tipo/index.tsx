@@ -5,8 +5,6 @@ import BottomControls from "@components/pedido/bottomControls";
 import axios from "axios";
 import { env } from "@config/env";
 import { toast } from "react-toastify";
-import { ICupom } from "tpdb-lib";
-import { IPedido } from "tpdb-lib";
 import { Endereco } from "./components/endereco";
 import { EnderecoStyle } from "./components/endereco/styles";
 import Modal from "@components/modal";
@@ -15,11 +13,25 @@ import { GiStairsGoal } from "react-icons/gi";
 import { ButtonSecondary } from "@styles/components/buttons";
 import { Metodo } from "./components/metodo";
 import { useTipoPage } from "./context";
+import { usePedidoStore } from "src/infra/zustand/pedido";
+import { taxaAdicional } from "@util/dados";
 import { useEffect } from "react";
+import { useClienteStore } from "src/infra/zustand/cliente";
 
 export const TipoView = () => {
   const router = useRouter();
-  const { tipo, setTipo, pedido } = useTipoPage();
+  const { tipo, setTipo } = useTipoPage();
+  const { pedido } = usePedidoStore();
+  const { cliente } = useClienteStore();
+
+  // Fecha modal com botão voltar do celular
+  useEffect(() => {
+    const handlePopState = () => {
+      router.replace("/pedido");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   return (
     <TipoViewStyle>
@@ -47,6 +59,14 @@ export const TipoView = () => {
           </aside>
         </EnderecoStyle>
 
+        <ul className="tipos">
+          {(cliente?.enderecos ?? [])
+            .filter((x) => x.visivel)
+            .map((e) => (
+              <Endereco key={e.id} e={e} />
+            ))}
+        </ul>
+
         <EnderecoStyle
           onClick={() => router.push("/cliente/novo-endereco")}
           className={`item`}
@@ -62,17 +82,11 @@ export const TipoView = () => {
             <p className="item-price"></p>
           </aside>
         </EnderecoStyle>
-
-        <ul className="tipos">
-          {(pedido?.cliente?.enderecos ?? []).map((e) => (
-            <Endereco key={e.id} e={e} />
-          ))}
-        </ul>
       </menu>
 
       <BottomControls
         secondaryButton={{
-          click: () => router.back(),
+          click: () => router.replace("/pedido"),
           text: "Voltar",
         }}
         primaryButton={{
@@ -128,7 +142,9 @@ export const TipoView = () => {
               nome="Com trecho a pé"
               descricao="Quero que  entregador desembarque do veículo e se desloque à pé até o local da entrega"
               Icone={GiStairsGoal}
-              taxa={(tipo.endereco?.enderecoOriginal?.taxa ?? 0) * 2}
+              taxa={eval(
+                `${tipo.endereco?.enderecoOriginal?.taxa ?? 0} ${taxaAdicional}`
+              )}
               desconto={0}
             />
           </div>

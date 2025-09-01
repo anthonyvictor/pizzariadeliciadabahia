@@ -40,7 +40,7 @@ export const Metodo = ({
       </aside>
       <aside className="descricao-valor">
         <p className="descricao">{descricao}</p>
-        <span className="valor">Taxa: {formatCurrency(taxa - desconto)}</span>
+        <h6 className="valor">Taxa: {formatCurrency(taxa - desconto)}</h6>
       </aside>
     </MetodoStyle>
   );

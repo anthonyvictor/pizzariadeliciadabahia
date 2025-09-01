@@ -3,6 +3,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useClienteStore } from "src/infra/zustand/cliente";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 import { ICliente, IPagamentoPedidoPix, IPedido } from "tpdb-lib";
 
 const pages = {
@@ -16,8 +18,10 @@ export const useAuth = () => {
 
   const [fechado, setFechado] = useState(true);
   const [authCarregado, setAuthCarregado] = useState(false);
-  const [cliente, setCliente] = useState<ICliente>();
-  const [pedido, setPedido] = useState<IPedido>();
+  // const [cliente, setCliente] = useState<ICliente>();
+  // const [pedido, setPedido] = useState<IPedido>();
+  const { setCliente } = useClienteStore();
+  const { setPedido } = usePedidoStore();
   const [pixAguardando, setPixAguardando] = useState<IPagamentoPedidoPix>();
 
   const temClientePedido = async (
@@ -124,8 +128,6 @@ export const useAuth = () => {
   return {
     temClientePedido,
     authCarregado,
-    cliente,
-    pedido,
     pixAguardando,
     fechado,
   };

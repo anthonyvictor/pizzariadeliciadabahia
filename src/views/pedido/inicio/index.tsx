@@ -4,11 +4,23 @@ import BottomControls from "@components/pedido/bottomControls";
 import { Nav } from "./nav";
 import { Produtos } from "./produtos";
 import { usePedidoPage } from "./context";
+import { usePedidoStore } from "src/infra/zustand/pedido";
+import { useEffect } from "react";
 
 export const PedidoView = () => {
   const router = useRouter();
 
-  const { home, destaques, pedido } = usePedidoPage();
+  const { home, destaques } = usePedidoPage();
+  const { pedido } = usePedidoStore();
+
+  // Fecha modal com botão voltar do celular
+  useEffect(() => {
+    const handlePopState = () => {
+      router.replace("/pedido");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   return (
     <PedidoStyle

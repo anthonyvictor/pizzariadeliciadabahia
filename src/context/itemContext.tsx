@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { env } from "@config/env";
 import { toast } from "react-toastify";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
 export type ItemComBuilder = IItemPedidoIds & { builderId: string };
 
@@ -28,15 +29,13 @@ const ItemBuilderContext = createContext<IItemBuilderContext>(
 export const ItemBuilderProvider = ({
   children,
   builder,
-  pedido,
 }: {
   children: ReactNode;
   builder: IItemBuilder | null;
-  pedido: IPedido;
 }) => {
   const [itensFinais, setItensFinais] = useState<ItemComBuilder[]>([]);
   const router = useRouter();
-
+  const { pedido } = usePedidoStore();
   const continuar = async (qtd: number) => {
     try {
       const itens = [];
@@ -59,7 +58,7 @@ export const ItemBuilderProvider = ({
         itens,
       });
 
-      router.push("/pedido");
+      router.replace("/pedido");
     } catch (err) {
       toast.error("Oops, não foi possível adicionar esse item no momento!");
     }

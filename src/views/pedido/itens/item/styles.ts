@@ -22,23 +22,38 @@ export const ItemStyle = styled.li`
     flex-shrink: 0;
     aspect-ratio: 1/1;
     border-radius: 5px;
-    overflow: hidden;
+    /* overflow: hidden; */
     background-color: #fff;
     img {
+      border-radius: 5px;
       transform: scale(101%);
+    }
+    .numero {
+      z-index: 1;
+      background-color: ${colors.background};
+      color: #fff;
+      border-radius: 50%;
+      padding: 3px;
+      text-align: center;
+      border: 1px solid #fff;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      transform: translate(-50%, 50%) scale(75%);
     }
   }
   .info {
     flex: 1;
 
     .nome {
-      font-size: 1rem;
+      font-size: 0.8rem;
     }
     .descricao {
-      font-size: 0.8rem;
+      font-size: 0.6rem;
     }
     .subdescricao {
       font-size: 0.6rem;
+      opacity: 0.8;
     }
   }
   .excluir {
@@ -64,16 +79,21 @@ export const ItemStyle = styled.li`
       flex-direction: column;
       align-items: end;
       justify-content: center;
+      font-size: 1rem;
 
       .price-title {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
       }
     }
     .original-price {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
     }
     .free-price {
       color: ${colors.checkedLight};
     }
+  }
+
+  .observacoes {
+    font-size: 0.5rem;
   }
 `;

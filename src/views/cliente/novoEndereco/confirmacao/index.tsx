@@ -11,15 +11,12 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { axiosOk } from "@util/axios";
 import Loading from "@components/loading";
+import { useClienteStore } from "src/infra/zustand/cliente";
 
-export const ConfirmacaoComplementoView = ({
-  cliente,
-}: {
-  cliente: ICliente;
-}) => {
+export const ConfirmacaoComplementoView = () => {
   const router = useRouter();
   const [endereco, setEndereco] = useState<IEnderecoCliente>();
-
+  const { cliente } = useClienteStore();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

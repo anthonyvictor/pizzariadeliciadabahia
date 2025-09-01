@@ -1,26 +1,19 @@
 import TextContainer from "@components/textContainer";
 import BottomControls from "@components/pedido/bottomControls";
-import { IPagamentoPedidoPix, IPagamentoTipo, IPedido } from "tpdb-lib";
+import { IPagamentoPedidoPix } from "tpdb-lib";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@util/format";
-import { usePagamentoStore } from "src/infra/zustand/pagamentos";
 import axios from "axios";
 import { env } from "@config/env";
 import { PixViewStyle } from "./styles";
 import QRCode from "react-qr-code";
 import { CgClipboard } from "react-icons/cg";
 import { axiosOk } from "@util/axios";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
-export const PixView = ({
-  pedido,
-  pix,
-}: {
-  pedido: IPedido;
-  pix: IPagamentoPedidoPix;
-}) => {
-  const { pagamentos } = usePagamentoStore();
-
+export const PixView = ({ pix }: { pix: IPagamentoPedidoPix }) => {
+  const { pedido } = usePedidoStore();
   const router = useRouter();
 
   const [continuarDisabled, setContinuarDisabled] = useState<boolean>(true);

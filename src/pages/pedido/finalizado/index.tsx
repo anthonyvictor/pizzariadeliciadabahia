@@ -5,7 +5,7 @@ import Loading from "@components/loading";
 import { useEffect } from "react";
 
 const FinalizadoPage: NextPage = () => {
-  const { temClientePedido, authCarregado, pedido } = useAuth();
+  const { temClientePedido, authCarregado } = useAuth();
 
   useEffect(() => {
     temClientePedido({
@@ -15,7 +15,7 @@ const FinalizadoPage: NextPage = () => {
 
   if (!authCarregado) return <Loading />;
 
-  return <FinalizadoView pedido={pedido} />;
+  return <FinalizadoView />;
 };
 
 export default FinalizadoPage;

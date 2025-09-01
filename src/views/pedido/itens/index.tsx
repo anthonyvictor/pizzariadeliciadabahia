@@ -4,20 +4,15 @@ import { useRouter } from "next/router";
 import BottomControls from "@components/pedido/bottomControls";
 import Modal from "@components/modal";
 import { ButtonSecondary } from "@styles/components/buttons";
-import { IPedido } from "tpdb-lib";
 import axios from "axios";
 import { env } from "@config/env";
-import { IPizzaExtra } from "tpdb-lib";
-import { CgTrash } from "react-icons/cg";
-import Image from "next/image";
 import TextContainer from "@components/textContainer";
-import { toast } from "react-toastify";
 import { Item } from "./item";
-import { agrupar } from "@util/array";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
-export const ItensView = ({ pedido }: { pedido: IPedido }) => {
+export const ItensView = () => {
   const router = useRouter();
-
+  const { pedido } = usePedidoStore();
   const [showModalRemoverItem, setShowModalRemoverItem] = useState<{
     show: boolean;
     id?: string;
@@ -52,7 +47,6 @@ export const ItensView = ({ pedido }: { pedido: IPedido }) => {
               key={item.id}
               numero={i + 1}
               item={item}
-              pedido={pedido}
               excluirItem={(itemsIds) => {
                 setItens((prev) =>
                   prev.filter((x) => !itemsIds.includes(x.id))

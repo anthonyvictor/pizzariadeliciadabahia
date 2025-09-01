@@ -5,27 +5,37 @@ import { EnderecosModel } from "tpdb-lib";
 import { obterEnderecoExtra } from "@util/enderecos";
 import { normalizarOrdinal } from "@util/format";
 import { HTTPError } from "@models/error";
+import { Types } from "mongoose";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método não permitido" });
-  }
-
   try {
-    const { clienteId, novoEndereco } = req.body;
+    if (req.method === "POST") {
+      const { clienteId, novoEndereco } = req.body;
 
-    if (!clienteId || !novoEndereco || !novoEndereco?.enderecoOriginal?.rua) {
-      return res.status(400).json({
-        error: "clienteId e endereço, com endereço original são obrigatórios",
-      });
+      if (!clienteId || !novoEndereco || !novoEndereco?.enderecoOriginal?.rua) {
+        return res.status(400).json({
+          error: "clienteId e endereço, com endereço original são obrigatórios",
+        });
+      }
+
+      await adicionarEnderecoAoCliente(clienteId, novoEndereco);
+
+      return res.status(200).end();
+    } else if (req.method === "DELETE") {
+      const { enderecoId, clienteId } = req.query;
+      if (!enderecoId || !clienteId)
+        throw new HTTPError("Precisa do id do cliente e do endereço", 404);
+      await desativarEnderecoDoCliente(
+        clienteId as string,
+        enderecoId as string
+      );
+      return res.status(200).end();
+    } else {
+      return res.status(405).json({ error: "Método não permitido" });
     }
-
-    await adicionarEnderecoAoCliente(clienteId, novoEndereco);
-
-    return res.status(200).end();
   } catch (error) {
     console.error("Erro ao adicionar endereço:", error);
     return res.status(500).json({ error: "Erro interno no servidor" });
@@ -86,4 +96,31 @@ export async function adicionarEnderecoAoCliente(
       },
     },
   });
+}
+
+export async function desativarEnderecoDoCliente(
+  clienteId: string,
+  enderecoId: string
+) {
+  await conectarDB();
+
+  const cliente = await ffid({
+    m: ClientesModel,
+    id: clienteId,
+  });
+
+  if (
+    !cliente ||
+    !cliente?.enderecos?.length ||
+    !cliente.enderecos.find((x) => x.id === enderecoId)
+  )
+    throw new HTTPError("Endereço não encontrado", 404, cliente);
+
+  await ClientesModel.updateOne(
+    {
+      _id: new Types.ObjectId(clienteId),
+      "enderecos._id": new Types.ObjectId(enderecoId),
+    },
+    { $set: { "enderecos.$.visivel": false } }
+  );
 }

@@ -6,49 +6,93 @@ import Loading from "@components/loading";
 
 export const GeolocalizacaoView = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+
+  const [buttonText, setButtonText] = useState<ReactNode>(<>Continuar</>);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  const salvarGeoLoc = (loc: [number, number] | null) => {
+    if (!loc) {
+      sessionStorage.removeItem("geoLoc");
+    } else {
+      sessionStorage.setItem("geoLoc", JSON.stringify(loc));
+    }
+  };
+
+  const avancar = () => {
+    router.replace("/cliente/novo-endereco/rua");
+  };
+
+  const [status, setStatus] = useState<"checking" | "prompt" | "denied">(
+    "checking"
+  );
 
   useEffect(() => {
-    const geoLoc = JSON.parse(sessionStorage.getItem("geoLoc") ?? "{}");
-    if (geoLoc?.[0] && geoLoc?.[1])
-      router.replace("/cliente/novo-endereco/rua");
-    setLoading(false);
-  }, []);
-
-  const solicitarLocalizacao = () => {
-    if (!navigator.geolocation) {
-      sessionStorage.removeItem("geoLoc");
-      console.error("Geolocalização não é suportada pelo seu navegador.");
+    if (!("geolocation" in navigator)) {
+      setStatus("denied");
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        sessionStorage.setItem(
-          "geoLoc",
-          JSON.stringify([pos.coords.latitude, pos.coords.longitude])
-        );
-        router.replace("/cliente/novo-endereco/rua");
-      },
-      (err) => {
-        if (err.code === 1) console.error("Permissão negada.");
-        else if (err.code === 2) console.error("Localização indisponível.");
-        else console.error("Erro desconhecido ao obter localização.");
+    const obterPosicao = () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          salvarGeoLoc([position.coords.latitude, position.coords.longitude]);
+          avancar();
+        },
+        (error) => {
+          console.error("Erro ao obter localização:", error);
+          setStatus("prompt");
+        }
+      );
+    };
 
-        sessionStorage.removeItem("geoLoc");
-        router.replace("/cliente/novo-endereco/rua");
+    if ("permissions" in navigator) {
+      navigator.permissions.query({ name: "geolocation" }).then((result) => {
+        if (result.state === "granted") {
+          // já tem permissão, pega localização automaticamente
+          obterPosicao();
+        } else if (result.state === "prompt") {
+          setStatus("prompt");
+        } else {
+          setStatus("denied");
+        }
+
+        // atualiza se a permissão mudar
+        result.onchange = () => {
+          if (result.state === "granted") {
+            obterPosicao();
+          } else if (result.state === "prompt") {
+            setStatus("prompt");
+          } else {
+            setStatus("denied");
+          }
+        };
+      });
+    } else {
+      // fallback se Permissions API não suportada
+      setStatus("prompt");
+    }
+  }, [salvarGeoLoc]);
+
+  if (status === "checking") return <Loading />;
+
+  if (status === "denied")
+    return <p>Geolocalização não disponível neste dispositivo.</p>;
+
+  // status === "prompt" → mostra botão para solicitar
+  const solicitarPermissao = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        salvarGeoLoc([position.coords.latitude, position.coords.longitude]);
+        avancar();
       },
-      {
-        enableHighAccuracy: true, // mais rápido e consome menos bateria se false
-        timeout: 10000,
-        maximumAge: 0,
+      (error) => {
+        console.error("Erro ao obter localização:", error);
+        // avancar()
       }
     );
   };
 
-  const [buttonText, setButtonText] = useState<ReactNode>(<>Continuar</>);
-  const [buttonDisabled, setButtonDisabled] = useState(false);
-  if (loading) return <Loading />;
+  // if (loading || loadingPermission) return <Loading />;
 
   return (
     <GeolocalizacaoStyle>
@@ -69,7 +113,7 @@ export const GeolocalizacaoView = () => {
               <span>.</span>
             </>
           );
-          solicitarLocalizacao();
+          solicitarPermissao();
         }}
       >
         {buttonText}

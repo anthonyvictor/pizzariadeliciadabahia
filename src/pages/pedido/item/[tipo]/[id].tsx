@@ -9,12 +9,13 @@ import { env } from "@config/env";
 import { toast } from "react-toastify";
 import Loading from "@components/loading";
 import { useRouter } from "next/router";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
 const ItemBuilderPage: NextPage = () => {
   const [builder, setBuilder] = useState<IItemBuilder>();
-  const { temClientePedido, authCarregado, pedido } = useAuth();
+  const { temClientePedido, authCarregado } = useAuth();
   const router = useRouter();
-
+  const { pedido } = usePedidoStore();
   useEffect(() => {
     temClientePedido();
   }, []);
@@ -38,7 +39,7 @@ const ItemBuilderPage: NextPage = () => {
   if (!authCarregado || !builder) return <Loading />;
 
   return (
-    <ItemBuilderProvider builder={builder} pedido={pedido}>
+    <ItemBuilderProvider builder={builder}>
       <ItemBuilderView />
     </ItemBuilderProvider>
   );

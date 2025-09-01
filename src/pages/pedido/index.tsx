@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import Loading from "@components/loading";
 
 const PedidoPage: NextPage = () => {
-  const { temClientePedido, authCarregado, pedido, fechado } = useAuth();
+  const { temClientePedido, authCarregado, fechado } = useAuth();
 
   useEffect(() => {
     temClientePedido();
@@ -36,7 +36,7 @@ const PedidoPage: NextPage = () => {
     );
 
   return (
-    <PedidoPageProvider pedido={pedido}>
+    <PedidoPageProvider>
       <PedidoView />
     </PedidoPageProvider>
   );

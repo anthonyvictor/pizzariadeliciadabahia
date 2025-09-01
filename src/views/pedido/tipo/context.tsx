@@ -6,18 +6,15 @@ import { Tipo } from "./types";
 interface ITipoPageContext {
   tipo: Tipo;
   setTipo: SetState<Tipo>;
-  pedido: IPedido;
   cupomEntrega: ICupom | null;
 }
 
 const TipoPageContext = createContext<ITipoPageContext>({} as ITipoPageContext);
 
 export const TipoPageProvider = ({
-  pedido,
   cupomEntrega,
   children,
 }: {
-  pedido: IPedido;
   cupomEntrega: ICupom | null;
   children: ReactNode;
 }) => {
@@ -28,7 +25,6 @@ export const TipoPageProvider = ({
       value={{
         tipo,
         setTipo,
-        pedido,
         cupomEntrega,
       }}
     >

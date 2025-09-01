@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useAuth } from "@util/hooks/auth";
 
 const ItensPage: NextPage = () => {
-  const { temClientePedido, authCarregado, pedido } = useAuth();
+  const { temClientePedido, authCarregado } = useAuth();
 
   useEffect(() => {
     temClientePedido();
@@ -13,7 +13,7 @@ const ItensPage: NextPage = () => {
 
   if (!authCarregado) return <Loading />;
 
-  return <ItensView pedido={pedido} />;
+  return <ItensView />;
 };
 
 export default ItensPage;

@@ -8,6 +8,7 @@ import { obterValoresDoPedido } from "@util/pedidos";
 import { colors } from "@styles/colors";
 import { formatCurrency } from "@util/format";
 import { useRouter } from "next/router";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 interface IInfo {
   titulo: string;
   valor: number;
@@ -15,7 +16,8 @@ interface IInfo {
   negativo?: boolean;
   cor?: string;
 }
-export const ConfirmacaoView = ({ pedido }: { pedido: IPedido }) => {
+export const ConfirmacaoView = () => {
+  const { pedido } = usePedidoStore();
   const router = useRouter();
   const {
     valorEntregaBruto,
@@ -53,9 +55,7 @@ export const ConfirmacaoView = ({ pedido }: { pedido: IPedido }) => {
 
         <ul className="itens no-scroll">
           {pedido.itens.map((item, i) => {
-            return (
-              <Item numero={i + 1} key={item.id} item={item} pedido={pedido} />
-            );
+            return <Item numero={i + 1} key={item.id} item={item} />;
           })}
         </ul>
 

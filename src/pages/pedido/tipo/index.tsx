@@ -9,12 +9,14 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { env } from "@config/env";
 import { TipoPageProvider } from "src/views/pedido/tipo/context";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
 const TipoPage: NextPage = () => {
   const [cupom, setCupom] = useState<ICupom>();
   const [carregouCupom, setCarregouCupom] = useState(false);
 
-  const { temClientePedido, authCarregado, pedido } = useAuth();
+  const { temClientePedido, authCarregado } = useAuth();
+  const { pedido } = usePedidoStore();
 
   useEffect(() => {
     temClientePedido({
@@ -52,7 +54,7 @@ const TipoPage: NextPage = () => {
   if (!authCarregado || !carregouCupom || !pedido) return <Loading />;
 
   return (
-    <TipoPageProvider pedido={pedido} cupomEntrega={cupom}>
+    <TipoPageProvider cupomEntrega={cupom}>
       <TipoView />
     </TipoPageProvider>
   );

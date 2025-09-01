@@ -17,7 +17,7 @@ export const MetodoStyle = styled.button`
     align-items: center;
     gap: 5px;
     svg {
-      font-size: 2rem;
+      font-size: 2.5rem;
     }
 
     .nome {
@@ -35,6 +35,7 @@ export const MetodoStyle = styled.button`
     }
     .valor {
       color: ${colors.checkedLight};
+      font-size: 1rem;
     }
   }
 

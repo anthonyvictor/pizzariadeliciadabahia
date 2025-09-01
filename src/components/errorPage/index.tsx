@@ -13,7 +13,7 @@ const ErrorPage: FC<ErrorProps> = ({ emoji, text }) => {
     <ErrorStyle>
       <h1 className="icon">{emoji}</h1>
       <h1 className="title">{text}</h1>
-      <a href="#" onClick={() => router.back()} className="link">
+      <a href="#" onClick={() => router.replace("/pedido")} className="link">
         Voltar
       </a>
     </ErrorStyle>

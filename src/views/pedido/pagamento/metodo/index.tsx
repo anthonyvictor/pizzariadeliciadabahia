@@ -15,23 +15,24 @@ import { colors } from "@styles/colors";
 import { useRouter } from "next/router";
 import { usePagamentoStore } from "src/infra/zustand/pagamentos";
 import { MetodoModal } from "../metodoModal";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
 export const Metodo = ({
   metodo: m,
-  pedido,
   valorTotal,
   valorDefinido,
   valorItens,
   cupomPagamento: cupom,
 }: {
   metodo: IMetodo;
-  pedido: IPedido;
   valorTotal: number;
   valorItens: number;
   valorDefinido: number;
   cupomPagamento: ICupom | null;
 }) => {
   // const [open, setOpen] = useState(false);
+
+  const { pedido } = usePedidoStore();
 
   const padding = "20px 15px";
   const { pagamentos, addPagamento, deletePagamento } = usePagamentoStore();
@@ -167,7 +168,11 @@ export const Metodo = ({
   // Fecha modal com botão voltar do celular
   useEffect(() => {
     const handlePopState = () => {
-      if (metodo) closeModal();
+      if (metodo) {
+        closeModal();
+      } else {
+        router.replace("/pedido");
+      }
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);

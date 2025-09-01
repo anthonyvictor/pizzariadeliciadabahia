@@ -6,11 +6,19 @@ export const InformacoesIniciaisStyle = styled.main`
   flex-direction: column;
   /* justify-content: center; */
   gap: 20px;
-  padding: 50px 5px;
+  padding: 10px 5px;
 
   form {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin-bottom: 50px;
+    min-height: 0;
+    overflow-y: auto;
+
+    .nome-sobrenome {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
   }
 `;

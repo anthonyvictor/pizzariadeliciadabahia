@@ -40,8 +40,16 @@ type IMyInput = {
   autoFocus?: boolean;
   onFocus?: (e: Event) => void;
   onClick?: (e: Event) => void;
+  onKeyDown?: (
+    e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   onKeyUp?: (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBeforeInput?: (
+    e: React.FormEvent<HTMLInputElement> & { data: string }
+  ) => void;
+  onDrop?: (e: React.DragEvent<HTMLInputElement>) => void;
+  onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
 };
 
 export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
@@ -67,6 +75,10 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
       onFocus,
       onBlur,
       onKeyUp,
+      onKeyDown: _onKeyDown,
+      onBeforeInput,
+      onDrop,
+      onPaste,
       tag,
       autoFocus = false,
     },
@@ -77,6 +89,9 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
       onChange: (e) => setValue(e.target.value),
       onClick: (e) => onClick?.(e),
       onFocus: (e) => onFocus?.(e),
+      onBeforeInput: (e) => onBeforeInput?.(e),
+      onDrop: (e) => onDrop?.(e),
+      onPaste: (e) => onPaste?.(e),
       placeholder: placeholder,
       autoCorrect: "off",
       spellCheck: false,
@@ -105,6 +120,7 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
           !["Backspace", "Delete", "Tab"].includes(e.key)
         )
           e.preventDefault();
+        _onKeyDown?.(e);
       },
     };
     const inputPropsCheck = {

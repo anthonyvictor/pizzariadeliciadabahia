@@ -10,21 +10,20 @@ import { colors } from "@styles/colors";
 import { formatCurrency } from "@util/format";
 import { abreviarBebida } from "@util/bebidas";
 import { abreviarLanche } from "@util/lanches";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
 export const Item = ({
   item,
   numero,
-  pedido,
   excluirItem,
 }: {
   item: IItemPedido;
-  pedido: IPedido;
   numero: number;
   excluirItem?: (itemsIds: string[]) => void;
 }) => {
+  const { pedido } = usePedidoStore();
   return (
     <ItemStyle key={item.id} className="item">
-      <h6>{numero}º</h6>
       <aside className="imagem">
         <Image
           src={
@@ -37,6 +36,7 @@ export const Item = ({
           layout="fill"
           objectFit={item.tipo === "bebida" ? "scale-down" : "cover"}
         />
+        <h6 className="numero">{numero}º</h6>
       </aside>
       <aside className="info">
         {item.tipo === "pizza" ? (
@@ -87,7 +87,7 @@ export const Item = ({
         )}
 
         {!!item.observacoes && (
-          <p className="observacoes">{item.observacoes}</p>
+          <p className="observacoes">{item.observacoes.toUpperCase()}</p>
         )}
       </aside>
 

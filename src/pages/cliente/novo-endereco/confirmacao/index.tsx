@@ -3,9 +3,10 @@ import { ConfirmacaoComplementoView } from "src/views/cliente/novoEndereco/confi
 import { useEffect } from "react";
 import { useAuth } from "@util/hooks/auth";
 import Loading from "@components/loading";
+import { useClienteStore } from "src/infra/zustand/cliente";
 
 const ConfirmacaoComplementoPage: NextPage = () => {
-  const { temClientePedido, authCarregado, cliente } = useAuth();
+  const { temClientePedido, authCarregado } = useAuth();
 
   useEffect(() => {
     temClientePedido();
@@ -13,7 +14,7 @@ const ConfirmacaoComplementoPage: NextPage = () => {
 
   if (!authCarregado) return <Loading />;
 
-  return <ConfirmacaoComplementoView cliente={cliente} />;
+  return <ConfirmacaoComplementoView />;
 };
 
 export default ConfirmacaoComplementoPage;

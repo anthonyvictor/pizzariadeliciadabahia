@@ -26,10 +26,10 @@ export default async function handler(
         data = await obterClientes({ ids });
       }
       res.status(200).json(data);
-    } else if (req.method === "POST") {
-      const cliente = req.body.cliente;
-      const data = await loginCliente(cliente);
-      res.status(200).send(data);
+      // } else if (req.method === "POST") {
+      //   const cliente = req.body.cliente;
+      //   const data = await loginCliente(cliente);
+      //   res.status(200).send(data);
     } else {
       res.status(405).end(); // Método não permitido
     }
@@ -110,26 +110,6 @@ export const obterClientes = async ({ ids }: { ids?: string[] }) => {
   });
 };
 
-export const loginCliente = async (cliente: ICliente) => {
-  await conectarDB();
-
-  const { nome, whatsapp, dadosExtras } = cliente as ICliente;
-
-  const filter = { whatsapp: normalizePhone(whatsapp) };
-
-  const clienteEncontrado = await ClientesModel.findOne(filter).lean();
-
-  if (clienteEncontrado)
-    return await obterCliente(clienteEncontrado._id.toString());
-
-  const result = await ClientesModel.create({
-    nome,
-    whatsapp: normalizePhone(whatsapp),
-    dadosExtras: dadosExtras ?? [],
-  });
-
-  return await obterCliente(result._id.toString());
-};
 // export const upsertCliente = async (cliente: ICliente) => {
 //   await conectarDB();
 

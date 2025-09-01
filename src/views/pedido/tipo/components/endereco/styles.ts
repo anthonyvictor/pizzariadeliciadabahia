@@ -11,6 +11,14 @@ export const EnderecoStyle = styled.li`
   grid-template-columns: 1fr 80px;
   gap: 10px;
 
+  .deletar {
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+    padding: 5px;
+    color: #fff;
+  }
+
   .item-left {
     display: flex;
     flex-direction: column;

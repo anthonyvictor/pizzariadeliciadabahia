@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import Loading from "@components/loading";
 
 const ConfirmacaoPage: NextPage = () => {
-  const { temClientePedido, authCarregado, pedido } = useAuth();
+  const { temClientePedido, authCarregado } = useAuth();
 
   useEffect(() => {
     temClientePedido();
@@ -13,7 +13,7 @@ const ConfirmacaoPage: NextPage = () => {
 
   if (!authCarregado) return <Loading />;
 
-  return <ConfirmacaoView pedido={pedido} />;
+  return <ConfirmacaoView />;
 };
 
 export default ConfirmacaoPage;

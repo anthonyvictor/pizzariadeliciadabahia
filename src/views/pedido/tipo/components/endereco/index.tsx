@@ -6,10 +6,14 @@ import { colors } from "@styles/colors";
 import { EnderecoStyle } from "./styles";
 import { cupomAplicavelAoEndereco } from "@util/enderecos/cupomAplicavel";
 import { useTipoPage } from "../../context";
+import { taxaAdicional } from "@util/dados";
+import { CgTrash } from "react-icons/cg";
+import { api } from "@util/axios";
+import { useClienteStore } from "src/infra/zustand/cliente";
 
 export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   const { cupomEntrega, tipo, setTipo } = useTipoPage();
-
+  const { cliente, setCliente } = useClienteStore();
   const [descontoReal] = useState<number>(
     cupomAplicavelAoEndereco(cupomEntrega, e.enderecoOriginal)
       ? obterValorDescontoReal(
@@ -67,8 +71,14 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
               }}
             >
               {formatCurrency(
-                tipo.endereco.enderecoOriginal.taxa -
-                  (tipo.endereco.desconto ?? 0)
+                eval(
+                  `${
+                    tipo.endereco.enderecoOriginal.taxa -
+                    (tipo.endereco.desconto ?? 0)
+                  } ${
+                    tipo?.endereco?.metodo === "avancado" ? taxaAdicional : ""
+                  }`
+                )
               )}
             </span>
           ) : e.enderecoOriginal.taxa ? (
@@ -102,6 +112,25 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
             <span className="free-price">Taxa à definir!</span>
           )}
         </h6>
+        <button
+          className="deletar"
+          onClick={async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            await api.delete("/clientes/endereco", {
+              params: {
+                clienteId: cliente.id,
+                enderecoId: e.id,
+              },
+            });
+            setCliente({
+              ...cliente,
+              enderecos: cliente.enderecos.filter((x) => x.id !== e.id),
+            });
+          }}
+        >
+          <CgTrash />
+        </button>
       </aside>
     </EnderecoStyle>
   );

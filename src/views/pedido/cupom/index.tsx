@@ -9,9 +9,10 @@ import { CupomStyle } from "./styles";
 import { env } from "@config/env";
 import axios from "axios";
 import { axiosOk } from "@util/axios";
-import { IPedido } from "tpdb-lib";
+import { usePedidoStore } from "src/infra/zustand/pedido";
 
-export const CupomView = ({ pedido }: { pedido: IPedido }) => {
+export const CupomView = () => {
+  const { pedido } = usePedidoStore();
   const router = useRouter();
   const [cupom, setCupom] = useState("");
   return (
