@@ -1,25 +1,33 @@
 import { env } from "@config/env";
+import { analisarRegrasTempo } from "@util/regras";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useClienteStore } from "src/infra/zustand/cliente";
 import { usePedidoStore } from "src/infra/zustand/pedido";
-import { ICliente, IPagamentoPedidoPix, IPedido } from "tpdb-lib";
+import {
+  ICliente,
+  IPagamentoPedidoPix,
+  IPedido,
+  IConfig,
+  IConfigHorarioFuncionamento,
+} from "tpdb-lib";
 
 const pages = {
   infoIniciais: "/cliente/informacoes-iniciais",
   finalizado: "/pedido/finalizado",
   pedido: "/pedido",
+  fechado: "/fechado",
 };
 
 export const useAuth = () => {
   const router = useRouter();
 
-  const [fechado, setFechado] = useState(false);
   const [authCarregado, setAuthCarregado] = useState(false);
   // const [cliente, setCliente] = useState<ICliente>();
   // const [pedido, setPedido] = useState<IPedido>();
+  const [configs, setConfigs] = useState<IConfig[]>([]);
   const { setCliente } = useClienteStore();
   const { setPedido } = usePedidoStore();
   const [pixAguardando, setPixAguardando] = useState<IPagamentoPedidoPix>();
@@ -46,6 +54,41 @@ export const useAuth = () => {
       return router.push(pages.infoIniciais);
 
     setCliente(_cliente);
+
+    const obterConfigs = async () => {
+      if (!clienteId) return null;
+      const res = await axios.get(`${env.apiURL}/configs`);
+      return res.data as IConfig[];
+    };
+    const _configs = await obterConfigs();
+    const configHorarioFunc = _configs.find(
+      (x) => x.chave === "horario_funcionamento"
+    )?.valor as IConfigHorarioFuncionamento;
+
+    const getAberto = () => {
+      if (!configHorarioFunc) return true;
+      const pelasRegrasTempo = analisarRegrasTempo(configHorarioFunc);
+      const peloFechadoAte =
+        !configHorarioFunc.fechadoAte ||
+        new Date(configHorarioFunc.fechadoAte).getTime() <=
+          new Date().getTime();
+      const peloLiberadoAte =
+        configHorarioFunc.liberadoAte &&
+        new Date(configHorarioFunc.liberadoAte).getTime() >=
+          new Date().getTime();
+
+      return pelasRegrasTempo || peloFechadoAte || peloLiberadoAte;
+    };
+
+    if (getAberto()) {
+      if (router.pathname === pages.fechado)
+        return router.replace(pages.pedido);
+    } else {
+      if (router.pathname !== pages.fechado)
+        return router.replace(pages.fechado);
+    }
+
+    setConfigs(_configs);
 
     const obterPedido = async (peloCliente?: boolean) => {
       try {
@@ -88,18 +131,12 @@ export const useAuth = () => {
 
     if (!_pedido) _pedido = await obterPedido(true);
 
-    const _fechado = true;
-    setFechado(_fechado);
-
     if (!_pedido || _pedido.cliente?.id !== _cliente.id) {
-      if (_fechado) return;
-
       _pedido = await novoPedido();
       if (router.pathname !== pages.pedido) return router.push(pages.pedido);
     }
 
     if (!!_pedido?.enviadoEm && router.pathname !== pages.finalizado) {
-      if (_fechado) return;
       _pedido = await novoPedido();
       if (router.pathname !== pages.pedido) return router.push(pages.pedido);
     }
@@ -136,6 +173,6 @@ export const useAuth = () => {
     temClientePedido,
     authCarregado,
     pixAguardando,
-    fechado,
+    configs,
   };
 };

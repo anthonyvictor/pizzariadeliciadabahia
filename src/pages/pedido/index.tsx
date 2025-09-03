@@ -6,34 +6,13 @@ import { useEffect } from "react";
 import Loading from "@components/loading";
 
 const PedidoPage: NextPage = () => {
-  const { temClientePedido, authCarregado, fechado } = useAuth();
+  const { temClientePedido, authCarregado } = useAuth();
 
   useEffect(() => {
     temClientePedido();
   }, []);
 
   if (!authCarregado) return <Loading />;
-  if (fechado)
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-          height: "100%",
-          padding: "20px",
-          textAlign: "center",
-          flex: "1",
-        }}
-      >
-        <h3 style={{ color: "#ffae00" }}>Estamos fechados no momento</h3>
-        <small style={{ color: "#fff" }}>
-          Fique de olho em nossas postagens no instagram e whatsapp!
-        </small>
-      </div>
-    );
 
   return (
     <PedidoPageProvider>

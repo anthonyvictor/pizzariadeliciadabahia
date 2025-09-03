@@ -181,6 +181,7 @@ export const sanitizeData = (data: any): any => {
 };
 
 export function normalizarOrdinal(logradouro: string): string {
+  if (!logradouro) return logradouro;
   const ordinaisBasicos: Record<string, number> = {
     primeira: 1,
     segundo: 2,

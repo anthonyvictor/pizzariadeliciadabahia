@@ -18,30 +18,11 @@ export const ItemBuilderView = () => {
   //   const router = useRouter();
   //   const [showModal, setShowModal] = useState<boolean>(false);
   //   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  //   const [closedUntil, setClosedUntil] = useState<Date | null | undefined>();
 
   //   const askIfCustomerWantsDrink = () => {
   //     setShowModal(true);
   //   };
 
-  //   useEffect(() => {
-  //     (async () => {
-  //       const { closedUntil: _closedUntil } = (await (
-  //         await fetch(`${env.apiURL}/loja`)
-  //       ).json()) ?? { closedUntil: null };
-  //       setIsLoaded(true);
-  //       setClosedUntil(_closedUntil);
-  //     })();
-  //   }, []);
-
-  //   if (!isLoaded) return <Loading />;
-
-  //   if (closedUntil && new Date(closedUntil) > new Date())
-  //     return (
-  //       <>
-  //         <TextContainer title="OPA! ESTAMOS FECHADOS NESTE MOMENTO." />
-  //       </>
-  //     );
   //   if (!item)
   //     return (
   //       <>

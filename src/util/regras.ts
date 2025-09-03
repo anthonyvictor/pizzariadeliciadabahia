@@ -3,16 +3,20 @@ import {
   IProdutoComboPizza,
   IProdutoComboBebida,
   IProdutoComboLanche,
+  IEndereco,
 } from "tpdb-lib";
 import { ICliente } from "tpdb-lib";
 import { IRegra } from "tpdb-lib";
 import {
-  algumaData,
-  algumDiaDaSemanaNumero,
   entreDatas,
+  entreDias,
+  entrePeriodosDatas,
   entreHorarios,
+  entrePeriodosDias,
 } from "./date";
 import { IDeveEstar } from "@models/deveEstar";
+import { normalizarOrdinal } from "./format";
+import { entreEnderecos } from "./enderecos/regras";
 
 export const produtoDispPelasRegras = (
   prod:
@@ -57,8 +61,8 @@ export const analisarRegrasTempo = ({
   condicoes,
   excecoes,
 }: {
-  condicoes: IRegra[];
-  excecoes: IRegra[];
+  condicoes?: IRegra[];
+  excecoes?: IRegra[];
 }) => {
   const hoje = new Date();
   let condicoesDatas = [];
@@ -70,19 +74,25 @@ export const analisarRegrasTempo = ({
     }
 
     if (condicao.tipo === "datas" && condicao.valor.length) {
-      if (!algumaData(hoje, condicao.valor)) {
+      if (!entreDatas(hoje, condicao.valor)) {
         condicoesDatas.push(false);
       } else {
         condicoesDatas.push(true);
       }
     } else if (condicao.tipo === "dias" && condicao.valor.length) {
-      if (!algumDiaDaSemanaNumero(hoje, condicao.valor)) {
+      if (!entreDias(hoje, condicao.valor)) {
+        condicoesDatas.push(false);
+      } else {
+        condicoesDatas.push(true);
+      }
+    } else if (condicao.tipo === "periodos_dias" && condicao.valor.length) {
+      if (!entrePeriodosDias(hoje, condicao.valor)) {
         condicoesDatas.push(false);
       } else {
         condicoesDatas.push(true);
       }
     } else if (condicao.tipo === "periodos_datas" && condicao.valor.length) {
-      if (!entreDatas(hoje, condicao.valor)) {
+      if (!entrePeriodosDatas(hoje, condicao.valor)) {
         condicoesDatas.push(false);
       } else {
         condicoesDatas.push(true);
@@ -96,11 +106,11 @@ export const analisarRegrasTempo = ({
 
   for (const excecao of (excecoes ?? []).filter((x) => x.ativa)) {
     if (excecao.tipo === "datas" && excecao.valor.length) {
-      if (algumaData(hoje, excecao.valor)) {
+      if (entreDatas(hoje, excecao.valor)) {
         return false;
       }
     } else if (excecao.tipo === "dias" && excecao.valor.length) {
-      if (algumDiaDaSemanaNumero(hoje, excecao.valor)) {
+      if (entreDias(hoje, excecao.valor)) {
         return false;
       }
     } else if (excecao.tipo === "periodos_horarios" && excecao.valor.length) {
@@ -108,9 +118,65 @@ export const analisarRegrasTempo = ({
         return false;
       }
     } else if (excecao.tipo === "periodos_datas" && excecao.valor.length) {
-      if (entreDatas(hoje, excecao.valor)) {
+      if (entrePeriodosDatas(hoje, excecao.valor)) {
         return false;
       }
+    }
+  }
+
+  return true;
+};
+export const analisarRegrasEndereco = (
+  {
+    condicoes,
+    excecoes,
+  }: {
+    condicoes?: IRegra[];
+    excecoes?: IRegra[];
+  },
+  enderecoOriginal: IEndereco
+) => {
+  if (
+    !enderecoOriginal?.cep ||
+    !enderecoOriginal?.bairro ||
+    !enderecoOriginal?.rua ||
+    !enderecoOriginal?.distancia_metros
+  )
+    return true;
+  const hoje = new Date();
+  const { cep, bairro, rua, distancia_metros } = enderecoOriginal;
+  let condicoesEnderecos = [];
+  for (const condicao of (condicoes ?? []).filter((x) => x.ativa)) {
+    if (condicao.tipo === "enderecos_horarios") {
+      condicao.valor.forEach((x) => {
+        if (!entreHorarios(hoje, [x.horario])) return true;
+        x.enderecos.forEach((e) => {
+          condicoesEnderecos.push(entreEnderecos(enderecoOriginal, e));
+        });
+      });
+    }
+  }
+
+  if (condicoesEnderecos.length && condicoesEnderecos.every((x) => x === false))
+    return false;
+
+  condicoesEnderecos = [];
+
+  for (const condicao of (condicoes ?? []).filter((x) => x.ativa)) {
+    if (condicao.tipo === "enderecos") {
+      condicao.valor.forEach((x) => {
+        condicoesEnderecos.push(entreEnderecos(enderecoOriginal, x));
+      });
+    }
+  }
+  if (condicoesEnderecos.length && condicoesEnderecos.every((x) => x === false))
+    return false;
+
+  for (const excecao of (excecoes ?? []).filter((x) => x.ativa)) {
+    if (excecao.tipo === "enderecos") {
+      return excecao.valor.some((x) => {
+        !entreEnderecos(enderecoOriginal, x);
+      });
     }
   }
 

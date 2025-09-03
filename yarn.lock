@@ -5105,10 +5105,10 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-tpdb-lib@^1.0.0:
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/tpdb-lib/-/tpdb-lib-1.0.14.tgz#6dd5139b746b65090abc57162b95eb013e4885eb"
-  integrity sha512-MQ1Knh/DZf3GNOapFb2KF1FhIlAzg0+NAisds6z8OwNq2t5+gDbUkEHVmKjwNo1sR//X8x2XPxxh/jMZrUD6Tg==
+tpdb-lib@^1.0.19:
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/tpdb-lib/-/tpdb-lib-1.0.19.tgz#1359a54a9d79364312bc320c6ea228584a6e3d02"
+  integrity sha512-Lek/8PZTh2TKGfkfGM9DVLCGOKNOKz/FQ6zt6nADdUKLYfl1ohf4tIcL3oX7dexCkx/eS/0E+LBOYRkt8RfbtQ==
 
 tr46@^1.0.1:
   version "1.0.1"

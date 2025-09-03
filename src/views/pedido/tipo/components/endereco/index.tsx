@@ -4,18 +4,18 @@ import { obterValorDescontoReal } from "@util/cupons";
 import { useState } from "react";
 import { colors } from "@styles/colors";
 import { EnderecoStyle } from "./styles";
-import { cupomAplicavelAoEndereco } from "@util/enderecos/cupomAplicavel";
 import { useTipoPage } from "../../context";
 import { taxaAdicional } from "@util/dados";
 import { CgTrash } from "react-icons/cg";
 import { api } from "@util/axios";
 import { useClienteStore } from "src/infra/zustand/cliente";
+import { analisarRegrasEndereco } from "@util/regras";
 
 export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   const { cupomEntrega, tipo, setTipo } = useTipoPage();
   const { cliente, setCliente } = useClienteStore();
   const [descontoReal] = useState<number>(
-    cupomAplicavelAoEndereco(cupomEntrega, e.enderecoOriginal)
+    analisarRegrasEndereco(cupomEntrega, e.enderecoOriginal)
       ? obterValorDescontoReal(
           e.enderecoOriginal.taxa ?? 0,
           cupomEntrega.valor,
