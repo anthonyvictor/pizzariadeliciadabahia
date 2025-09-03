@@ -36,9 +36,16 @@ export default async function handler(
 }
 
 export async function autoCompleteEnderecos(rua: string, bairro?: string) {
-  const [c_cepAberto, q_cepAberto, q_nominatim, q_photon] = await Promise.all([
+  const [
+    c_cepAberto,
+    q_cepAberto,
+    q_nominatimComBairro,
+    q_nominatim,
+    q_photon,
+  ] = await Promise.all([
     cep_cepAberto(rua),
     query_cepaberto(rua, bairro),
+    bairro ? query_nominatim(rua + ", " + (bairro ?? "").trim()) : [],
     query_nominatim(rua),
     query_photon((rua + ", " + (bairro ?? "")).trim()),
   ]);
@@ -47,6 +54,7 @@ export async function autoCompleteEnderecos(rua: string, bairro?: string) {
   const enderecos: IEndereco[] = [
     ...c_cepAberto,
     ...q_cepAberto,
+    ...q_nominatimComBairro,
     ...q_nominatim,
     ...q_photon,
   ];

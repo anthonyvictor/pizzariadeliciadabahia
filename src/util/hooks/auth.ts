@@ -16,7 +16,7 @@ const pages = {
 export const useAuth = () => {
   const router = useRouter();
 
-  const [fechado, setFechado] = useState(true);
+  const [fechado, setFechado] = useState(false);
   const [authCarregado, setAuthCarregado] = useState(false);
   // const [cliente, setCliente] = useState<ICliente>();
   // const [pedido, setPedido] = useState<IPedido>();
@@ -49,7 +49,8 @@ export const useAuth = () => {
 
     const obterPedido = async (peloCliente?: boolean) => {
       try {
-        if (!pedidoId) return null;
+        if ((peloCliente && !_cliente.id) || (!peloCliente && !pedidoId))
+          return null;
         const res = await axios.get(
           `${env.apiURL}/pedidos?${
             peloCliente
@@ -87,12 +88,18 @@ export const useAuth = () => {
 
     if (!_pedido) _pedido = await obterPedido(true);
 
+    const _fechado = true;
+    setFechado(_fechado);
+
     if (!_pedido || _pedido.cliente?.id !== _cliente.id) {
+      if (_fechado) return;
+
       _pedido = await novoPedido();
       if (router.pathname !== pages.pedido) return router.push(pages.pedido);
     }
 
     if (!!_pedido?.enviadoEm && router.pathname !== pages.finalizado) {
+      if (_fechado) return;
       _pedido = await novoPedido();
       if (router.pathname !== pages.pedido) return router.push(pages.pedido);
     }

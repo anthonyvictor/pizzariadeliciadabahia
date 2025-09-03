@@ -1,7 +1,18 @@
 import { SetState } from "@config/react";
 import { colors } from "@styles/colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+
+interface INumberInput {
+  value: number;
+  setValue: (newValue: number) => void;
+  max?: number;
+  min?: number;
+  decimalPlaces?: number;
+  beforeUp?: (newValue: number) => boolean;
+  beforeDown?: (newValue: number) => boolean;
+  forceMin?: boolean;
+}
 
 export const NumberInput = ({
   value: numValue,
@@ -12,26 +23,36 @@ export const NumberInput = ({
   beforeUp = () => true,
   beforeDown = () => true,
   forceMin = false,
-}: {
-  value: number;
-  setValue: (newValue: number) => void;
-  max?: number;
-  min?: number;
-  decimalPlaces?: number;
-  beforeUp?: (newValue: number) => boolean;
-  beforeDown?: (newValue: number) => boolean;
-  forceMin?: boolean;
-}) => {
+}: INumberInput) => {
+  const [strValue, setStrValue] = useState(numValue.toString());
+
   const f = (v: number) =>
     decimalPlaces ? v.toFixed(decimalPlaces) : v.toString();
-  const [strValue, setStrValue] = useState(numValue.toString());
+
   const canUp = (novoNum: number) =>
     novoNum <= max && novoNum >= min && beforeUp(novoNum);
+
   const canDown = (novoNum: number) =>
     novoNum <= max && novoNum >= min && beforeDown(novoNum);
+
+  const [upDisabled, setUpDisabled] = useState(false);
+  const [downDisabled, setDownDisabled] = useState(false);
+
+  useEffect(() => {
+    (() => {
+      const novoNum = numValue + 1;
+      setUpDisabled(!canUp(novoNum));
+    })();
+    (() => {
+      const novoNum = numValue - 1;
+      setDownDisabled(!canDown(novoNum));
+    })();
+  }, [numValue]);
+
   return (
     <NumberInputStyle>
       <button
+        disabled={downDisabled}
         style={{ visibility: numValue > 0 ? "initial" : "hidden" }}
         onClick={() => {
           const novoNum =
@@ -84,6 +105,7 @@ export const NumberInput = ({
 
       <button
         style={{ color: colors.elements }}
+        disabled={upDisabled}
         onClick={() => {
           const novoNum = numValue + 1 <= max ? numValue + 1 : numValue;
 
@@ -127,5 +149,9 @@ const NumberInputStyle = styled.div`
     padding: 5px 10px;
     color: #fff;
     min-width: 0;
+
+    &:disabled {
+      opacity: 0.5;
+    }
   }
 `;

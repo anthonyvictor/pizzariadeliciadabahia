@@ -59,8 +59,7 @@ export function obterValorDescontoReal(
   valor: number,
   desconto: number,
   tipo: "percentual" | "fixo",
-  max?: number,
-  randomCentavos = 0
+  max?: number
 ): number {
   if (valor <= 0 || desconto <= 0) return 0;
 
@@ -76,9 +75,7 @@ export function obterValorDescontoReal(
     descontoReal = Math.min(descontoReal, max);
   }
 
-  const adc = descontoReal ? randomCentavos : 0;
-
-  descontoReal = Number((descontoReal + adc).toFixed(2));
+  descontoReal = Number(descontoReal.toFixed(2));
 
   return descontoReal;
 }

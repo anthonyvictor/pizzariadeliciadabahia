@@ -30,9 +30,12 @@ export const Header = () => {
         />
       </div>
 
-      {router.pathname.startsWith("/pedido") && !!cliente?.id && (
-        <h5 className="nome">Olá, {capitalize(cliente.nome.split(" ")[0])}!</h5>
-      )}
+      {["/pedido", "/cliente"].some((x) => router.pathname.startsWith(x)) &&
+        !!cliente?.id && (
+          <h5 className="nome">
+            Olá, {capitalize(cliente.nome.split(" ")[0])}!
+          </h5>
+        )}
 
       <Navigation />
       <PecaJaButton style="minimal" />

@@ -74,20 +74,20 @@ export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
     { new: true }
   );
   type Vendidos = { id: string; qtd: number };
-  const _combos: { grupoId: string; comboId: string }[] = [];
+  const _combosVendidos: { grupoId: string; comboId: string }[] = [];
   const _tamanhos: Vendidos[] = [];
   const _extras: Vendidos[] = [];
   const _bebidas: Vendidos[] = [];
   const _lanches: Vendidos[] = [];
 
   itens.forEach((item) => {
+    //adiciona unicamente o combo do produto a lista de combos vendidos
     if (item.comboId) {
-      const i = _combos.findIndex((x) => x.grupoId === item.grupoId);
-
-      if (i === -1) {
-        _combos.push({ grupoId: item.grupoId, comboId: item.comboId });
-      }
+      const i = _combosVendidos.findIndex((x) => x.grupoId === item.grupoId);
+      if (i === -1)
+        _combosVendidos.push({ grupoId: item.grupoId, comboId: item.comboId });
     }
+
     if (item.tipo === "pizza") {
       const { tamanho, extras } = item;
       (extras ?? []).forEach((e) => {
@@ -123,7 +123,7 @@ export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
   });
   const combos = (() => {
     const arr: Vendidos[] = [];
-    _combos.forEach((item) => {
+    _combosVendidos.forEach((item) => {
       const i = arr.findIndex((x) => x.id === item.comboId);
       if (i > -1) {
         arr[i].qtd += 1;
@@ -137,13 +137,46 @@ export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
 
   (async () => {
     try {
+      // const update = async (arr: Vendidos[], m: Model<any>) => {
+      //   if (arr.length) {
+      //     await m.bulkWrite(
+      //       arr.map((u) => {
+      //       return  ({
+      //         updateOne: {
+      //           filter: { _id: new mongoose.Types.ObjectId(u.id) },
+      //           update: { $inc: { vendidos: u.qtd },  },
+      //         },
+      //       })
+
+      //       })
+      //     );
+      //   }
+      // };
+
       const update = async (arr: Vendidos[], m: Model<any>) => {
         if (arr.length) {
           await m.bulkWrite(
             arr.map((u) => ({
               updateOne: {
                 filter: { _id: new mongoose.Types.ObjectId(u.id) },
-                update: { $inc: { vendidos: u.qtd } },
+                update: [
+                  {
+                    $set: {
+                      vendidos: {
+                        $add: [{ $ifNull: ["$vendidos", 0] }, u.qtd],
+                      },
+                      estoque: {
+                        $cond: {
+                          if: { $gt: ["$estoque", null] }, // só mexe se estoque existe
+                          then: {
+                            $max: [{ $subtract: ["$estoque", u.qtd] }, 0],
+                          },
+                          else: "$estoque", // mantém undefined/null
+                        },
+                      },
+                    },
+                  },
+                ],
               },
             }))
           );

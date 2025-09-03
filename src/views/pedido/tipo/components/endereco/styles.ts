@@ -8,7 +8,7 @@ export const EnderecoStyle = styled.li`
   color: #fff;
   padding: 15px 10px;
   display: grid;
-  grid-template-columns: 1fr 80px;
+  grid-template-columns: 1fr auto;
   gap: 10px;
 
   .deletar {

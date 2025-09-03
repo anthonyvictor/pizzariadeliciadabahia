@@ -27,6 +27,10 @@ export const GeolocalizacaoView = () => {
   );
 
   useEffect(() => {
+    if (status === "denied") avancar();
+  }, [status]);
+
+  useEffect(() => {
     if (!("geolocation" in navigator)) {
       setStatus("denied");
       return;

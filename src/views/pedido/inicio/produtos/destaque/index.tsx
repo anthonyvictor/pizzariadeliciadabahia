@@ -4,7 +4,7 @@ import { DestaqueStyle } from "./styles";
 import Image from "next/image";
 import { abreviarBebida } from "@util/bebidas";
 import { abreviarLanche } from "@util/lanches";
-import { formatCurrency } from "@util/format";
+import { capitalize, formatCurrency } from "@util/format";
 import { useRouter } from "next/router";
 
 export const Destaque = ({ prod }: { prod: IProdutoHome }) => {
@@ -35,14 +35,16 @@ export const Destaque = ({ prod }: { prod: IProdutoHome }) => {
       </aside>
       <aside className="conteudo">
         <h6 className="nome">
-          {("maxSabores" in prod
-            ? `P. ${prod.nome}`
-            : "produtos" in prod
-            ? prod.nome
-            : prod.tipo === "bebida"
-            ? abreviarBebida(prod.nome, true)
-            : abreviarLanche(prod.nome)
-          ).toUpperCase()}
+          {capitalize(
+            ("maxSabores" in prod
+              ? `P. ${prod.nome}`
+              : "produtos" in prod
+              ? prod.nome
+              : prod.tipo === "bebida"
+              ? abreviarBebida(prod.nome, true)
+              : abreviarLanche(prod.nome)
+            ).toUpperCase()
+          )}
         </h6>
         {!!prod["valorMin"] && (
           <p style={{ fontSize: "0.6rem", opacity: "0.6" }}>À partir de</p>

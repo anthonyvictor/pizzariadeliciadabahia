@@ -137,9 +137,7 @@ export const Metodo = ({
           cupom.alvo === "itens" ? valorItens : totalMetodo,
           cupom.valor,
           cupom.tipo,
-          cupom.maxDesconto,
-          pedido.cliente.dadosExtras.find((x) => x.chave === "randomCentavos")
-            ?.valor ?? 0
+          cupom.maxDesconto
         )
       : 0
   );
@@ -165,18 +163,19 @@ export const Metodo = ({
     });
   };
 
-  // Fecha modal com botão voltar do celular
   useEffect(() => {
     const handlePopState = () => {
-      if (metodo) {
-        closeModal();
-      } else {
-        router.replace("/pedido");
-      }
+      metodo ? closeModal() : router.replace("/pedido");
+      return false; // impede a navegação normal
     };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, [metodo]);
+
+    router.beforePopState(handlePopState);
+
+    return () => {
+      // importante: volta o comportamento ao padrão quando desmontar
+      router.beforePopState(() => true);
+    };
+  }, [router, metodo]);
 
   const pagComTroco = pagsMetodo
     ? pagsMetodo.find(
@@ -292,10 +291,7 @@ export const Metodo = ({
                       cupom.alvo === "itens" ? valorItens : pag.valor,
                       cupom.valor,
                       cupom.tipo,
-                      cupom.maxDesconto,
-                      pedido.cliente.dadosExtras.find(
-                        (x) => x.chave === "randomCentavos"
-                      )?.valor ?? 0
+                      cupom.maxDesconto
                     )
                   : 0,
             });

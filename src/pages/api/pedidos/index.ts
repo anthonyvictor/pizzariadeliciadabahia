@@ -9,35 +9,46 @@ import mongoose, { Types } from "mongoose";
 import { obterDistancias } from "@routes/distancias";
 import { encontrarTaxa } from "@util/distancias";
 import { toArray } from "@util/array";
+import { HTTPError } from "@models/error";
 
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<RespType<IPedido>>
 ) {
-  if (req.method === "GET") {
-    let data;
-    const { id, ids, clientesIds, status } = req.query;
-    if (id) {
-      data = await obterPedido(id as string);
+  try {
+    if (req.method === "GET") {
+      let data;
+      const { id, ids, clientesIds, status } = req.query;
+      if (id) {
+        data = await obterPedido(id as string);
+      } else {
+        data = await obterPedidos({
+          clientesIds,
+          status: status as any,
+          ids: ids as any,
+        });
+      }
+      res.status(200).json(data);
+    } else if (req.method === "POST") {
+      const { clienteId } = req.body;
+      const data = await novoPedido(clienteId);
+      res.status(200).send(data);
+    } else if (req.method === "PATCH") {
+      const { pedidoId, pedido } = req.body;
+      await patchPedido(pedidoId, pedido);
+      res.status(200).end();
     } else {
-      data = await obterPedidos({
-        clientesIds,
-        status: status as any,
-        ids: ids as any,
-      });
+      res.status(405).end(); // Método não permitido
     }
-    res.status(200).json(data);
-  } else if (req.method === "POST") {
-    const { clienteId } = req.body;
-    const data = await novoPedido(clienteId);
-    res.status(200).send(data);
-  } else if (req.method === "PATCH") {
-    const { pedidoId, pedido } = req.body;
-    await patchPedido(pedidoId, pedido);
-    res.status(200).end();
-  } else {
-    res.status(405).end(); // Método não permitido
+  } catch (err) {
+    if (err instanceof HTTPError) {
+      console.error(err.message, err.code, err.data, err.stack);
+      res.status(err.code).end();
+    } else {
+      console.error(err.message, err.stack);
+      res.status(500).end();
+    }
   }
 }
 
@@ -129,8 +140,8 @@ export const obterPedido = async (id: string) => {
     populates: populates.pedidos,
   });
 
-  const distancias = await obterDistancias();
   if (!pedido) return null;
+  const distancias = await obterDistancias();
   const r = {
     ...pedido,
     cliente: !pedido?.cliente

@@ -15,7 +15,7 @@ import { Metodo } from "./components/metodo";
 import { useTipoPage } from "./context";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { taxaAdicional } from "@util/dados";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useClienteStore } from "src/infra/zustand/cliente";
 
 export const TipoView = () => {
@@ -23,16 +23,27 @@ export const TipoView = () => {
   const { tipo, setTipo } = useTipoPage();
   const { pedido } = usePedidoStore();
   const { cliente } = useClienteStore();
+  const [showModal, setShowModal] = useState(false);
 
-  // Fecha modal com botão voltar do celular
   useEffect(() => {
     const handlePopState = () => {
-      router.replace("/pedido");
+      showModal ? setTipo(null) : router.replace("/pedido");
+      return false; // impede a navegação normal
     };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
 
+    router.beforePopState(handlePopState);
+
+    return () => {
+      // importante: volta o comportamento ao padrão quando desmontar
+      router.beforePopState(() => true);
+    };
+  }, [router, showModal]);
+
+  useEffect(() => {
+    setShowModal(
+      tipo?.type === "entrega" && !!tipo.endereco && !tipo.endereco.metodo
+    );
+  }, [tipo]);
   return (
     <TipoViewStyle>
       <menu className="no-scroll">
@@ -72,10 +83,10 @@ export const TipoView = () => {
           className={`item`}
         >
           <aside className="item-left">
-            <h2 className="item-type">Novo endereço 🛵</h2>
+            <h2 className="item-type">Cadastre um endereço 🛵</h2>
 
             <small className="item-description">
-              {"Cadastre seu endereço clicando aqui".toUpperCase()}
+              {"Cadastre seu endereço para entrega clicando aqui".toUpperCase()}
             </small>
           </aside>
           <aside className="item-right">
@@ -117,7 +128,7 @@ export const TipoView = () => {
         }}
       />
 
-      {tipo?.type === "entrega" && !!tipo.endereco && !tipo.endereco.metodo && (
+      {showModal && tipo?.type === "entrega" && (
         <Modal
           label="Método de entrega"
           description="Como você quer sua entrega?"

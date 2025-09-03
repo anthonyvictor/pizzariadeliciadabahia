@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
-import { formatCurrency } from "@util/format";
+import { capitalize, formatCurrency } from "@util/format";
 import { useRouter } from "next/router";
 import { TamanhoStyle } from "./styles";
 import { IPizzaTamanho } from "tpdb-lib";
@@ -22,7 +22,7 @@ export const Tamanho = ({ prod }: { prod: IPizzaTamanho }) => {
         <Image src={prod.imagemUrl} layout="fill" priority />
       </aside>
       <aside className="conteudo">
-        <h5>Pizza {prod.nome.toUpperCase()}</h5>
+        <h5>Pizza {capitalize(prod.nome.toUpperCase())}</h5>
         <p style={{ fontSize: "0.7rem" }}>{tamanhoDescricao(prod)}</p>
         <h6>À partir de {formatCurrency(prod.valorMin)}</h6>
       </aside>

@@ -49,15 +49,19 @@ export const ItemBuilderView = () => {
   //         <ButtonSecondary onClick={() => router.back()}>Voltar</ButtonSecondary>
   //       </>
   //     );
-
-  // Fecha modal com botão voltar do celular
   useEffect(() => {
     const handlePopState = () => {
       router.replace("/pedido");
+      return false; // impede a navegação normal
     };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
+
+    router.beforePopState(handlePopState);
+
+    return () => {
+      // importante: volta o comportamento ao padrão quando desmontar
+      router.beforePopState(() => true);
+    };
+  }, [router]);
   return (
     <>
       <ItemBuilderStyle>

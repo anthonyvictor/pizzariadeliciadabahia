@@ -119,7 +119,6 @@ export const InformacoesIniciaisView = () => {
 
   const logar = async () => {
     try {
-      console.log("entrou");
       const { whatsapp } = formData;
       const resultado = telefoneSchema.safeParse(whatsapp);
 
@@ -134,11 +133,9 @@ export const InformacoesIniciaisView = () => {
 
       if (axiosOk(res.status)) {
         if (res.data) {
-          console.log("res.data", res.data);
           setCliente(res.data);
           localStorage.setItem("clienteId", res.data.id);
-          console.log("foi finalmente");
-          router.push("/pedido");
+          router.replace("/pedido");
         } else {
           setAchouCliente("naoAchou");
         }
@@ -160,12 +157,6 @@ export const InformacoesIniciaisView = () => {
       const cliente = {
         nome: (nome + " " + sobrenome).trim(),
         whatsapp,
-        dadosExtras: [
-          {
-            chave: "randomCentavos",
-            valor: Number((Math.random() * 0.06).toFixed(2)),
-          },
-        ],
       };
 
       const res = await api.post(`/clientes/cadastro`, {
@@ -176,7 +167,7 @@ export const InformacoesIniciaisView = () => {
         if (res.data) {
           setCliente(res.data);
           localStorage.setItem("clienteId", res.data.id);
-          router.push("/pedido");
+          router.replace("/pedido");
         }
       }
     } catch (err) {
@@ -415,7 +406,7 @@ export const InformacoesIniciaisView = () => {
         secondaryButton={{
           click: () => {
             achouCliente === "naoProcurou"
-              ? router.push("/")
+              ? router.replace("/")
               : setAchouCliente("naoProcurou");
           },
         }}

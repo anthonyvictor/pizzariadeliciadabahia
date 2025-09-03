@@ -1,10 +1,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { abreviarBebida } from "@util/bebidas";
-import { formatCurrency } from "@util/format";
+import { capitalize, formatCurrency } from "@util/format";
 import { useRouter } from "next/router";
 import { BebidaStyle } from "./styles";
 import { IBebida } from "tpdb-lib";
+import { camelCase } from "lodash";
 
 export const Bebida = ({ prod }: { prod: IBebida }) => {
   const [locked, setLocked] = useState(false);
@@ -28,7 +29,7 @@ export const Bebida = ({ prod }: { prod: IBebida }) => {
         />
       </aside>
       <aside className="conteudo">
-        <h5>{abreviarBebida(prod.nome.toUpperCase())}</h5>
+        <h5>{capitalize(abreviarBebida(prod.nome.toUpperCase()))}</h5>
         <h6>{formatCurrency(prod.valor)}</h6>
       </aside>
     </BebidaStyle>

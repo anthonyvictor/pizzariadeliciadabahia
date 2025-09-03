@@ -1,10 +1,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { abreviarLanche } from "@util/lanches";
-import { formatCurrency } from "@util/format";
+import { capitalize, formatCurrency } from "@util/format";
 import { useRouter } from "next/router";
 import { LancheStyle } from "./styles";
 import { ILanche } from "tpdb-lib";
+import { camelCase } from "lodash";
 
 export const Lanche = ({ prod }: { prod: ILanche }) => {
   const [locked, setLocked] = useState(false);
@@ -29,7 +30,7 @@ export const Lanche = ({ prod }: { prod: ILanche }) => {
         />
       </aside>
       <aside className="conteudo">
-        <h5>{abreviarLanche(prod.nome.toUpperCase())}</h5>
+        <h5>{capitalize(abreviarLanche(prod.nome.toUpperCase()))}</h5>
         {!!prod.descricao && (
           <p style={{ fontSize: "0.7rem" }}>{prod.descricao}</p>
         )}
