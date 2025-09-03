@@ -27,6 +27,7 @@ export const useAuth = () => {
   const [authCarregado, setAuthCarregado] = useState(false);
   // const [cliente, setCliente] = useState<ICliente>();
   // const [pedido, setPedido] = useState<IPedido>();
+  const [aberto, setAberto] = useState(true);
   const [configs, setConfigs] = useState<IConfig[]>([]);
   const { setCliente } = useClienteStore();
   const { setPedido } = usePedidoStore();
@@ -67,25 +68,32 @@ export const useAuth = () => {
 
     const getAberto = () => {
       if (!configHorarioFunc) return true;
+
+      if (
+        configHorarioFunc.fechadoAte &&
+        new Date(configHorarioFunc.fechadoAte).getTime() > new Date().getTime()
+      )
+        return false;
+
       const pelasRegrasTempo = analisarRegrasTempo(configHorarioFunc);
-      const peloFechadoAte =
-        !configHorarioFunc.fechadoAte ||
-        new Date(configHorarioFunc.fechadoAte).getTime() <=
-          new Date().getTime();
+
       const peloLiberadoAte =
         configHorarioFunc.liberadoAte &&
         new Date(configHorarioFunc.liberadoAte).getTime() >=
           new Date().getTime();
 
-      return pelasRegrasTempo || peloFechadoAte || peloLiberadoAte;
+      return !(pelasRegrasTempo && peloLiberadoAte) || pelasRegrasTempo;
     };
 
-    if (getAberto()) {
-      if (router.pathname === pages.fechado)
+    const _aberto = getAberto();
+    setAberto(_aberto);
+    if (!_aberto) {
+      const subpage = router.pathname.replace(pages.pedido, "");
+      if (
+        router.pathname.startsWith(pages.pedido) &&
+        !(subpage.startsWith("/item") || subpage === "" || subpage === "/")
+      )
         return router.replace(pages.pedido);
-    } else {
-      if (router.pathname !== pages.fechado)
-        return router.replace(pages.fechado);
     }
 
     setConfigs(_configs);
@@ -174,5 +182,6 @@ export const useAuth = () => {
     authCarregado,
     pixAguardando,
     configs,
+    aberto,
   };
 };

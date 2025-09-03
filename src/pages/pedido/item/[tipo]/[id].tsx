@@ -13,7 +13,7 @@ import { usePedidoStore } from "src/infra/zustand/pedido";
 
 const ItemBuilderPage: NextPage = () => {
   const [builder, setBuilder] = useState<IItemBuilder>();
-  const { temClientePedido, authCarregado } = useAuth();
+  const { temClientePedido, authCarregado, aberto } = useAuth();
   const router = useRouter();
   const { pedido } = usePedidoStore();
   useEffect(() => {
@@ -39,7 +39,7 @@ const ItemBuilderPage: NextPage = () => {
   if (!authCarregado || !builder) return <Loading />;
 
   return (
-    <ItemBuilderProvider builder={builder}>
+    <ItemBuilderProvider builder={builder} aberto={aberto}>
       <ItemBuilderView />
     </ItemBuilderProvider>
   );

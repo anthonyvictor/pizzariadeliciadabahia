@@ -42,456 +42,279 @@ export default async function handler(
 export const obterConfigs = async (chaves?: string[]) => {
   await conectarDB();
   const q: any = {};
-
-  if (chaves) {
-    q.chave = { $in: Array.isArray(chaves) ? chaves : [chaves] };
+  if (chaves?.length) {
+    q.chave = {
+      $in: chaves,
+    };
   }
   const data = (await ff({ m: ConfigsModel, q })) as unknown as IConfig[];
-
-  const configs: IConfig[] = [
-    {
-      chave: "pagamento",
-      valor: {
-        chavePix: "86160308599",
-        trocoMax: 70,
-        cartoesRecusados: ["will"],
-        metodos: {
-          pix: { disponivel: true },
-          especie: {
-            disponivel: true,
-            condicoes: [
-              {
-                id: "",
-                tipo: "enderecos_horarios",
-                valor: [
-                  {
-                    enderecos: [
-                      { tipo: "bairros", valor: ["ondina", "rio vermelho"] },
-                    ],
-                    horario: { de: { h: 22, m: 30 }, ate: { h: 5 } },
-                  },
-                ],
-                ativa: true,
-              },
-            ],
-            excecoes: [
-              {
-                id: "",
-                tipo: "min_distancia",
-                valor: 5000,
-                ativa: true,
-              },
-
-              {
-                id: "",
-                tipo: "periodos_horarios",
-                valor: [{ de: { h: 23, m: 30 }, ate: { h: 5 } }],
-                ativa: true,
-              },
-            ],
-          },
-          cartao: {
-            disponivel: true,
-            condicoes: [
-              {
-                id: "",
-                tipo: "enderecos_horarios",
-                valor: [
-                  {
-                    enderecos: [
-                      { tipo: "bairros", valor: ["ondina", "rio vermelho"] },
-                    ],
-                    horario: { de: { h: 22, m: 30 }, ate: { h: 5 } },
-                  },
-                ],
-                ativa: true,
-              },
-            ],
-            excecoes: [
-              {
-                id: "",
-                tipo: "min_distancia",
-                valor: 5000,
-                ativa: true,
-              },
-
-              {
-                id: "",
-                tipo: "periodos_horarios",
-                valor: [{ de: { h: 23, m: 30 }, ate: { h: 5 } }],
-                ativa: true,
-              },
-            ],
-          },
-        },
-      },
-    },
-    {
-      chave: "estimativa",
-      valor: { retirada: { de: 30, ate: 50 }, entrega: { de: 40, ate: 60 } },
-    },
-    {
-      chave: "horario_funcionamento",
-      valor: {
-        liberadoAte: new Date(),
-        descricao:
-          "Funcionamos de terça à domingo e feriados, das 18:30 até 23:30",
-        condicoes: [
-          {
-            id: "",
-            ativa: true,
-            tipo: "periodos_dias",
-            valor: [{ de: 3, ate: 1 }],
-          },
-          {
-            id: "",
-            ativa: true,
-            tipo: "periodos_horarios",
-            valor: [{ de: { h: 18, m: 30 }, ate: { h: 23, m: 30 } }],
-          },
-          {
-            id: "",
-            ativa: true,
-            tipo: "datas",
-            valor: [{ y: 2025, m: 12, d: 8 }],
-          },
-        ],
-      },
-    },
-    {
-      chave: "entrega_avancada",
-      valor: {
-        disponivel: true,
-        condicoes: [
-          {
-            id: "",
-            tipo: "periodos_horarios",
-            valor: [{ de: { h: 18, m: 30 }, ate: { h: 23, m: 30 } }],
-            ativa: true,
-          },
-        ],
-        taxaAdicional: "* 3",
-      },
-    },
-    {
-      chave: "entrega",
-      valor: {
-        disponivel: true,
-        condicoes: [
-          {
-            id: "",
-            tipo: "periodos_horarios",
-            valor: [{ de: { h: 5 }, ate: { h: 23, m: 30 } }],
-            ativa: true,
-          },
-        ],
-        excecoes: [
-          {
-            id: "",
-            tipo: "enderecos_horarios",
-            valor: [
-              {
-                enderecos: [
-                  {
-                    tipo: "bairros",
-                    valor: [
-                      "calabar",
-                      "alto das pombas",
-                      "brotas",
-                      "cosme de farias",
-                      "engenho velho de brotas",
-                      "engenho velho da federação",
-                      "federação",
-                    ],
-                  },
-                ],
-                horario: { de: { h: 22, m: 30 }, ate: { h: 4, m: 59 } },
-              },
-            ],
-            ativa: true,
-          },
-          {
-            id: "",
-            tipo: "min_distancia",
-            valor: 8000,
-            ativa: true,
-          },
-        ],
-        adicionalDinamico: {
-          valor: "* 3",
-          ate: new Date("2025-08-31 07:00:00"),
-        },
-      },
-    },
-  ];
 
   return data;
 };
 
 export const createConfigs = async () => {
-  const configs = [
-    {
-      chave: "pagamento",
-      valor: {
-        chavePix: "86160308599",
-        trocoMax: 70,
-        cartoesRecusados: ["will"],
-        metodos: {
-          pix: {
-            disponivel: true,
-          },
-          especie: {
-            disponivel: true,
-            condicoes: [
-              {
-                tipo: "enderecos_horarios",
-                valor: [
-                  {
-                    enderecos: [
-                      {
-                        tipo: "bairros",
-                        valor: ["ondina", "rio vermelho"],
-                      },
-                    ],
-                    horario: {
-                      de: {
-                        h: 22,
-                        m: 30,
-                      },
-                      ate: {
-                        h: 5,
-                      },
-                    },
-                  },
-                ],
-                ativa: true,
-              },
-            ],
-            excecoes: [
-              {
-                tipo: "min_distancia",
-                valor: 5000,
-                ativa: true,
-              },
-              {
-                tipo: "periodos_horarios",
-                valor: [
-                  {
-                    de: {
-                      h: 23,
-                      m: 30,
-                    },
-                    ate: {
-                      h: 5,
-                    },
-                  },
-                ],
-                ativa: true,
-              },
-            ],
-          },
-          cartao: {
-            disponivel: true,
-            condicoes: [
-              {
-                tipo: "enderecos_horarios",
-                valor: [
-                  {
-                    enderecos: [
-                      {
-                        tipo: "bairros",
-                        valor: ["ondina", "rio vermelho"],
-                      },
-                    ],
-                    horario: {
-                      de: {
-                        h: 22,
-                        m: 30,
-                      },
-                      ate: {
-                        h: 5,
-                      },
-                    },
-                  },
-                ],
-                ativa: true,
-              },
-            ],
-            excecoes: [
-              {
-                tipo: "min_distancia",
-                valor: 5000,
-                ativa: true,
-              },
-              {
-                tipo: "periodos_horarios",
-                valor: [
-                  {
-                    de: {
-                      h: 23,
-                      m: 30,
-                    },
-                    ate: {
-                      h: 5,
-                    },
-                  },
-                ],
-                ativa: true,
-              },
-            ],
-          },
-        },
-      },
-    },
-    {
-      chave: "estimativa",
-      valor: {
-        retirada: {
-          de: 30,
-          ate: 50,
-        },
-        entrega: {
-          de: 40,
-          ate: 60,
-        },
-      },
-    },
-    {
-      chave: "horario_funcionamento",
-      valor: {
-        liberadoAte: "2025-09-03T07:06:51.975Z",
-        descricao:
-          "Funcionamos de terça à domingo e feriados, das 18:30 até 23:30",
-        condicoes: [
-          {
-            ativa: true,
-            tipo: "periodos_dias",
-            valor: [
-              {
-                de: 3,
-                ate: 1,
-              },
-            ],
-          },
-          {
-            ativa: true,
-            tipo: "periodos_horarios",
-            valor: [
-              {
-                de: {
-                  h: 18,
-                  m: 30,
-                },
-                ate: {
-                  h: 23,
-                  m: 30,
-                },
-              },
-            ],
-          },
-          {
-            ativa: true,
-            tipo: "datas",
-            valor: [
-              {
-                y: 2025,
-                m: 12,
-                d: 8,
-              },
-            ],
-          },
-        ],
-      },
-    },
-    {
-      chave: "entrega_avancada",
-      valor: {
-        disponivel: true,
-        condicoes: [
-          {
-            tipo: "periodos_horarios",
-            valor: [
-              {
-                de: {
-                  h: 18,
-                  m: 30,
-                },
-                ate: {
-                  h: 23,
-                  m: 30,
-                },
-              },
-            ],
-            ativa: true,
-          },
-        ],
-        taxaAdicional: "* 3",
-      },
-    },
-    {
-      chave: "entrega",
-      valor: {
-        disponivel: true,
-        condicoes: [
-          {
-            tipo: "periodos_horarios",
-            valor: [
-              {
-                de: {
-                  h: 5,
-                },
-                ate: {
-                  h: 23,
-                  m: 30,
-                },
-              },
-            ],
-            ativa: true,
-          },
-        ],
-        excecoes: [
-          {
-            tipo: "enderecos_horarios",
-            valor: [
-              {
-                enderecos: [
-                  {
-                    tipo: "bairros",
-                    valor: [
-                      "calabar",
-                      "alto das pombas",
-                      "brotas",
-                      "cosme de farias",
-                      "engenho velho de brotas",
-                      "engenho velho da federação",
-                      "federação",
-                    ],
-                  },
-                ],
-                horario: {
-                  de: {
-                    h: 22,
-                    m: 30,
-                  },
-                  ate: {
-                    h: 4,
-                    m: 59,
-                  },
-                },
-              },
-            ],
-            ativa: true,
-          },
-          {
-            tipo: "min_distancia",
-            valor: 8000,
-            ativa: true,
-          },
-        ],
-      },
-    },
-  ];
-  await ConfigsModel.create(configs);
-
-  return await obterConfigs();
+  //   const configs = [
+  //     {
+  //       chave: "pagamento",
+  //       valor: {
+  //         chavePix: "86160308599",
+  //         trocoMax: 70,
+  //         cartoesRecusados: ["will"],
+  //         metodos: {
+  //           pix: {
+  //             disponivel: true,
+  //           },
+  //           especie: {
+  //             disponivel: true,
+  //             condicoes: [
+  //               {
+  //                 tipo: "enderecos_horarios",
+  //                 valor: [
+  //                   {
+  //                     enderecos: [
+  //                       {
+  //                         tipo: "bairros",
+  //                         valor: ["ondina", "rio vermelho"],
+  //                       },
+  //                     ],
+  //                     horario: {
+  //                       de: {
+  //                         h: 22,
+  //                         m: 30,
+  //                       },
+  //                       ate: {
+  //                         h: 5,
+  //                       },
+  //                     },
+  //                   },
+  //                 ],
+  //                 ativa: true,
+  //               },
+  //             ],
+  //             excecoes: [
+  //               {
+  //                 tipo: "min_distancia",
+  //                 valor: 5000,
+  //                 ativa: true,
+  //               },
+  //               {
+  //                 tipo: "periodos_horarios",
+  //                 valor: [
+  //                   {
+  //                     de: {
+  //                       h: 23,
+  //                       m: 30,
+  //                     },
+  //                     ate: {
+  //                       h: 5,
+  //                     },
+  //                   },
+  //                 ],
+  //                 ativa: true,
+  //               },
+  //             ],
+  //           },
+  //           cartao: {
+  //             disponivel: true,
+  //             condicoes: [
+  //               {
+  //                 tipo: "enderecos_horarios",
+  //                 valor: [
+  //                   {
+  //                     enderecos: [
+  //                       {
+  //                         tipo: "bairros",
+  //                         valor: ["ondina", "rio vermelho"],
+  //                       },
+  //                     ],
+  //                     horario: {
+  //                       de: {
+  //                         h: 22,
+  //                         m: 30,
+  //                       },
+  //                       ate: {
+  //                         h: 5,
+  //                       },
+  //                     },
+  //                   },
+  //                 ],
+  //                 ativa: true,
+  //               },
+  //             ],
+  //             excecoes: [
+  //               {
+  //                 tipo: "min_distancia",
+  //                 valor: 5000,
+  //                 ativa: true,
+  //               },
+  //               {
+  //                 tipo: "periodos_horarios",
+  //                 valor: [
+  //                   {
+  //                     de: {
+  //                       h: 23,
+  //                       m: 30,
+  //                     },
+  //                     ate: {
+  //                       h: 5,
+  //                     },
+  //                   },
+  //                 ],
+  //                 ativa: true,
+  //               },
+  //             ],
+  //           },
+  //         },
+  //       },
+  //     },
+  //     {
+  //       chave: "estimativa",
+  //       valor: {
+  //         retirada: {
+  //           de: 30,
+  //           ate: 50,
+  //         },
+  //         entrega: {
+  //           de: 40,
+  //           ate: 60,
+  //         },
+  //       },
+  //     },
+  //     {
+  //       chave: "horario_funcionamento",
+  //       valor: {
+  //         liberadoAte: "2025-09-03T07:06:51.975Z",
+  //         descricao:
+  //           "Funcionamos de terça à domingo e feriados, das 18:30 até 23:30",
+  //         condicoes: [
+  //           {
+  //             ativa: true,
+  //             tipo: "periodos_dias",
+  //             valor: [
+  //               {
+  //                 de: 3,
+  //                 ate: 1,
+  //               },
+  //             ],
+  //           },
+  //           {
+  //             ativa: true,
+  //             tipo: "periodos_horarios",
+  //             valor: [
+  //               {
+  //                 de: {
+  //                   h: 18,
+  //                   m: 30,
+  //                 },
+  //                 ate: {
+  //                   h: 23,
+  //                   m: 30,
+  //                 },
+  //               },
+  //             ],
+  //           },
+  //           {
+  //             ativa: true,
+  //             tipo: "datas",
+  //             valor: [
+  //               {
+  //                 y: 2025,
+  //                 m: 12,
+  //                 d: 8,
+  //               },
+  //             ],
+  //           },
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       chave: "entrega_avancada",
+  //       valor: {
+  //         disponivel: true,
+  //         condicoes: [
+  //           {
+  //             tipo: "periodos_horarios",
+  //             valor: [
+  //               {
+  //                 de: {
+  //                   h: 18,
+  //                   m: 30,
+  //                 },
+  //                 ate: {
+  //                   h: 23,
+  //                   m: 30,
+  //                 },
+  //               },
+  //             ],
+  //             ativa: true,
+  //           },
+  //         ],
+  //         taxaAdicional: "* 3",
+  //       },
+  //     },
+  //     {
+  //       chave: "entrega",
+  //       valor: {
+  //         disponivel: true,
+  //         condicoes: [
+  //           {
+  //             tipo: "periodos_horarios",
+  //             valor: [
+  //               {
+  //                 de: {
+  //                   h: 5,
+  //                 },
+  //                 ate: {
+  //                   h: 23,
+  //                   m: 30,
+  //                 },
+  //               },
+  //             ],
+  //             ativa: true,
+  //           },
+  //         ],
+  //         excecoes: [
+  //           {
+  //             tipo: "enderecos_horarios",
+  //             valor: [
+  //               {
+  //                 enderecos: [
+  //                   {
+  //                     tipo: "bairros",
+  //                     valor: [
+  //                       "calabar",
+  //                       "alto das pombas",
+  //                       "brotas",
+  //                       "cosme de farias",
+  //                       "engenho velho de brotas",
+  //                       "engenho velho da federação",
+  //                       "federação",
+  //                     ],
+  //                   },
+  //                 ],
+  //                 horario: {
+  //                   de: {
+  //                     h: 22,
+  //                     m: 30,
+  //                   },
+  //                   ate: {
+  //                     h: 4,
+  //                     m: 59,
+  //                   },
+  //                 },
+  //               },
+  //             ],
+  //             ativa: true,
+  //           },
+  //           {
+  //             tipo: "min_distancia",
+  //             valor: 8000,
+  //             ativa: true,
+  //           },
+  //         ],
+  //       },
+  //     },
+  //   ];
+  //   await ConfigsModel.create(configs);
+  //   return await obterConfigs();
 };
