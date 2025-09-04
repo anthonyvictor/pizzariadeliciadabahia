@@ -19,16 +19,16 @@ export const analisarRegrasCupomPedido = (
   cupom: ICupom,
   ignorarRegrasPagamento?: boolean
 ) => {
-  const { valorTotalBruto, valorPagamentos } = obterValoresDoPedido(pedido);
+  const { valorTotalComDescontos } = obterValoresDoPedido(pedido);
   for (let cond of (cupom.condicoes ?? []).filter((x) => x.ativa)) {
-    if (cond.tipo === "min_valor_pedido" && valorTotalBruto < cond.valor)
+    if (cond.tipo === "min_valor_pedido" && valorTotalComDescontos < cond.valor)
       return false;
-    if (cond.tipo === "max_valor_pedido" && valorTotalBruto > cond.valor)
+    if (cond.tipo === "max_valor_pedido" && valorTotalComDescontos > cond.valor)
       return false;
     if (!ignorarRegrasPagamento) {
       if (
         cond.tipo === "metodo_pagamento" &&
-        valorTotalBruto >
+        valorTotalComDescontos >
           pedido.pagamentos
             .filter((x) => (cond.valor as IPagamentoTipo[]).includes(x.tipo))
             .reduce((acc, curr) => acc + curr.valor, 0)
@@ -37,14 +37,14 @@ export const analisarRegrasCupomPedido = (
     }
   }
   for (let exc of (cupom.excecoes ?? []).filter((x) => x.ativa)) {
-    if (exc.tipo === "min_valor_pedido" && valorTotalBruto > exc.valor)
+    if (exc.tipo === "min_valor_pedido" && valorTotalComDescontos > exc.valor)
       return false;
-    if (exc.tipo === "max_valor_pedido" && valorTotalBruto < exc.valor)
+    if (exc.tipo === "max_valor_pedido" && valorTotalComDescontos < exc.valor)
       return false;
     if (!ignorarRegrasPagamento) {
       if (
         exc.tipo === "metodo_pagamento" &&
-        valorTotalBruto <
+        valorTotalComDescontos <
           pedido.pagamentos
             .filter((x) => (exc.valor as IPagamentoTipo[]).includes(x.tipo))
             .reduce((acc, curr) => acc + curr.valor, 0)

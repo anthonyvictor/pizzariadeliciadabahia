@@ -17,6 +17,7 @@ import { usePagamentoStore } from "src/infra/zustand/pagamentos";
 import { MetodoModal } from "../metodoModal";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { analisarRegrasEndereco } from "@util/regras";
+import { obterValoresDoPedido } from "@util/pedidos";
 
 export const Metodo = ({
   metodo: m,
@@ -34,6 +35,7 @@ export const Metodo = ({
   // const [open, setOpen] = useState(false);
 
   const { pedido } = usePedidoStore();
+  const { valorTotalComDescontos } = obterValoresDoPedido(pedido);
 
   const padding = "20px 15px";
   const { pagamentos, addPagamento, deletePagamento } = usePagamentoStore();
@@ -51,6 +53,7 @@ export const Metodo = ({
     for (let cond of cupom?.condicoes ?? []) {
       if (
         cond.tipo in ["enderecos", "max_distancia", "min_distancia"] &&
+        pedido.tipo === "entrega" &&
         !pedido.endereco?.enderecoOriginal?.cep
       )
         return false;
@@ -60,17 +63,28 @@ export const Metodo = ({
       )
         return false;
 
+      if (
+        cond.tipo === "min_valor_pedido" &&
+        valorTotalComDescontos < cond.valor
+      )
+        return false;
+      if (
+        cond.tipo === "max_valor_pedido" &&
+        valorTotalComDescontos > cond.valor
+      )
+        return false;
+
       if (!analisarRegrasEndereco(cupom, pedido?.endereco?.enderecoOriginal))
         return false;
 
       if (
         cond.tipo === "max_distancia" &&
-        cond.valor > (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
+        cond.valor < (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
       )
         return false;
       if (
         cond.tipo === "min_distancia" &&
-        cond.valor <
+        cond.valor >
           (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
       )
         return false;
@@ -85,12 +99,12 @@ export const Metodo = ({
 
       if (
         exc.tipo === "max_distancia" &&
-        exc.valor < (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
+        exc.valor > (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
       )
         return false;
       if (
         exc.tipo === "min_distancia" &&
-        exc.valor >
+        exc.valor <
           (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
       )
         return false;

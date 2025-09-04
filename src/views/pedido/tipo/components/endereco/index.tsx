@@ -10,20 +10,78 @@ import { CgTrash } from "react-icons/cg";
 import { api } from "@util/axios";
 import { useClienteStore } from "src/infra/zustand/cliente";
 import { analisarRegrasEndereco } from "@util/regras";
+import { usePedidoStore } from "src/infra/zustand/pedido";
+import { obterValoresDoPedido } from "@util/pedidos";
 
 export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
-  const { cupomEntrega, tipo, setTipo } = useTipoPage();
+  const { cupomEntrega: cupom, tipo, setTipo } = useTipoPage();
   const { cliente, setCliente } = useClienteStore();
+  const { pedido } = usePedidoStore();
+  const { valorItensComDesconto } = obterValoresDoPedido(pedido);
   const [descontoReal] = useState<number>(
-    analisarRegrasEndereco(cupomEntrega, e.enderecoOriginal)
+    cupomAplicavel()
       ? obterValorDescontoReal(
           e.enderecoOriginal.taxa ?? 0,
-          cupomEntrega.valor,
-          cupomEntrega.tipo,
-          cupomEntrega.maxDesconto
+          cupom.valor,
+          cupom.tipo,
+          cupom.maxDesconto
         )
       : 0
   );
+
+  function cupomAplicavel() {
+    if (!analisarRegrasEndereco(cupom, e?.enderecoOriginal)) return false;
+
+    for (let cond of cupom?.condicoes ?? []) {
+      if (
+        cond.tipo === "min_valor_pedido" &&
+        valorItensComDesconto < cond.valor
+      )
+        return false;
+      if (
+        cond.tipo === "max_valor_pedido" &&
+        valorItensComDesconto > cond.valor
+      )
+        return false;
+
+      cond.tipo === "max_distancia" &&
+        console.log(
+          cond.tipo,
+          cond.valor,
+          e?.enderecoOriginal?.distancia_metros,
+          cond.valor < (e?.enderecoOriginal?.distancia_metros ?? 0)
+        );
+      if (
+        cond.tipo === "max_distancia" &&
+        cond.valor < (e?.enderecoOriginal?.distancia_metros ?? 0)
+      )
+        return false;
+
+      if (
+        cond.tipo === "min_distancia" &&
+        cond.valor > (e?.enderecoOriginal?.distancia_metros ?? 1000000000)
+      )
+        return false;
+    }
+    for (let exc of cupom.excecoes ?? []) {
+      if (exc.tipo === "min_valor_pedido" && valorItensComDesconto > exc.valor)
+        return false;
+      if (exc.tipo === "max_valor_pedido" && valorItensComDesconto < exc.valor)
+        return false;
+      if (
+        exc.tipo === "max_distancia" &&
+        exc.valor < (e?.enderecoOriginal?.distancia_metros ?? 0)
+      )
+        return false;
+      if (
+        exc.tipo === "min_distancia" &&
+        exc.valor > (e?.enderecoOriginal?.distancia_metros ?? 1000000000)
+      )
+        return false;
+    }
+
+    return true;
+  }
 
   const metodoBasico =
     !tipo?.type ||

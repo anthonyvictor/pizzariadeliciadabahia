@@ -4,6 +4,7 @@ import {
   IProdutoComboBebida,
   IProdutoComboLanche,
   IEndereco,
+  IPedido,
 } from "tpdb-lib";
 import { ICliente } from "tpdb-lib";
 import { IRegra } from "tpdb-lib";
@@ -17,6 +18,7 @@ import {
 import { IDeveEstar } from "@models/deveEstar";
 import { normalizarOrdinal } from "./format";
 import { entreEnderecos } from "./enderecos/regras";
+import { obterValoresDoPedido } from "./pedidos";
 
 export const produtoDispPelasRegras = (
   prod:
@@ -142,7 +144,7 @@ export const analisarRegrasEndereco = (
     !enderecoOriginal?.rua ||
     !enderecoOriginal?.distancia_metros
   )
-    return true;
+    return false;
   const hoje = new Date();
   const { cep, bairro, rua, distancia_metros } = enderecoOriginal;
   let condicoesEnderecos = [];
@@ -299,3 +301,76 @@ export const comboDispPelasRegras = (
   }
   return true;
 };
+
+// if (
+//       !cupom ||
+//       (!ignorarTotalMetodo &&
+//         (!totalMetodo ||
+//           totalMetodo < (cupom.alvo === "itens" ? valorItens : valorTotal)))
+//     )
+//       return false;
+
+//************************************************************** */
+//   export const analisarRegras = ({condicoes, excecoes}:{condicoes?:IRegra[], excecoes?:IRegra[]}, pedido:IPedido, {}) => {
+//     if(!analisarRegrasTempo({condicoes, excecoes})) return false
+//     if(pedido.tipo === 'entrega' && !analisarRegrasEndereco({condicoes, excecoes}, pedido?.endereco?.enderecoOriginal)) return false
+
+//       const {valorTotalComDescontos} = obterValoresDoPedido(pedido)
+
+//     for (let cond of condicoes ?? []) {
+//       if (
+//         cond.tipo in ["enderecos", "max_distancia", "min_distancia"] &&
+//        pedido.tipo==='entrega' && !pedido.endereco?.enderecoOriginal?.cep
+//       )
+//         return false;
+//       if (
+//         cond.tipo === "metodo_pagamento"
+
+//       ){
+// if(!pedido.pagamentos.length )return true
+// if(pedido.pagamentos.length > 1 )return false
+
+// !cond.valor.some((x) => x === pedido.pagamentos[0].tipo)
+//         return false;
+//       }
+//       if (
+//         cond.tipo === "min_valor_pedido" &&
+//         cond.valor > valorTotalComDescontos
+//       )
+//         return false;
+
+//       if (
+//         cond.tipo === "max_distancia" &&
+//         cond.valor > (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
+//       )
+//         return false;
+//       if (
+//         cond.tipo === "min_distancia" &&
+//         cond.valor <
+//           (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
+//       )
+//         return false;
+//     }
+//     for (let exc of excecoes ?? []) {
+//       if (!pedido.endereco?.enderecoOriginal?.cep) return true;
+//       if (
+//         exc.tipo === "metodo_pagamento" &&
+//         exc.valor.some((x) => x === m.tipo)
+//       )
+//         return false;
+
+//       if (
+//         exc.tipo === "max_distancia" &&
+//         exc.valor < (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
+//       )
+//         return false;
+//       if (
+//         exc.tipo === "min_distancia" &&
+//         exc.valor >
+//           (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
+//       )
+//         return false;
+//     }
+
+//     return true;
+//   };

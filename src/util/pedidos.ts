@@ -1,10 +1,12 @@
 import { IPagamentoPedido, IPagamentoTipo, IPedido } from "tpdb-lib";
 
 export const obterValoresDoPedido = ({
-  itens,
+  itens: _itens,
   endereco,
-  pagamentos,
+  pagamentos: _pagamentos,
 }: IPedido) => {
+  const itens = _itens?.length ? _itens : [];
+  const pagamentos = _pagamentos?.length ? _pagamentos : [];
   const descontoItens = Number(
     itens.reduce((acc, curr) => acc + (curr.desconto ?? 0), 0).toFixed(2)
   );
