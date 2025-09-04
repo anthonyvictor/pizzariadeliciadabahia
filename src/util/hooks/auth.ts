@@ -79,12 +79,14 @@ export const useAuth = (
 
       const pelasRegrasTempo = analisarRegrasTempo(configHorarioFunc);
 
+      if (pelasRegrasTempo) return true;
+
       const peloLiberadoAte =
-        configHorarioFunc.liberadoAte &&
+        !!configHorarioFunc.liberadoAte &&
         new Date(configHorarioFunc.liberadoAte).getTime() >=
           new Date().getTime();
 
-      return !(pelasRegrasTempo && peloLiberadoAte) || pelasRegrasTempo;
+      return peloLiberadoAte;
     };
 
     const _aberto = getAberto();
