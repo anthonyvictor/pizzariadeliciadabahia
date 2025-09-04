@@ -5,11 +5,7 @@ import { useEffect } from "react";
 import Loading from "@components/loading";
 
 const ConfirmacaoPage: NextPage = () => {
-  const { temClientePedido, authCarregado } = useAuth();
-
-  useEffect(() => {
-    temClientePedido();
-  }, []);
+  const { authCarregado } = useAuth();
 
   if (!authCarregado) return <Loading />;
 

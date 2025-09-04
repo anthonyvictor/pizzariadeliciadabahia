@@ -12,15 +12,13 @@ import { IBairro } from "tpdb-lib";
 const RuaPage: NextPage = ({
   ipLoc,
 }: { ipLoc: [number, number] | null } & IAuth) => {
-  const { temClientePedido, authCarregado } = useAuth();
+  const { authCarregado } = useAuth();
   const router = useRouter();
 
   const [geoLoc, setGeoLoc] = useState<[number, number]>();
   const [bairro, setBairro] = useState<IBairro>();
 
   useEffect(() => {
-    temClientePedido();
-
     const _geoLoc = JSON.parse(sessionStorage.getItem("geoLoc") ?? "{}");
 
     if (_geoLoc?.[0] && _geoLoc?.[1]) {

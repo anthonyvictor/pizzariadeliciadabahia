@@ -5,11 +5,7 @@ import { useEffect } from "react";
 import { useAuth } from "@util/hooks/auth";
 
 const ItensPage: NextPage = () => {
-  const { temClientePedido, authCarregado } = useAuth();
-
-  useEffect(() => {
-    temClientePedido();
-  }, []);
+  const { authCarregado } = useAuth();
 
   if (!authCarregado) return <Loading />;
 

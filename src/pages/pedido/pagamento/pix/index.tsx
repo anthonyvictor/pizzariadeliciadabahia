@@ -5,11 +5,7 @@ import { useEffect } from "react";
 import Loading from "@components/loading";
 
 const PixPage: NextPage = () => {
-  const { temClientePedido, authCarregado, pixAguardando } = useAuth();
-
-  useEffect(() => {
-    temClientePedido();
-  }, []);
+  const { authCarregado, pixAguardando } = useAuth();
 
   if (!authCarregado) return <Loading />;
 

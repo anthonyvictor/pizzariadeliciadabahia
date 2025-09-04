@@ -2,7 +2,7 @@ import { env } from "@config/env";
 import { analisarRegrasTempo } from "@util/regras";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useClienteStore } from "src/infra/zustand/cliente";
 import { usePedidoStore } from "src/infra/zustand/pedido";
@@ -21,7 +21,11 @@ const pages = {
   fechado: "/fechado",
 };
 
-export const useAuth = () => {
+export const useAuth = (
+  opcoes: { verificarPixAguardando?: boolean } = {
+    verificarPixAguardando: true,
+  }
+) => {
   const router = useRouter();
 
   const [authCarregado, setAuthCarregado] = useState(false);
@@ -33,13 +37,11 @@ export const useAuth = () => {
   const { setPedido } = usePedidoStore();
   const [pixAguardando, setPixAguardando] = useState<IPagamentoPedidoPix>();
 
-  const temClientePedido = async (
-    opcoes: {
-      verificarPixAguardando?: boolean;
-    } = {
-      verificarPixAguardando: true,
-    }
-  ) => {
+  useEffect(() => {
+    temClientePedido();
+  }, []);
+
+  const temClientePedido = async () => {
     const clienteId = localStorage.getItem("clienteId");
     const pedidoId = localStorage.getItem("pedidoId");
 
@@ -178,7 +180,6 @@ export const useAuth = () => {
   };
 
   return {
-    temClientePedido,
     authCarregado,
     pixAguardando,
     configs,

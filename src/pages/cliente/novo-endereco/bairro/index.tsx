@@ -9,11 +9,7 @@ import { toast } from "react-toastify";
 
 const BairroPage: NextPage = () => {
   const [bairros, setBairros] = useState([]);
-  const { temClientePedido, authCarregado } = useAuth();
-
-  useEffect(() => {
-    temClientePedido();
-  }, []);
+  const { authCarregado } = useAuth();
 
   useEffect(() => {
     if (authCarregado) {

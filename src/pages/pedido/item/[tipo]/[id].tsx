@@ -13,12 +13,9 @@ import { usePedidoStore } from "src/infra/zustand/pedido";
 
 const ItemBuilderPage: NextPage = () => {
   const [builder, setBuilder] = useState<IItemBuilder>();
-  const { temClientePedido, authCarregado, aberto } = useAuth();
+  const { authCarregado, aberto } = useAuth();
   const router = useRouter();
   const { pedido } = usePedidoStore();
-  useEffect(() => {
-    temClientePedido();
-  }, []);
 
   useEffect(() => {
     if (authCarregado) {

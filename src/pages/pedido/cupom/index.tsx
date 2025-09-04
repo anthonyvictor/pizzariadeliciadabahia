@@ -6,10 +6,7 @@ import { useAuth } from "@util/hooks/auth";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 
 const CupomPage: NextPage = () => {
-  const { temClientePedido, authCarregado } = useAuth();
-  useEffect(() => {
-    temClientePedido();
-  }, []);
+  const { authCarregado } = useAuth();
 
   if (!authCarregado) return <Loading />;
 

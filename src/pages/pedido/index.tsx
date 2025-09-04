@@ -10,7 +10,7 @@ import styled from "styled-components";
 import { ButtonSecondary } from "@styles/components/buttons";
 
 const PedidoPage: NextPage = () => {
-  const { temClientePedido, authCarregado, aberto, configs } = useAuth();
+  const { authCarregado, aberto, configs } = useAuth();
   const [locker, setLocker] = useState(true);
 
   useEffect(() => {
@@ -20,8 +20,6 @@ const PedidoPage: NextPage = () => {
       console.log("entrou");
       setLocker(false);
     }
-
-    temClientePedido();
   }, []);
 
   console.log("aberto", aberto);
