@@ -31,8 +31,6 @@ export default async function handler(
 export const loginLoja = async (email: string, senha: string) => {
   await conectarDB();
 
-  console.log(senha, process.env.SENHA_LOJA);
-  console.log(email.toLowerCase(), process.env.EMAIL_LOJA.toLowerCase());
   if (
     email.toLowerCase() === process.env.EMAIL_LOJA.toLowerCase() &&
     senha === process.env.SENHA_LOJA

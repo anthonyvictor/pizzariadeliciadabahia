@@ -15,14 +15,10 @@ const PedidoPage: NextPage = () => {
 
   useEffect(() => {
     const _locker = sessionStorage.getItem("fechado-locker");
-    console.log("_locker", _locker);
     if (_locker === "false") {
-      console.log("entrou");
       setLocker(false);
     }
   }, []);
-
-  console.log("aberto", aberto);
 
   const horario = configs.find((x) => x.chave === "horario_funcionamento")
     ?.valor as IConfigHorarioFuncionamento | undefined;
