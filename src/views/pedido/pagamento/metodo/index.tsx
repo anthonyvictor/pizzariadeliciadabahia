@@ -8,7 +8,7 @@ import { IMetodo } from "../types";
 import { MetodoStyle } from "./styles";
 import { MdDiscount } from "react-icons/md";
 import { formatCurrency } from "@util/format";
-import { obterDescontos, obterValorDescontoReal } from "@util/cupons";
+import { obterValorDescontoReal } from "@util/cupons";
 import { ICupom } from "tpdb-lib";
 import { useEffect, useState } from "react";
 import { colors } from "@styles/colors";
@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { usePagamentoStore } from "src/infra/zustand/pagamentos";
 import { MetodoModal } from "../metodoModal";
 import { usePedidoStore } from "src/infra/zustand/pedido";
+import { analisarRegrasEndereco } from "@util/regras";
 
 export const Metodo = ({
   metodo: m,
@@ -49,7 +50,7 @@ export const Metodo = ({
       return false;
     for (let cond of cupom?.condicoes ?? []) {
       if (
-        cond.tipo in ["bairros", "ceps", "max_distancia", "min_distancia"] &&
+        cond.tipo in ["enderecos", "max_distancia", "min_distancia"] &&
         !pedido.endereco?.enderecoOriginal?.cep
       )
         return false;
@@ -58,24 +59,10 @@ export const Metodo = ({
         !cond.valor.some((x) => x === m.tipo)
       )
         return false;
-      if (
-        cond.tipo === "bairros" &&
-        !cond.valor.some(
-          (x) =>
-            x.toLowerCase() ===
-            pedido.endereco?.enderecoOriginal?.bairro?.toLowerCase?.()
-        )
-      )
+
+      if (!analisarRegrasEndereco(cupom, pedido?.endereco?.enderecoOriginal))
         return false;
-      if (
-        cond.tipo === "ceps" &&
-        !cond.valor.some(
-          (x) =>
-            x.replace(/\D+/g, "") ===
-            pedido.endereco?.enderecoOriginal?.cep?.replace?.(/\D+/g, "")
-        )
-      )
-        return false;
+
       if (
         cond.tipo === "max_distancia" &&
         cond.valor > (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
@@ -95,24 +82,7 @@ export const Metodo = ({
         exc.valor.some((x) => x === m.tipo)
       )
         return false;
-      if (
-        exc.tipo === "bairros" &&
-        exc.valor.some(
-          (x) =>
-            x.toLowerCase() ===
-            pedido.endereco?.enderecoOriginal?.bairro.toLowerCase()
-        )
-      )
-        return false;
-      if (
-        exc.tipo === "ceps" &&
-        exc.valor.some(
-          (x) =>
-            x.replace(/\D+/g, "") ===
-            pedido.endereco?.enderecoOriginal?.cep?.replace?.(/\D+/g, "")
-        )
-      )
-        return false;
+
       if (
         exc.tipo === "max_distancia" &&
         exc.valor < (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)

@@ -30,13 +30,20 @@ export type IProdutoHome =
 interface IPedidoPageContext {
   home: IHome;
   destaques: IProdutoHome[];
+  aberto: boolean;
 }
 
 const PedidoPageContext = createContext<IPedidoPageContext>(
   {} as IPedidoPageContext
 );
 
-export const PedidoPageProvider = ({ children }: { children: ReactNode }) => {
+export const PedidoPageProvider = ({
+  children,
+  aberto,
+}: {
+  children: ReactNode;
+  aberto: boolean;
+}) => {
   const [home, setHome] = useState<IHome>();
   const [carregandoHome, setCarregandoHome] = useState(true);
   const { pedido } = usePedidoStore();
@@ -85,6 +92,7 @@ export const PedidoPageProvider = ({ children }: { children: ReactNode }) => {
     <PedidoPageContext.Provider
       value={{
         home,
+        aberto,
         destaques,
       }}
     >

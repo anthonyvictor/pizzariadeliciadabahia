@@ -21,6 +21,7 @@ interface IItemBuilderContext {
   setItensFinais: SetState<ItemComBuilder[]>;
   builder: IItemBuilder | null;
   continuar: (qtd: number) => Promise<void>;
+  aberto: boolean;
 }
 const ItemBuilderContext = createContext<IItemBuilderContext>(
   {} as IItemBuilderContext
@@ -29,9 +30,11 @@ const ItemBuilderContext = createContext<IItemBuilderContext>(
 export const ItemBuilderProvider = ({
   children,
   builder,
+  aberto,
 }: {
   children: ReactNode;
   builder: IItemBuilder | null;
+  aberto: boolean;
 }) => {
   const [itensFinais, setItensFinais] = useState<ItemComBuilder[]>([]);
   const router = useRouter();
@@ -71,6 +74,7 @@ export const ItemBuilderProvider = ({
         setItensFinais,
         builder,
         continuar,
+        aberto,
       }}
     >
       {children}

@@ -9,7 +9,7 @@ import { rolarEl } from "@util/dom";
 
 export const ItemBuilderFooter = () => {
   const [qtd, setQtd] = useState(1);
-  const { itensFinais, builder, continuar } = useItemBuilder();
+  const { itensFinais, builder, continuar, aberto } = useItemBuilder();
 
   const pizzaSchema = z.object({
     tipo: z.literal("pizza"),
@@ -121,7 +121,7 @@ export const ItemBuilderFooter = () => {
       />
       <button
         className="avancar"
-        disabled={avancarDisabled}
+        disabled={avancarDisabled || !aberto}
         onClick={async () => {
           try {
             setAvancarDisabled(true);

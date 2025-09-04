@@ -10,7 +10,7 @@ import { useEffect } from "react";
 export const PedidoView = () => {
   const router = useRouter();
 
-  const { home, destaques } = usePedidoPage();
+  const { home, destaques, aberto } = usePedidoPage();
   const { pedido } = usePedidoStore();
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export const PedidoView = () => {
           click: () => {
             router.push("/pedido/itens");
           },
-          disabled: (pedido?.itens?.length ?? 0) < 1,
+          disabled: !aberto || (pedido?.itens?.length ?? 0) < 1,
           text: "MEUS ITENS",
           badge: pedido?.itens?.length,
         }}
@@ -92,7 +92,7 @@ export const PedidoView = () => {
           click: () => {
             router.push(`/pedido/tipo`);
           },
-          disabled: (pedido?.itens?.length ?? 0) < 1,
+          disabled: !aberto || (pedido?.itens?.length ?? 0) < 1,
         }}
       />
 

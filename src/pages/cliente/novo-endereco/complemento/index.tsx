@@ -10,12 +10,8 @@ const ComplementoPage: NextPage = () => {
   // const [cupom, setCupom] = useState<ICupom>();
   // const [carregouCupom, setCarregouCupom] = useState(false);
 
-  const { temClientePedido, authCarregado } = useAuth();
+  const { authCarregado } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    temClientePedido();
-  }, []);
 
   const [carregandoEndereco, setCarregandoEndereco] = useState(true);
   // const [descontoReal, setDescontoReal] = useState<number>(0);

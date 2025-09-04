@@ -26,7 +26,7 @@ export default async function handler(
 export const cadastroCliente = async (cliente: ICliente) => {
   await conectarDB();
 
-  const { nome, whatsapp, dadosExtras } = cliente as ICliente;
+  const { nome, whatsapp } = cliente as ICliente;
 
   const filter = { whatsapp: normalizePhone(whatsapp) };
 
@@ -38,7 +38,6 @@ export const cadastroCliente = async (cliente: ICliente) => {
   const result = await ClientesModel.create({
     nome,
     whatsapp: normalizePhone(whatsapp),
-    dadosExtras: dadosExtras ?? [],
   });
 
   return await obterCliente(result._id.toString());

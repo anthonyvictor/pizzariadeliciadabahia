@@ -13,6 +13,14 @@ export const PageStyle = styled.main`
   /* background-color: blue; */
 `;
 
+export const PageStyleWithoutHeader = styled.main`
+  flex-grow: 1;
+  z-index: 1;
+  height: calc(100% - ${sizes.header}px);
+  width: 100%;
+  top: ${sizes.header}px;
+  position: fixed;
+`;
 export const PageStyleWithoutElements = styled.main`
   z-index: 1;
   height: 100vh;

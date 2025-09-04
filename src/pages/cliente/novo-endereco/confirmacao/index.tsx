@@ -6,11 +6,7 @@ import Loading from "@components/loading";
 import { useClienteStore } from "src/infra/zustand/cliente";
 
 const ConfirmacaoComplementoPage: NextPage = () => {
-  const { temClientePedido, authCarregado } = useAuth();
-
-  useEffect(() => {
-    temClientePedido();
-  }, []);
+  const { authCarregado } = useAuth();
 
   if (!authCarregado) return <Loading />;
 

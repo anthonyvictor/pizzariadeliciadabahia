@@ -1,24 +1,33 @@
 import { Footer } from "../footer";
-import { useState } from "react";
 import { Header } from "../header";
 import Page from "../page";
 import { LayoutStyle } from "./styles";
+// import { useEffect, useState } from "react";
+// import Loading from "@components/loading";
 
 export default function Layout({ children }) {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [closedUntil, setClosedUntil] = useState(undefined);
+  //   const [status, setStatus] = useState<'carregando'|'aberto'|'fechado'>('carregando');
+  //   useEffect(() => {
 
-  // useEffect(() => {
-  //     getClosedUntil()
-  // }, [])
+  //        const obterConfigs = async () => {
+  //       if (!clienteId) return null;
+  //       const res = await axios.get(`${env.apiURL}/configs`);
+  //       return res.data as IConfig[];
+  //     };
 
-  // const getClosedUntil = async () => {
-  //   const { closedUntil: _closedUntil } =
-  //   (await (await fetch(`${env.apiURL}/loja`)).json()) ?? {closedUntil: null};
-  //   setClosedUntil(_closedUntil ?? null)
-  //   setIsLoaded(true)
-  // }
+  //     const configs = await obterConfigs();
+  //     const configHorarioFunc = configs.find(
+  //       (x) => x.chave === "horario_funcionamento"
+  //     )?.valor;
 
+  //     const _fechado = configHorarioFunc
+  //       ? !analisarRegrasTempo(configHorarioFunc)
+  //       : false;
+  //     setFechado(_fechado);
+
+  //   }, [])
+
+  // if(status === 'carregando') return <Loading />
   return (
     <LayoutStyle>
       <Header />

@@ -2,16 +2,11 @@ import { NextPage } from "next";
 import { FinalizadoView } from "src/views/pedido/finalizado";
 import { useAuth } from "@util/hooks/auth";
 import Loading from "@components/loading";
-import { useEffect } from "react";
 
 const FinalizadoPage: NextPage = () => {
-  const { temClientePedido, authCarregado } = useAuth();
-
-  useEffect(() => {
-    temClientePedido({
-      verificarPixAguardando: false,
-    });
-  }, []);
+  const { authCarregado } = useAuth({
+    verificarPixAguardando: false,
+  });
 
   if (!authCarregado) return <Loading />;
 

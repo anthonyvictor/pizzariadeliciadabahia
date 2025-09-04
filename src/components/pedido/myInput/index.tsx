@@ -19,6 +19,7 @@ type IMyInput = {
   placeholder?: string;
   type:
     | "text"
+    | "email"
     | "name"
     | "address"
     | "phoneNumber"
@@ -26,6 +27,7 @@ type IMyInput = {
     | "number"
     | "currency"
     | "checkbox"
+    | "password"
     | "date";
   value?: string | number;
   checked?: boolean;

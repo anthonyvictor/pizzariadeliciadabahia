@@ -15,14 +15,8 @@ const TipoPage: NextPage = () => {
   const [cupom, setCupom] = useState<ICupom>();
   const [carregouCupom, setCarregouCupom] = useState(false);
 
-  const { temClientePedido, authCarregado } = useAuth();
+  const { authCarregado } = useAuth();
   const { pedido } = usePedidoStore();
-
-  useEffect(() => {
-    temClientePedido({
-      verificarPixAguardando: true,
-    });
-  }, []);
 
   useEffect(() => {
     if (authCarregado) {
