@@ -34,9 +34,10 @@ const PedidoPage: NextPage = () => {
             title="Estamos fechados no momento"
             subtitle="Mas fique à vontade para conferir nosso cardápio!"
             description={
-              horario?.fechadoAte
+              horario?.fechadoAte &&
+              new Date(horario.fechadoAte).getTime() > new Date().getTime()
                 ? `Retornamos em ${horario.fechadoAte.toLocaleString("pt-BR", {
-                    dateStyle: "long",
+                    dateStyle: "full",
                     timeStyle: "full",
                   })}`
                 : horario?.descricao
