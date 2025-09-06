@@ -1,4 +1,4 @@
-import { IProdutoCombo } from "tpdb-lib";
+import { IItemBuilderBebidas, IProdutoCombo } from "tpdb-lib";
 import { IITemBuilderCombo } from "tpdb-lib";
 import { PizzaBuilder } from "../pizza";
 import { ComboBuilderStyle } from "./styles";
@@ -52,10 +52,14 @@ export const ComboBuilder = ({
                 const obj =
                   prod.tipo === "bebida"
                     ? {
-                        bebidas: builder.bebidas,
+                        bebidas: prod.bebidas?.length
+                          ? prod.bebidas
+                          : builder.bebidas,
                       }
                     : {
-                        lanches: builder.lanches,
+                        lanches: prod.lanches?.length
+                          ? prod.lanches
+                          : builder.lanches,
                       };
                 return (
                   <OutroBuilder

@@ -43,6 +43,7 @@ export const ItemBuilderView = () => {
       router.beforePopState(() => true);
     };
   }, [router]);
+
   return (
     <>
       <ItemBuilderStyle>

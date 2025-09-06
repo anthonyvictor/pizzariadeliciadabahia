@@ -16,6 +16,7 @@ export interface IChecklistItem {
   imageFit?: "cover" | "scale-down";
   description?: string | ReactNode;
   price?: number;
+  oldPrice?: number;
   isSum?: boolean;
   minPrice?: number;
   disabled?: boolean;
@@ -300,6 +301,9 @@ export const ChecklistItemInfo = ({
               )}`
           : "+R$ 0,00"}
       </b>
+      {item.oldPrice && (
+        <i className="old-price">{formatCurrency(item.oldPrice)}</i>
+      )}
     </ChecklistItemInfoStyle>
   );
 };
@@ -379,6 +383,12 @@ const ChecklistItemInfoStyle = styled.aside`
   flex-direction: column;
   flex: 1;
   .title {
+  }
+
+  .old-price {
+    font-size: 0.6rem;
+    text-decoration: line-through;
+    opacity: 0.6;
   }
 `;
 

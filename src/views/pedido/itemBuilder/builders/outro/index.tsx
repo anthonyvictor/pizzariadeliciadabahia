@@ -171,6 +171,7 @@ export const OutroBuilder = ({
               : abreviarLanche(x.nome),
           description: x.descricao,
           disabled: !x.disponivel,
+          oldPrice: Math.max(valorMax, x.valor),
           price:
             valorMax > -1
               ? x.valor > valorMax
