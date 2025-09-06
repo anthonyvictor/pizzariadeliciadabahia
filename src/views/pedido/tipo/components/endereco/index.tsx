@@ -30,6 +30,7 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   );
 
   function cupomAplicavel() {
+    if (!cupom) return false;
     if (!analisarRegrasEndereco(cupom, e?.enderecoOriginal)) return false;
 
     for (let cond of cupom?.condicoes ?? []) {

@@ -19,8 +19,11 @@ export const analisarRegrasCupomPedido = (
   cupom: ICupom,
   ignorarRegrasPagamento?: boolean
 ) => {
+  if (!cupom) return false;
+
   const { valorTotalComDescontos } = obterValoresDoPedido(pedido);
-  for (let cond of (cupom.condicoes ?? []).filter((x) => x.ativa)) {
+
+  for (let cond of (cupom?.condicoes ?? []).filter((x) => x.ativa)) {
     if (cond.tipo === "min_valor_pedido" && valorTotalComDescontos < cond.valor)
       return false;
     if (cond.tipo === "max_valor_pedido" && valorTotalComDescontos > cond.valor)
@@ -84,15 +87,17 @@ export const analisarCodigoCupom = (
   cupom: ICupom,
   codigo: string | undefined
 ) =>
-  !cupom.condicoes.some((y) => y.tipo === "codigo") ||
-  cupom.condicoes.some((y) => y.tipo === "codigo" && y.valor === codigo);
+  !cupom
+    ? false
+    : !cupom.condicoes.some((y) => y.tipo === "codigo") ||
+      cupom.condicoes.some((y) => y.tipo === "codigo" && y.valor === codigo);
 
 export const obterDescontos = (
   pedido: IPedido,
   _cupons: ICupom[],
   ignorarRegrasPagamento?: boolean
 ) => {
-  const cupons = _cupons
+  const cupons = (_cupons ?? [])
     .filter((x) => analisarRegrasCupomPedido(pedido, x, ignorarRegrasPagamento))
     .filter((x) => analisarCodigoCupom(x, pedido.codigoCupom));
 
