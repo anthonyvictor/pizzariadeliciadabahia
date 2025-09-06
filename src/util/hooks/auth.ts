@@ -42,6 +42,11 @@ export const useAuth = (
   }, []);
 
   const temClientePedido = async () => {
+    if (router.pathname === pages.finalizado) {
+      setAuthCarregado(true);
+      return;
+    }
+
     const clienteId = localStorage.getItem("clienteId");
     const pedidoId = localStorage.getItem("pedidoId");
 

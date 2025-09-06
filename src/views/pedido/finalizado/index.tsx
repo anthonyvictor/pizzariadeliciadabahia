@@ -7,11 +7,20 @@ import { env } from "@config/env";
 import { axiosOk } from "@util/axios";
 import { toast } from "react-toastify";
 import { usePedidoStore } from "src/infra/zustand/pedido";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const FinalizadoView = () => {
   const router = useRouter();
   const { pedido } = usePedidoStore();
+  const [continuarDisabled, setContinuarDisabled] = useState<boolean>(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setContinuarDisabled(false);
+    }, 1000 * 30);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -49,13 +58,14 @@ export const FinalizadoView = () => {
           description="Já já enviaremos uma mensagem para o whatsapp que você cadastrou!"
         />
       </main>
-
-      <BottomControls
-        secondaryButton={{
-          text: "Fazer novo pedido",
-          click: () => router.replace("/pedido"),
-        }}
-      />
+      {continuarDisabled && (
+        <BottomControls
+          secondaryButton={{
+            text: "Fazer novo pedido",
+            click: () => router.replace("/pedido"),
+          }}
+        />
+      )}
     </ConfirmacaoViewStyle>
   );
 };

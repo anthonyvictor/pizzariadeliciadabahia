@@ -96,6 +96,8 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
       onPaste: (e) => onPaste?.(e),
       placeholder: placeholder,
       autoCorrect: "off",
+      autoComplete: "one-time-code",
+      role: "presentation",
       spellCheck: false,
       min: min ?? undefined,
       maxLength: maxLength ?? undefined,
@@ -130,7 +132,7 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
       onChange: (e) => setChecked(e.target.checked),
     };
     const inputProps = {
-      name: id ?? name,
+      name: `myInput-${id ?? name}`,
       id: (id || name).replace(/[* ]/g, ""),
       disabled: disabled,
       autoFocus: autoFocus,
@@ -186,7 +188,7 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
           className="input-label"
           style={{ flexDirection: type === "checkbox" ? "row" : "column" }}
         >
-          <label htmlFor={name}>{name}</label>
+          <label htmlFor={`myInput-${name}`}>{name}</label>
           {type === "phoneNumber" ? (
             <PhoneInput
               placeholder="(71) 9xxxx-xxxx"

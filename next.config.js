@@ -6,7 +6,7 @@ const withPWA = require("next-pwa")({
 
 const nextConfig = withPWA({
   images: {
-    domains: ["i.ibb.co"],
+    domains: ["i.ibb.co", "iili.io", "freeimage.host"],
   },
   reactStrictMode: false,
   compiler: {

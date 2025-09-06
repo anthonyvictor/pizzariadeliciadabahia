@@ -73,12 +73,15 @@ export const PedidoPageProvider = ({
   const destaques = home
     ? (() => {
         const combos = fmv(home.combos, 4);
-        const tamanhos = fmv(home.tamanhos, maxDestaques - (combos.length + 2));
+        const tamanhos = fmv(
+          home.tamanhos,
+          maxDestaques - (combos.length + 2)
+        ).filter((x) => !x.somenteEmCombos);
         const bebidas = fmv(
           home.bebidas,
           maxDestaques - (combos.length + tamanhos.length + 1)
-        );
-        const lanches = fmv(home.lanches, 1);
+        ).filter((x) => !x.somenteEmCombos);
+        const lanches = fmv(home.lanches, 1).filter((x) => !x.somenteEmCombos);
         const itens = [...combos, ...tamanhos, ...bebidas, ...lanches];
 
         return fmv(itens, maxDestaques);

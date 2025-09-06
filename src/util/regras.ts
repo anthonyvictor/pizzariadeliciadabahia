@@ -16,9 +16,7 @@ import {
   entrePeriodosDias,
 } from "./date";
 import { IDeveEstar } from "@models/deveEstar";
-import { normalizarOrdinal } from "./format";
 import { entreEnderecos } from "./enderecos/regras";
-import { obterValoresDoPedido } from "./pedidos";
 
 export const produtoDispPelasRegras = (
   prod:

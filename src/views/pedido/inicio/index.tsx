@@ -54,20 +54,24 @@ export const PedidoView = () => {
             />
           )}
           {!!home.tamanhos.length && (
-            <Produtos id={"pizzas"} label={"Pizzas 🍕"} itens={home.tamanhos} />
+            <Produtos
+              id={"pizzas"}
+              label={"Pizzas 🍕"}
+              itens={home.tamanhos.filter((x) => !x.somenteEmCombos)}
+            />
           )}
           {!!home.bebidas.length && (
             <Produtos
               id={"bebidas"}
               label={"Bebidas 🍹"}
-              itens={home.bebidas}
+              itens={home.bebidas.filter((x) => !x.somenteEmCombos)}
             />
           )}
           {!!home.lanches.length && (
             <Produtos
               id={"lanches"}
               label={"Lanches e Outros 🍦"}
-              itens={home.lanches}
+              itens={home.lanches.filter((x) => !x.somenteEmCombos)}
             />
           )}
         </div>

@@ -207,35 +207,37 @@ export const PizzaBuilder = ({
         min={1}
         max={pizza.tamanho.maxSabores}
         description={`Selecione até ${pizza.tamanho.maxSabores} sabores`}
-        items={builder.sabores.map((sab) => ({
-          id: sab.id,
-          imageUrl: sab.imagemUrl,
-          group: sab.categoria,
-          title: sab.nome,
-          description: sab.descricao,
-          disabled: !sab.disponivel,
-          price: sab.valores
-            .filter((x) => x.tamanhoId === builder.tamanho.id)
-            .map((v) => {
-              let valorExtra = v.valor;
+        items={builder.sabores
+          .filter((x) => (isCombo ? !x.somenteEmCombos : true))
+          .map((sab) => ({
+            id: sab.id,
+            imageUrl: sab.imagemUrl,
+            group: sab.categoria,
+            title: sab.nome,
+            description: sab.descricao,
+            disabled: !sab.disponivel,
+            price: sab.valores
+              .filter((x) => x.tamanhoId === builder.tamanho.id)
+              .map((v) => {
+                let valorExtra = v.valor;
 
-              const valorSaboresAntes = calcularValor({
-                ...pizza,
-                sabores: pizza.sabores,
-                acoes: builder.acoes,
-              });
-              const valorSaboresDepois = calcularValor({
-                ...pizza,
-                sabores: [...pizza.sabores, sab],
-                acoes: builder.acoes,
-              });
+                const valorSaboresAntes = calcularValor({
+                  ...pizza,
+                  sabores: pizza.sabores,
+                  acoes: builder.acoes,
+                });
+                const valorSaboresDepois = calcularValor({
+                  ...pizza,
+                  sabores: [...pizza.sabores, sab],
+                  acoes: builder.acoes,
+                });
 
-              valorExtra = valorSaboresDepois - valorSaboresAntes;
+                valorExtra = valorSaboresDepois - valorSaboresAntes;
 
-              return valorExtra;
-            })[0],
-          isSum: isCombo,
-        }))}
+                return valorExtra;
+              })[0],
+            isSum: isCombo,
+          }))}
         value={pizza.sabores.map((x) => x.id)}
         setValue={(novosSabores) => {
           const sabores = novosSabores.map(
@@ -272,16 +274,18 @@ export const PizzaBuilder = ({
           name={`borda-${builder.id}`}
           label={`Borda ${pizzaNumberStr}🍕`}
           required={true}
-          items={builder.bordas.map((x) => ({
-            id: x.id,
-            imageUrl: x.imagemUrl,
-            title: x.nome,
-            description: x.descricao,
-            disabled: !x.disponivel,
-            price: x.valores.find((x) => x.tamanhoId === builder.tamanho.id)
-              .valor,
-            isSum: true,
-          }))}
+          items={builder.bordas
+            .filter((x) => (isCombo ? !x.somenteEmCombos : true))
+            .map((x) => ({
+              id: x.id,
+              imageUrl: x.imagemUrl,
+              title: x.nome,
+              description: x.descricao,
+              disabled: !x.disponivel,
+              price: x.valores.find((x) => x.tamanhoId === builder.tamanho.id)
+                .valor,
+              isSum: true,
+            }))}
           value={pizza.borda?.id}
           setValue={(value) => {
             const borda = builder.bordas.find((x) => x.id === value)!;
@@ -315,15 +319,17 @@ export const PizzaBuilder = ({
           label={`Espessura da massa ${pizzaNumberStr}🍕`}
           description="Como você prefere a massa?"
           required={true}
-          items={builder.espessuras.map((x) => ({
-            id: x.id,
-            imageUrl: x.imagemUrl,
-            title: x.nome,
-            description: x.descricao,
-            disabled: !x.disponivel,
-            price: x.valor,
-            isSum: true,
-          }))}
+          items={builder.espessuras
+            .filter((x) => (isCombo ? !x.somenteEmCombos : true))
+            .map((x) => ({
+              id: x.id,
+              imageUrl: x.imagemUrl,
+              title: x.nome,
+              description: x.descricao,
+              disabled: !x.disponivel,
+              price: x.valor,
+              isSum: true,
+            }))}
           value={pizza.espessura?.id}
           setValue={(value) => {
             const espessura = builder.espessuras.find((x) => x.id === value)!;
@@ -354,15 +360,17 @@ export const PizzaBuilder = ({
           label={`Ponto ${pizzaNumberStr}🍕`}
           description="Qual seu ponto da massa preferido?"
           required={true}
-          items={builder.pontos.map((x) => ({
-            id: x.id,
-            imageUrl: x.imagemUrl,
-            title: x.nome,
-            description: x.descricao,
-            disabled: !x.disponivel,
-            price: x.valor,
-            isSum: true,
-          }))}
+          items={builder.pontos
+            .filter((x) => (isCombo ? !x.somenteEmCombos : true))
+            .map((x) => ({
+              id: x.id,
+              imageUrl: x.imagemUrl,
+              title: x.nome,
+              description: x.descricao,
+              disabled: !x.disponivel,
+              price: x.valor,
+              isSum: true,
+            }))}
           value={pizza.ponto?.id}
           setValue={(value) => {
             const ponto = builder.pontos.find((x) => x.id === value)!;
@@ -391,17 +399,19 @@ export const PizzaBuilder = ({
           min={0}
           max={10}
           description={`Quer adicionar algum ingrediente extra?`}
-          items={builder.extras.map((x) => {
-            return {
-              id: x.id,
-              imageUrl: x.imagemUrl,
-              title: x.nome,
-              description: x.descricao,
-              disabled: !x.disponivel,
-              price: x.valor,
-              isSum: true,
-            };
-          })}
+          items={builder.extras
+            .filter((x) => (isCombo ? !x.somenteEmCombos : true))
+            .map((x) => {
+              return {
+                id: x.id,
+                imageUrl: x.imagemUrl,
+                title: x.nome,
+                description: x.descricao,
+                disabled: !x.disponivel,
+                price: x.valor,
+                isSum: true,
+              };
+            })}
           value={pizza.extras.map((x) => x.id)}
           setValue={(novosExtras) => {
             const extras = novosExtras.map(

@@ -11,6 +11,12 @@ import superjson from "superjson";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "@components/loading";
+import { useInactivityTimer } from "@util/hooks/inactivity";
+import styled from "styled-components";
+import { useModoStore } from "src/infra/zustand/modo";
+import TextContainer from "@components/textContainer";
+import { ButtonSecondary } from "@styles/components/buttons";
+import BottomControls from "@components/pedido/bottomControls";
 
 export default function App({ Component, pageProps }) {
   let finalProps = pageProps;
@@ -24,6 +30,24 @@ export default function App({ Component, pageProps }) {
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { modo } = useModoStore();
+  const novoPedido = () => {
+    localStorage.removeItem("pedidoId");
+    localStorage.removeItem("clienteId");
+    router.replace("/pedido");
+  };
+  const { showWarning, countdown } = useInactivityTimer({
+    warningVisible() {
+      return (
+        modo === "autoatendimento" && router.pathname.startsWith("/pedido")
+      );
+    },
+    onTimeout: () => {
+      if (modo === "autoatendimento" && router.pathname.startsWith("/pedido")) {
+        novoPedido();
+      }
+    },
+  });
 
   useEffect(() => {
     const handleStart = () => setLoading(true);
@@ -61,6 +85,22 @@ export default function App({ Component, pageProps }) {
       <>
         <NavigationProvider>
           <Layout>
+            {showWarning && (
+              <Inatividade>
+                <TextContainer
+                  title="Oi, você ainda tá aí?"
+                  subtitle=""
+                  description={`Você tem ${countdown}s para continuar com seu pedido, ou o app vai voltar para a tela inicial!`}
+                />
+                <BottomControls
+                  secondaryButton={{
+                    text: "Iniciar novo pedido",
+                    click: () => {},
+                  }}
+                  primaryButton={{ text: "Continuar", click: () => {} }}
+                />
+              </Inatividade>
+            )}
             {loading ? <Loading /> : <Component {...finalProps} />}
           </Layout>
           <ToastContainer
@@ -77,3 +117,17 @@ export default function App({ Component, pageProps }) {
     </>
   );
 }
+
+const Inatividade = styled.div`
+  background-color: #000000cf;
+  position: fixed;
+  z-index: 999;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  backdrop-filter: blur(10px);
+`;

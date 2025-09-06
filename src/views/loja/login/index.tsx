@@ -38,6 +38,7 @@ export const LoginView = () => {
     <LoginViewStyle>
       <TextContainer title="Site-PDB" subtitle="Sistema de gestão" />
       <form
+        autoComplete="one-time-code"
         onSubmit={(e) => {
           e.preventDefault();
         }}

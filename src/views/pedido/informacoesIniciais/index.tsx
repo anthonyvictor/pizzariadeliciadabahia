@@ -11,6 +11,8 @@ import { useClienteStore } from "src/infra/zustand/cliente";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { normalizePhone } from "@util/enderecos/format";
 import parsePhoneNumberFromString from "libphonenumber-js";
+import Loading from "@components/loading";
+import { useModoStore } from "src/infra/zustand/modo";
 
 type FormData = {
   nome: string;
@@ -24,10 +26,12 @@ type FormData = {
 export const InformacoesIniciaisView = () => {
   const router = useRouter();
   const { setCliente } = useClienteStore();
-
+  const { modo } = useModoStore();
   const [achouCliente, setAchouCliente] = useState<
     "naoProcurou" | "achou" | "naoAchou"
   >("naoProcurou");
+
+  const [carregando, setCarregando] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     nome: "",
@@ -119,6 +123,7 @@ export const InformacoesIniciaisView = () => {
 
   const logar = async () => {
     try {
+      setCarregando(true);
       const { whatsapp } = formData;
       const resultado = telefoneSchema.safeParse(whatsapp);
 
@@ -142,10 +147,13 @@ export const InformacoesIniciaisView = () => {
       }
     } catch (err) {
       toast.error("Oops, não foi possível fazer seu cadastro no momento!");
+    } finally {
+      setCarregando(false);
     }
   };
   const cadastrar = async () => {
     try {
+      setCarregando(true);
       const resultado = clienteSchema.safeParse(formData);
 
       if (!resultado.success) {
@@ -172,6 +180,8 @@ export const InformacoesIniciaisView = () => {
       }
     } catch (err) {
       toast.error("Oops, não foi possível fazer seu cadastro no momento!");
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -183,6 +193,7 @@ export const InformacoesIniciaisView = () => {
     }
   };
 
+  if (carregando) return <Loading />;
   return (
     <InformacoesIniciaisStyle>
       <form
@@ -351,7 +362,7 @@ export const InformacoesIniciaisView = () => {
             }
           }}
         />
-        {achouCliente === "naoAchou" && (
+        {achouCliente === "naoAchou" && modo !== "atendente" && (
           <>
             <MyInput
               name="Confirme seu telefone *"
