@@ -120,7 +120,7 @@ export const MultiChecklist = ({
         s={goSearch ? { search, setSearch } : undefined}
       />
       <ul>
-        {(isDone
+        {(isDone && collapsed
           ? groupItems(items.filter((x) => value.includes(x.id)))
           : collapsed
           ? groupItems(
@@ -139,7 +139,7 @@ export const MultiChecklist = ({
         })}
       </ul>
       {collapsed && (
-        <button className="show-more">
+        <button className="show-more" onClick={() => setCollapsed(false)}>
           {collapsedLabel ?? "Mostrar mais itens..."}
         </button>
       )}

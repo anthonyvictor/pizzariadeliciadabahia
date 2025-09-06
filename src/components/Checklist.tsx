@@ -156,7 +156,7 @@ export const Checklist = ({
         s={goSearch ? { search, setSearch } : undefined}
       />
       <ul>
-        {(isDone
+        {(isDone && collapsed
           ? groupItems(items.filter((x) => value === x.id))
           : collapsed
           ? groupItems(
@@ -175,7 +175,7 @@ export const Checklist = ({
         )}
       </ul>
       {collapsed && (
-        <button className="show-more">
+        <button className="show-more" onClick={() => setCollapsed(false)}>
           {collapsedLabel ?? "Mostrar mais opções..."}
         </button>
       )}
