@@ -35,22 +35,24 @@ export const Destaque = ({ prod }: { prod: IProdutoHome }) => {
       </aside>
       <aside className="conteudo">
         <h6 className="nome">
-          {capitalize(
-            ("maxSabores" in prod
-              ? `P. ${prod.nome}`
-              : "produtos" in prod
-              ? prod.nome
-              : prod.tipo === "bebida"
-              ? abreviarBebida(prod.nome, true)
-              : abreviarLanche(prod.nome)
-            ).toUpperCase()
-          )}
+          {("maxSabores" in prod
+            ? `P. ${prod.nome}`
+            : "produtos" in prod
+            ? prod.nome
+            : prod.tipo === "bebida"
+            ? abreviarBebida(prod.nome, true)
+            : abreviarLanche(prod.nome)
+          ).toUpperCase()}
         </h6>
         {!!prod["valorMin"] && (
           <p style={{ fontSize: "0.6rem", opacity: "0.6" }}>À partir de</p>
         )}
 
         <h6>{formatCurrency(prod["valorMin"] ?? prod["valor"])}</h6>
+        {/* {prod["valorMin"] &&
+          prod. && (
+            <i className="old-price">{formatCurrency(prod["valor"])}</i>
+          )} */}
       </aside>
     </DestaqueStyle>
   );

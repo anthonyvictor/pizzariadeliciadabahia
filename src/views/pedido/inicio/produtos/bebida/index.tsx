@@ -29,7 +29,7 @@ export const Bebida = ({ prod }: { prod: IBebida }) => {
         />
       </aside>
       <aside className="conteudo">
-        <h5>{capitalize(abreviarBebida(prod.nome.toUpperCase()))}</h5>
+        <h5>{abreviarBebida(prod.nome.toUpperCase())}</h5>
         <h6>{formatCurrency(prod.valor)}</h6>
       </aside>
     </BebidaStyle>

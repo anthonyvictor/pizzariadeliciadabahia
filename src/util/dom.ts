@@ -14,6 +14,8 @@
 //   }
 // };
 
+import { sleep } from "./misc";
+
 // function getScrollParent(el: HTMLElement): HTMLElement | Window {
 //   let parent = el.parentElement;
 
@@ -31,10 +33,11 @@
 //   return window; // Se não achar, retorna a janela principal
 // }
 
-export const rolarEl = (id: string, block?: ScrollLogicalPosition) => {
+export const rolarEl = async (id: string, block?: ScrollLogicalPosition) => {
   const el = document.querySelector<HTMLElement>(`#${id}`);
   if (el) {
     const container = getScrollParent(el);
+    await sleep(500);
     if (container instanceof HTMLElement) {
       const y = el.offsetTop; // offset do header
       container.scrollTo({ top: y, behavior: "smooth" });

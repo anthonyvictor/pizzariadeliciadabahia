@@ -14,6 +14,7 @@ import {
 } from "./Checklist";
 import { CgChevronDoubleRight, CgChevronRight } from "react-icons/cg";
 import Image from "next/image";
+import { X } from "@upstash/redis/zmscore-CgRD7oFR";
 
 export const MultiChecklist = ({
   name,
@@ -26,6 +27,9 @@ export const MultiChecklist = ({
   setValue,
   search: goSearch,
   onDone,
+  collapsed: _collapsed,
+  maxItemsCollapsed,
+  collapsedLabel,
 }: IChecklistBase & {
   min?: number;
   max?: number;
@@ -33,6 +37,7 @@ export const MultiChecklist = ({
   setValue: (newValues: string[]) => void;
 }) => {
   const [search, setSearch] = useState("");
+  const [collapsed, setCollapsed] = useState(_collapsed);
 
   useEffect(() => {
     if (goSearch && search) {
@@ -87,6 +92,7 @@ export const MultiChecklist = ({
               prev.push(...new Array(novoValor).fill(item.id));
               setValue(prev);
               if (prev.length === max) {
+                setCollapsed(true);
                 onDone?.();
               }
             }}
@@ -101,6 +107,7 @@ export const MultiChecklist = ({
       </li>
     );
   };
+  const isDone = value.length === max;
 
   return (
     <MultiChecklistStyle checked={!!value} id={`checklist-${name}`}>
@@ -113,7 +120,17 @@ export const MultiChecklist = ({
         s={goSearch ? { search, setSearch } : undefined}
       />
       <ul>
-        {groupItems(checklistSearchFilter(items, search)).map((gi) => {
+        {(isDone
+          ? groupItems(items.filter((x) => value.includes(x.id)))
+          : collapsed
+          ? groupItems(
+              checklistSearchFilter(items, search).slice(
+                0,
+                maxItemsCollapsed ?? 3
+              )
+            )
+          : groupItems(checklistSearchFilter(items, search))
+        ).map((gi) => {
           return "items" in gi ? (
             <Group key={gi.name} group={gi} />
           ) : (
@@ -121,6 +138,11 @@ export const MultiChecklist = ({
           );
         })}
       </ul>
+      {collapsed && (
+        <button className="show-more">
+          {collapsedLabel ?? "Mostrar mais itens..."}
+        </button>
+      )}
     </MultiChecklistStyle>
   );
 };

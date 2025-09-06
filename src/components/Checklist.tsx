@@ -35,6 +35,9 @@ export interface IChecklistBase {
   search?: boolean;
   showZeroValue?: boolean;
   onDone?: () => void;
+  collapsed?: boolean;
+  maxItemsCollapsed?: number;
+  collapsedLabel?: string;
 }
 
 export interface IChecklistItemGroup {
@@ -76,18 +79,24 @@ export const Checklist = ({
   search: goSearch,
   onDone,
   showZeroValue = true,
+  collapsed: _collapsed,
+  collapsedLabel,
+  maxItemsCollapsed,
 }: IChecklistBase & {
   required?: boolean;
   value: string | undefined;
   setValue: (newValue: string | undefined) => void;
 }) => {
   const [search, setSearch] = useState("");
+  const [collapsed, setCollapsed] = useState(_collapsed);
 
   useEffect(() => {
     if (goSearch && search) {
       setSearch("");
     }
   }, [value]);
+
+  const isDone = !!value;
 
   const Group = ({ group }: { group: IChecklistItemGroup }) => {
     return (
@@ -111,6 +120,7 @@ export const Checklist = ({
         className={`checklist-item`}
         onClick={() => {
           setValue(item.id);
+          setCollapsed(true);
           onDone?.();
         }}
         style={{
@@ -146,7 +156,17 @@ export const Checklist = ({
         s={goSearch ? { search, setSearch } : undefined}
       />
       <ul>
-        {groupItems(checklistSearchFilter(items, search)).map((gi) =>
+        {(isDone
+          ? groupItems(items.filter((x) => value === x.id))
+          : collapsed
+          ? groupItems(
+              checklistSearchFilter(items, search).slice(
+                0,
+                maxItemsCollapsed ?? 3
+              )
+            )
+          : groupItems(checklistSearchFilter(items, search))
+        ).map((gi) =>
           "items" in gi ? (
             <Group key={gi.name} group={gi} />
           ) : (
@@ -154,6 +174,11 @@ export const Checklist = ({
           )
         )}
       </ul>
+      {collapsed && (
+        <button className="show-more">
+          {collapsedLabel ?? "Mostrar mais opções..."}
+        </button>
+      )}
     </ChecklistStyle>
   );
 };
@@ -431,5 +456,13 @@ export const ChecklistStyle = styled.section.attrs(
         }
       }
     }
+  }
+  .show-more {
+    padding: 20px 10px;
+    background-color: transparent;
+    color: ${colors.elements};
+    border: none;
+    width: 100%;
+    font-weight: 800;
   }
 `;
