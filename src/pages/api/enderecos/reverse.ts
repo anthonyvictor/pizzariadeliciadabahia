@@ -31,12 +31,12 @@ export default async function handler(
 }
 
 export async function reverseEnderecos(lat: number, lon: number) {
-  const [osm, photon] = await Promise.all([
+  const [cepaberto, nominatim, photon] = await Promise.all([
     pos_cepaberto([lat, lon]),
     pos_nominatim([lat, lon]),
     pos_photon([lat, lon]),
   ]);
-  const enderecos: IEndereco[] = [...osm, ...photon];
+  const enderecos: IEndereco[] = [...cepaberto, ...nominatim, ...photon];
 
   return enderecos;
 }
