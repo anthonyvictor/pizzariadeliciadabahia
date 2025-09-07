@@ -11,6 +11,7 @@ import QRCode from "react-qr-code";
 import { CgClipboard } from "react-icons/cg";
 import { axiosOk } from "@util/axios";
 import { usePedidoStore } from "src/infra/zustand/pedido";
+import { toast } from "react-toastify";
 
 export const PixView = ({ pix }: { pix: IPagamentoPedidoPix }) => {
   const { pedido } = usePedidoStore();
@@ -31,32 +32,33 @@ export const PixView = ({ pix }: { pix: IPagamentoPedidoPix }) => {
     let interval: NodeJS.Timeout;
     let timeout: NodeJS.Timeout;
 
-    // espera 40s antes de começar a rodar o setInterval
-    timeout = setTimeout(() => {
-      interval = setInterval(async () => {
-        try {
-          const res = await axios.get(
-            `${env.apiURL}/pedidos/pagamento/pix?pedido=${pedido.id}&pix=${pix.id}`
-          );
-
-          if (!axiosOk(res.status)) {
-            return router.replace("/pedido/pagamento");
-          }
-
-          if (res.data === true) {
-            router.push("/pedido/finalizado");
-          }
-        } catch (err) {
-          console.error("Erro na verificação do pagamento", err);
-        }
-      }, 1000 * 15);
-    }, 1000 * 40);
+    interval = setInterval(async () => {
+      verificarPagamento();
+    }, 1000 * 10);
 
     return () => {
       clearTimeout(timeout);
       clearInterval(interval);
     };
   }, [continuarDisabled, pedido.id, pix.id]);
+
+  const verificarPagamento = async () => {
+    try {
+      const res = await axios.get(
+        `${env.apiURL}/pedidos/pagamento/pix?pedido=${pedido.id}&pix=${pix.id}`
+      );
+
+      if (!axiosOk(res.status)) {
+        return router.replace("/pedido/pagamento");
+      }
+
+      if (res.data === true) {
+        router.push("/pedido/finalizado");
+      }
+    } catch (err) {
+      console.error("Erro na verificação do pagamento", err);
+    }
+  };
 
   return (
     <PixViewStyle>
@@ -106,11 +108,14 @@ export const PixView = ({ pix }: { pix: IPagamentoPedidoPix }) => {
           secondaryButton={{
             text: "Já paguei",
             click: async () => {
+              await verificarPagamento();
+
               axios
                 .post(`${env.apiURL}/pedidos/finalizar`, {
                   pedidoId: pedido.id,
                 })
                 .then(() => {
+                  toast.info("Pedido finalizado!");
                   router.push(`/pedido/finalizado`);
                 });
             },
