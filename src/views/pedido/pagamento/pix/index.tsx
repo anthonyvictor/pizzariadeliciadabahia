@@ -48,13 +48,9 @@ export const PixView = ({ pix }: { pix: IPagamentoPedidoPix }) => {
         `${env.apiURL}/pedidos/pagamento/pix?pedido=${pedido.id}&pix=${pix.id}`
       );
 
-      if (!axiosOk(res.status)) {
-        return router.replace("/pedido/pagamento");
-      }
+      if (!axiosOk(res.status)) return router.replace("/pedido/pagamento");
 
-      if (res.data === true) {
-        router.push("/pedido/finalizado");
-      }
+      if (res.data === true) return router.push("/pedido/finalizado");
     } catch (err) {
       console.error("Erro na verificação do pagamento", err);
     }

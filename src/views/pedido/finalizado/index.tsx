@@ -8,13 +8,16 @@ import { axiosOk } from "@util/axios";
 import { toast } from "react-toastify";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { useEffect, useState } from "react";
+import { usePagamentoStore } from "src/infra/zustand/pagamentos";
 
 export const FinalizadoView = () => {
   const router = useRouter();
   const { pedido } = usePedidoStore();
   const [continuarDisabled, setContinuarDisabled] = useState<boolean>(true);
+  const { clearPagamentos } = usePagamentoStore();
 
   useEffect(() => {
+    clearPagamentos();
     const timeout = setTimeout(() => {
       setContinuarDisabled(false);
     }, 1000 * 60 * 6);
