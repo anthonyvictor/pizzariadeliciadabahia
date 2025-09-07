@@ -5,13 +5,13 @@ import { useState } from "react";
 import { colors } from "@styles/colors";
 import { EnderecoStyle } from "./styles";
 import { useTipoPage } from "../../context";
-import { taxaAdicional } from "@util/dados";
 import { CgTrash } from "react-icons/cg";
 import { api } from "@util/axios";
 import { useClienteStore } from "src/infra/zustand/cliente";
 import { analisarRegrasEndereco } from "@util/regras";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { obterValoresDoPedido } from "@util/pedidos";
+import { useConfigsStore } from "src/infra/zustand/configs";
 
 export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   const { cupomEntrega: cupom, tipo, setTipo } = useTipoPage();
@@ -28,6 +28,11 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
         )
       : 0
   );
+  const { configs } = useConfigsStore();
+
+  const taxaAdicional =
+    configs.find((x) => x.chave === "entrega_avancada")?.valor?.taxaAdicional ??
+    0;
 
   function cupomAplicavel() {
     if (!cupom) return false;

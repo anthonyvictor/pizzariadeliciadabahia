@@ -31,7 +31,7 @@ const PagamentoPage: NextPage = () => {
             analisarCodigoCupom(cupom, pedido.codigoCupom)
           );
           const d = c.sort((a, b) =>
-            a.condicoes.some((x) => x.tipo === "codigo") ? -1 : 1
+            (a?.condicoes ?? []).some((x) => x.tipo === "codigo") ? -1 : 1
           );
 
           setCupom(d?.[0]);

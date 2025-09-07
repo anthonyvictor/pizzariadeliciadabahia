@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useClienteStore } from "src/infra/zustand/cliente";
+import { useConfigsStore } from "src/infra/zustand/configs";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import {
   ICliente,
@@ -32,7 +33,7 @@ export const useAuth = (
   // const [cliente, setCliente] = useState<ICliente>();
   // const [pedido, setPedido] = useState<IPedido>();
   const [aberto, setAberto] = useState(true);
-  const [configs, setConfigs] = useState<IConfig[]>([]);
+  const { setConfigs } = useConfigsStore();
   const { setCliente } = useClienteStore();
   const { setPedido } = usePedidoStore();
   const [pixAguardando, setPixAguardando] = useState<IPagamentoPedidoPix>();
@@ -189,7 +190,6 @@ export const useAuth = (
   return {
     authCarregado,
     pixAguardando,
-    configs,
     aberto,
   };
 };

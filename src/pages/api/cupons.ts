@@ -72,15 +72,19 @@ export const obterCupons = async ({
     )
   );
 
-  const comRegras = data.map((x) =>
-    deveEstar === "emCondicoes"
-      ? {
-          ...x,
-          condicoes: (x.condicoes ?? []).filter((y) => y.ativa),
-          excecoes: (x.excecoes ?? []).filter((y) => y.ativa),
-        }
-      : x
-  );
+  const comRegras = data
+    .map((x) =>
+      deveEstar === "emCondicoes"
+        ? x
+          ? {
+              ...x,
+              condicoes: (x?.condicoes ?? []).filter((y) => y.ativa),
+              excecoes: (x?.excecoes ?? []).filter((y) => y.ativa),
+            }
+          : x
+        : undefined
+    )
+    .filter(Boolean);
 
   return comRegras;
 };

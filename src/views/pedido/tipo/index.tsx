@@ -14,9 +14,9 @@ import { ButtonSecondary } from "@styles/components/buttons";
 import { Metodo } from "./components/metodo";
 import { useTipoPage } from "./context";
 import { usePedidoStore } from "src/infra/zustand/pedido";
-import { taxaAdicional } from "@util/dados";
 import { useEffect, useState } from "react";
 import { useClienteStore } from "src/infra/zustand/cliente";
+import { useConfigsStore } from "src/infra/zustand/configs";
 
 export const TipoView = () => {
   const router = useRouter();
@@ -24,7 +24,10 @@ export const TipoView = () => {
   const { pedido } = usePedidoStore();
   const { cliente } = useClienteStore();
   const [showModal, setShowModal] = useState(false);
-
+  const { configs } = useConfigsStore();
+  const taxaAdicional =
+    configs.find((x) => x.chave === "entrega_avancada")?.valor?.taxaAdicional ??
+    0;
   useEffect(() => {
     const handlePopState = () => {
       showModal ? setTipo(null) : router.replace("/pedido");
