@@ -1,4 +1,8 @@
-import { IEnderecoCliente, IEnderecoPedido } from "tpdb-lib";
+import {
+  IConfigEntregaAvancada,
+  IEnderecoCliente,
+  IEnderecoPedido,
+} from "tpdb-lib";
 import { formatCurrency } from "@util/format";
 import { obterValorDescontoReal } from "@util/cupons";
 import { useState } from "react";
@@ -31,8 +35,10 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   const { configs } = useConfigsStore();
 
   const taxaAdicional =
-    configs.find((x) => x.chave === "entrega_avancada")?.valor?.taxaAdicional ??
-    0;
+    (
+      configs.find((x) => x.chave === "entrega_avancada")
+        ?.valor as IConfigEntregaAvancada
+    )?.taxaAdicional ?? 0;
 
   function cupomAplicavel() {
     if (!cupom) return false;
