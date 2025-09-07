@@ -21,29 +21,42 @@ export const PixView = ({ pix }: { pix: IPagamentoPedidoPix }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setContinuarDisabled(false);
-    }, 1000 * 30);
+    }, 1000 * 40);
 
     return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
-      if (!continuarDisabled) {
-        const res = await axios.get(
-          `${env.apiURL}/pedidos/pagamento/pix?pedido=${pedido.id}&pix=${pix.id}`
-        );
+    if (!pedido?.id || !pix?.id || continuarDisabled) return;
+    let interval: NodeJS.Timeout;
+    let timeout: NodeJS.Timeout;
 
-        if (!axiosOk(res.status)) return router.replace("/pedido/pagamento");
-        if (res.data === true) {
-          router.push("/pedido/finalizado");
+    // espera 40s antes de começar a rodar o setInterval
+    timeout = setTimeout(() => {
+      interval = setInterval(async () => {
+        try {
+          const res = await axios.get(
+            `${env.apiURL}/pedidos/pagamento/pix?pedido=${pedido.id}&pix=${pix.id}`
+          );
+
+          if (!axiosOk(res.status)) {
+            return router.replace("/pedido/pagamento");
+          }
+
+          if (res.data === true) {
+            router.push("/pedido/finalizado");
+          }
+        } catch (err) {
+          console.error("Erro na verificação do pagamento", err);
         }
-      }
-    }, 1000 * 60 * 1.5);
+      }, 1000 * 15);
+    }, 1000 * 40);
 
     return () => {
+      clearTimeout(timeout);
       clearInterval(interval);
     };
-  }, [continuarDisabled]);
+  }, [continuarDisabled, pedido.id, pix.id]);
 
   return (
     <PixViewStyle>

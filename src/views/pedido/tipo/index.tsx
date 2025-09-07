@@ -17,6 +17,7 @@ import { usePedidoStore } from "src/infra/zustand/pedido";
 import { useEffect, useState } from "react";
 import { useClienteStore } from "src/infra/zustand/cliente";
 import { useConfigsStore } from "src/infra/zustand/configs";
+import { IConfigEntregaAvancada } from "tpdb-lib";
 
 export const TipoView = () => {
   const router = useRouter();
@@ -26,8 +27,10 @@ export const TipoView = () => {
   const [showModal, setShowModal] = useState(false);
   const { configs } = useConfigsStore();
   const taxaAdicional =
-    configs.find((x) => x.chave === "entrega_avancada")?.valor?.taxaAdicional ??
-    0;
+    (
+      configs.find((x) => x.chave === "entrega_avancada")
+        ?.valor as IConfigEntregaAvancada
+    )?.taxaAdicional ?? 0;
   useEffect(() => {
     const handlePopState = () => {
       showModal ? setTipo(null) : router.replace("/pedido");
