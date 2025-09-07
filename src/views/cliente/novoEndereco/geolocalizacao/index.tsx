@@ -3,12 +3,14 @@ import { GeolocalizacaoStyle } from "./styles";
 import { useRouter } from "next/router";
 import { ButtonPrimary } from "@styles/components/buttons";
 import Loading from "@components/loading";
+import { useTimer } from "@util/hooks/timer";
 
 export const GeolocalizacaoView = () => {
   const router = useRouter();
 
   const [buttonText, setButtonText] = useState<ReactNode>(<>Continuar</>);
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const { start, reset, running, timeLeft } = useTimer();
 
   const salvarGeoLoc = (loc: [number, number] | null) => {
     if (!loc) {
@@ -117,6 +119,9 @@ export const GeolocalizacaoView = () => {
               <span>.</span>
             </>
           );
+          start(10, () => {
+            avancar();
+          });
           solicitarPermissao();
         }}
       >
