@@ -17,7 +17,7 @@ export const FinalizadoView = () => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setContinuarDisabled(false);
-    }, 1000 * 30);
+    }, 1000 * 60 * 6);
 
     return () => clearTimeout(timeout);
   }, []);
