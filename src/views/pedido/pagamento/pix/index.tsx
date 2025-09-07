@@ -28,7 +28,7 @@ export const PixView = ({ pix }: { pix: IPagamentoPedidoPix }) => {
   }, []);
 
   useEffect(() => {
-    if (!pedido?.id || !pix?.id || continuarDisabled) return;
+    if (!pedido?.id || !pix?.id) return;
     let interval: NodeJS.Timeout;
     let timeout: NodeJS.Timeout;
 
