@@ -71,9 +71,11 @@ export function entrePeriodosDias(d: Date, periodos: IPeriodoDia[]): boolean {
   return periodos.some(({ de, ate }) => {
     if (de <= ate) {
       // Ex: 2 → 6 (segunda até sexta)
+
       return diaSemana >= de && diaSemana <= ate;
     } else {
       // Ex: 5 → 2 (quinta até segunda, passando pelo domingo)
+
       return diaSemana >= de || diaSemana <= ate;
     }
   });

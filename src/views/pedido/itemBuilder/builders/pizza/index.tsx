@@ -12,7 +12,6 @@ import {
 import { useEffect, useState } from "react";
 import { PizzaBuilderStyle } from "./styles";
 import { Checklist } from "@components/Checklist";
-import { tamanhoDescricao } from "@util/pizza";
 import { rolarEl } from "@util/dom";
 import { MultiChecklist } from "@components/MultiChecklist";
 import { useItemBuilder } from "@context/itemContext";

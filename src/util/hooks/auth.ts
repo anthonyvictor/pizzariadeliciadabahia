@@ -75,6 +75,7 @@ export const useAuth = (
     )?.valor as IConfigHorarioFuncionamento;
 
     const getAberto = () => {
+      console.log("configHorarioFunc", configHorarioFunc);
       if (!configHorarioFunc) return true;
 
       if (

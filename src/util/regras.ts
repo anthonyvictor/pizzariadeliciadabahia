@@ -97,10 +97,9 @@ export const analisarRegrasTempo = ({
       } else {
         condicoesDatas.push(true);
       }
-    } else {
-      condicoesDatas.push(true);
     }
   }
+
   if (condicoesDatas.length && condicoesDatas.every((x) => x === false))
     return false;
 
