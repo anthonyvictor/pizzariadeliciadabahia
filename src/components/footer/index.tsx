@@ -18,6 +18,7 @@ export const Footer = () => {
     <FooterStyle>
       <span className="content icons">
         <a
+          rel="noreferrer"
           target={router.pathname.includes("/pedido") ? "_self" : "_blank"}
           aria-label="Link para o whatsapp da pizzaria"
           href={
@@ -38,6 +39,7 @@ export const Footer = () => {
           />
         </a>
         <a
+          rel="noreferrer"
           target={router.pathname.includes("/pedido") ? "_self" : "_blank"}
           aria-label="Link para o facebook da pizzaria"
           href={
@@ -54,6 +56,7 @@ export const Footer = () => {
           />
         </a>
         <a
+          rel="noreferrer"
           target={router.pathname.includes("/pedido") ? "_self" : "_blank"}
           aria-label="Link para o instagram da pizzaria"
           href={

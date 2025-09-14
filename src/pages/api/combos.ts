@@ -4,12 +4,12 @@ import { ff, ffid } from "tpdb-lib";
 import { CombosModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
-import { comboDispPelasRegras, produtoDispPelasRegras } from "@util/regras";
-import { obterCliente } from "@routes/clientes";
 import { ObterProduto, ObterProdutos } from "src/infra/dtos";
 import { aplicarValorMinCombo, sortCombos } from "@util/combo";
 import { populates } from "tpdb-lib";
-import { HTTPError } from "@models/error";
+import { analisarRegras } from "@util/regras";
+import { obterPedido } from "./pedidos";
+import { deve_estar, dvEst } from "@models/deveEstar";
 
 // Função handler da rota
 export default async function handler(
@@ -21,12 +21,12 @@ export default async function handler(
     if (req.query.id) {
       data = await obterCombo({
         id: req.query.id as string,
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         deveEstar: req.query.deveEstar as any,
       });
     } else {
       data = await obterCombos({
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         deveEstar: req.query.deveEstar as any,
       });
     }
@@ -38,8 +38,7 @@ export default async function handler(
 
 export const obterCombo = async ({
   id,
-  _cliente,
-  deveEstar = "emCondicoes",
+  _pedido,
   sabores,
   bebidas,
   lanches,
@@ -50,29 +49,34 @@ export const obterCombo = async ({
 }) => {
   await conectarDB();
 
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
 
-  const _data = (await ffid({
+  let data = (await ffid({
     m: CombosModel,
     id,
     populates: populates.combos,
   })) as unknown as ICombo;
 
-  if (!comboDispPelasRegras(_data, cliente, deveEstar))
-    throw new HTTPError("Combo indisponível", 404);
-
-  const data = [sabores, bebidas, lanches]
+  const trouxeProdutos = [sabores, bebidas, lanches]
     .filter(Boolean)
-    .some((x) => x?.length)
-    ? aplicarValorMinCombo(_data, sabores, bebidas, lanches)
-    : _data;
+    .some((x) => x?.length);
 
-  return data;
+  data = trouxeProdutos
+    ? aplicarValorMinCombo(data, sabores, bebidas, lanches)
+    : data;
+  return {
+    ...data,
+    emCondicoes: (() => {
+      const { v } = analisarRegras({ item: data, pedido });
+      return v;
+    })(),
+  };
 };
 
 export const obterCombos = async ({
-  _cliente,
-  deveEstar = "emCondicoes",
+  _pedido,
+  ignorar,
+  deveEstar = dvEst.visivel,
   sabores,
   bebidas,
   lanches,
@@ -83,23 +87,34 @@ export const obterCombos = async ({
 }) => {
   await conectarDB();
 
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
 
-  const _data = (await ff({
-    m: CombosModel,
-
-    populates: populates.combos,
-  })) as unknown as ICombo[];
+  const trouxeProdutos = [sabores, bebidas, lanches]
+    .filter(Boolean)
+    .some((x) => x?.length);
 
   const data = sortCombos(
-    _data
-      .filter((x) => comboDispPelasRegras(x, cliente, deveEstar))
-      .map((x) =>
-        [sabores, bebidas, lanches].filter(Boolean).some((x) => x?.length)
-          ? aplicarValorMinCombo(x, sabores, bebidas, lanches)
-          : x
+    deve_estar(
+      (
+        (await ff({
+          m: CombosModel,
+          populates: populates.combos,
+        })) as unknown as ICombo[]
       )
+        .map((x) => ({
+          ...x,
+          emCondicoes: (() => {
+            const { v } = analisarRegras({ item: x, pedido, ignorar });
+            return v;
+          })(),
+        }))
+        .map((x) =>
+          trouxeProdutos
+            ? aplicarValorMinCombo(x, sabores, bebidas, lanches)
+            : x
+        ),
+      deveEstar
+    )
   );
-
   return data;
 };

@@ -1,14 +1,12 @@
 import { IItemBuilderBebida } from "tpdb-lib";
 import { BebidaBuilderStyle } from "./styles";
 import { useEffect, useState } from "react";
-import { useItemBuilder } from "@context/itemContext";
-import { IBebidaPedido, IItemPedido, IItemPedidoIds } from "tpdb-lib";
+import { useItemBuilder } from "src/views/pedido/itemBuilder/context";
+import { IBebidaPedido, IItemPedidoIds } from "tpdb-lib";
 import { ItemBuilderObservacoes } from "../../observacoes";
 
 export const BebidaBuilder = ({
-  currentItem,
   builder,
-  nextEl,
 }: {
   currentItem?: IBebidaPedido;
   builder: IItemBuilderBebida;
@@ -29,15 +27,15 @@ export const BebidaBuilder = ({
         const prev = [..._prev];
         const i = prev.findIndex((x) => x.builderId === builder.id);
         if (i > -1) {
-          prev[i] = prod as any;
+          prev[i] = prod;
         } else {
-          prev.push(prod as any);
+          prev.push(prod);
         }
 
         return prev;
       });
     }
-  }, [prod]);
+  }, [prod]); //eslint-disable-line
   return (
     <BebidaBuilderStyle id={`builder-${builder.id}`}>
       <ItemBuilderObservacoes

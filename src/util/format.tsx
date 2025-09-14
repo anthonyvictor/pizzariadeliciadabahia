@@ -108,8 +108,8 @@ export const formatRua = (rua: string) => {
 
 export function formatPhoneNumber(
   valor: string,
-  manterDDD: boolean = true,
-  manterDDI: boolean = true
+  manterDDD = true,
+  manterDDI = true
 ) {
   let novoValor = valor;
 

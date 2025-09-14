@@ -1,3 +1,4 @@
+import { colors } from "@styles/colors";
 import styled, { css } from "styled-components";
 
 export const ProdutosStyle = styled.div`
@@ -17,33 +18,45 @@ export const ProdutoStyle = styled.li.attrs(
   /* background-color: #00000005; */
   color: #fff;
   padding: 5px;
-  border-radius: 10px;
   display: flex;
   gap: 5px;
   display: flex;
   align-items: center;
+  width: 100%;
+  border-radius: 5px;
+  background-color: ${colors.backgroundDark}80;
 
   .prod-img {
     position: relative;
     background-color: #fff;
-    border-radius: 10px;
-    border: 2px solid #000;
+    border-radius: 5px;
+    /* border: 2px solid #000; */
     overflow: hidden;
     flex-shrink: 0;
     img {
       display: none;
       background-color: #fff;
       border-radius: 10px;
-      transform: scale(102%);
+      transform: scale(106%);
       transform-origin: center center;
       flex-shrink: 0;
     }
+  }
+  .conteudo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .descricao {
+    font-size: 0.6rem;
+    opacity: 0.8;
   }
 
   ${(props) =>
     props.disabled &&
     css`
       pointer-events: none;
+      opacity: 0.5;
     `}
 `;
 
@@ -61,4 +74,5 @@ export const List = styled.div`
   display: flex;
   flex-direction: column;
   list-style: none;
+  gap: 5px;
 `;

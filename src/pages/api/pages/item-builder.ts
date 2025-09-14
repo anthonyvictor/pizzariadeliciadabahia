@@ -1,9 +1,5 @@
-import { ICliente, populates } from "tpdb-lib";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ffid } from "tpdb-lib";
-import { ClientesModel } from "tpdb-lib";
 import { RespType } from "@util/api";
-import { comboDispPelasRegras, produtoDispPelasRegras } from "@util/regras";
 import { IItemPedidoTipo } from "tpdb-lib";
 import { randomUUID } from "crypto";
 import { conectarDB } from "src/infra/mongodb/config";
@@ -18,6 +14,7 @@ import { obterBordas } from "@routes/pizzas/bordas";
 import { obterLanche, obterLanches } from "@routes/lanches";
 import { obterBebida, obterBebidas } from "@routes/bebidas";
 import { NoLogError } from "@models/error";
+import { obterPedido } from "@routes/pedidos";
 
 const indsp = "Oops, esse item não está disponível no momento!";
 
@@ -27,13 +24,13 @@ export default async function handler(
   res: NextApiResponse<RespType<IItemBuilder>>
 ) {
   if (req.method === "GET") {
-    const { id, tipo, clienteId } = req.query;
-    if (!id || !tipo || !clienteId) return res.status(400).end();
+    const { id, tipo, pedidoId } = req.query;
+    if (!id || !tipo || !pedidoId) return res.status(400).end();
 
     const data = await obterItemBuilder(
       id as any,
       tipo as any,
-      clienteId as any
+      pedidoId as any
     );
 
     res.status(200).json(data);
@@ -45,30 +42,22 @@ export default async function handler(
 export const obterItemBuilder = async (
   id: string,
   tipo: IItemPedidoTipo | "combo",
-  clienteId: string | undefined
+  pedidoId: string | undefined
 ): Promise<IItemBuilder> => {
   await conectarDB();
-  const cliente = (await ffid({
-    m: ClientesModel,
-    id: clienteId,
-    populates: populates.clientes,
-  })) as unknown as ICliente;
-  const _cliente = cliente;
+
+  const _pedido = await obterPedido(pedidoId);
 
   if (tipo === "combo") {
-    const bebidas = await obterBebidas({ _cliente });
-    const lanches = await obterLanches({ _cliente });
-    const bordas = await obterBordas({ _cliente });
-    const espessuras = await obterEspessuras({ _cliente });
-    const pontos = await obterPontos({ _cliente });
-    const extras = await obterExtras({ _cliente });
-    const sabores = await obterSabores({ _cliente });
-    const tamanhos = await obterTamanhos({ _cliente, sabores });
-    const combo = await obterCombo({ id, sabores, bebidas, lanches, _cliente });
-
-    if (!comboDispPelasRegras(combo, cliente)) {
-      throw new NoLogError(indsp);
-    }
+    const bebidas = await obterBebidas({ _pedido });
+    const lanches = await obterLanches({ _pedido });
+    const bordas = await obterBordas({ _pedido });
+    const espessuras = await obterEspessuras({ _pedido });
+    const pontos = await obterPontos({ _pedido });
+    const extras = await obterExtras({ _pedido });
+    const sabores = await obterSabores({ _pedido });
+    const tamanhos = await obterTamanhos({ _pedido, sabores });
+    const combo = await obterCombo({ id, sabores, bebidas, lanches, _pedido });
 
     return {
       id: randomUUID(),
@@ -84,15 +73,14 @@ export const obterItemBuilder = async (
       lanches,
     } as unknown as IITemBuilderCombo;
   } else if (tipo === "pizza") {
-    const bordas = await obterBordas({ _cliente });
-    const espessuras = await obterEspessuras({ _cliente });
-    const pontos = await obterPontos({ _cliente });
-    const extras = await obterExtras({ _cliente });
-    const sabores = await obterSabores({ _cliente });
-    const tamanho = await obterTamanho({ id, _cliente, sabores });
+    const bordas = await obterBordas({ _pedido });
+    const espessuras = await obterEspessuras({ _pedido });
+    const pontos = await obterPontos({ _pedido });
+    const extras = await obterExtras({ _pedido });
+    const sabores = await obterSabores({ _pedido });
+    const tamanho = await obterTamanho({ id, _pedido, sabores });
 
-    if (sabores.every((x) => !x.disponivel || !x.visivel))
-      throw new NoLogError(indsp);
+    if (!sabores?.length) throw new NoLogError(indsp);
 
     return {
       id: randomUUID(),
@@ -105,12 +93,7 @@ export const obterItemBuilder = async (
       extras,
     };
   } else if (tipo === "bebida") {
-    const bebida = await obterBebida({ id, _cliente });
-
-    if (!produtoDispPelasRegras(bebida, cliente)) throw new NoLogError(indsp);
-
-    if (!bebida || !bebida.disponivel || !bebida.visivel)
-      throw new NoLogError(indsp);
+    const bebida = await obterBebida({ id, _pedido });
 
     return {
       id: randomUUID(),
@@ -118,12 +101,7 @@ export const obterItemBuilder = async (
       bebida,
     };
   } else {
-    const lanche = await obterLanche({ id, _cliente });
-
-    if (!produtoDispPelasRegras(lanche, cliente)) throw new NoLogError(indsp);
-
-    if (!lanche || !lanche.disponivel || !lanche.visivel)
-      throw new NoLogError(indsp);
+    const lanche = await obterLanche({ id, _pedido });
 
     return {
       id: randomUUID(),

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { colors } from "@styles/colors";
 
 export const LogoStyle = styled.div.attrs(
-  (props: { menuOpen: Boolean }) => props
+  (props: { menuOpen: boolean }) => props
 )`
   position: absolute;
   z-index: 99;

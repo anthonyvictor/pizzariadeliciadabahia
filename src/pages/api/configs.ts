@@ -1,13 +1,8 @@
 import { IConfig } from "tpdb-lib";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ff, ffid } from "tpdb-lib";
+import { ff } from "tpdb-lib";
 import { ConfigsModel } from "tpdb-lib";
-import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
-import { produtoDispPelasRegras } from "@util/regras";
-import { obterCliente } from "@routes/clientes";
-import { ObterProduto, ObterProdutos } from "src/infra/dtos";
-import { HTTPError } from "@models/error";
 
 // Função handler da rota
 export default async function handler(

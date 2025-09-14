@@ -51,7 +51,7 @@ export const animations = {
         }
 `,
 
-  pulse: (color: string, maxSize: number = 1.1) => keyframes`
+  pulse: (color: string, maxSize = 1.1) => keyframes`
     0% {
       transform: scale(0.9);
       filter: drop-shadow(0 0 5px ${color});

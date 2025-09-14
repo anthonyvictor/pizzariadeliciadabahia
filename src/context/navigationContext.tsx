@@ -10,12 +10,12 @@ import {
 import { useRouter } from "next/router";
 
 const NavigationContext = createContext<{
-  menuOpen: Boolean;
-  setMenuOpen: Dispatch<SetStateAction<Boolean>>;
+  menuOpen: boolean;
+  setMenuOpen: Dispatch<SetStateAction<boolean>>;
 }>(null);
 
 const NavigationProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [menuOpen, setMenuOpen] = useState<Boolean>(false);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const router = useRouter();
 
   // useEffect(() => {

@@ -26,6 +26,23 @@ export const sortSabores = (sabores: IPizzaSabor[]) => {
   return r as IPizzaSabor[];
 };
 
+export const aplicarValorMinTamanho = (
+  tamanho: IPizzaTamanho | undefined,
+  sabores: IPizzaSabor[] | undefined
+) => {
+  if (!tamanho) return undefined;
+
+  const valores = (sabores ?? []).map((x) => x.valores).flat();
+  const valoresTamanho = valores
+    .filter((y) => y.tamanhoId === tamanho.id)
+    .map((y) => y.valor);
+
+  return {
+    ...tamanho,
+    valorMin: valoresTamanho.length ? Math.min(...valoresTamanho) : null,
+    tipo: "pizza",
+  };
+};
 export const aplicarValorMinTamanhos = (
   tamanhos: IPizzaTamanho[] | undefined,
   sabores: IPizzaSabor[] | undefined

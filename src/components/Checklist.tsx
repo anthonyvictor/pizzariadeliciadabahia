@@ -174,7 +174,7 @@ export const Checklist = ({
           )
         )}
       </ul>
-      {collapsed && (
+      {collapsed && items.length > 1 && (
         <button className="show-more" onClick={() => setCollapsed(false)}>
           {collapsedLabel ?? "Mostrar mais opções..."}
         </button>

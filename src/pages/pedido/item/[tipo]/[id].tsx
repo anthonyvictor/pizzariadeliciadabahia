@@ -1,6 +1,6 @@
 import { NextPage } from "next";
-import { IItemBuilder, IPedido } from "tpdb-lib";
-import { ItemBuilderProvider } from "@context/itemContext";
+import { IItemBuilder } from "tpdb-lib";
+import { ItemBuilderProvider } from "src/views/pedido/itemBuilder/context";
 import { ItemBuilderView } from "src/views/pedido/itemBuilder";
 import { useAuth } from "@util/hooks/auth";
 import { useEffect, useState } from "react";
@@ -21,13 +21,14 @@ const ItemBuilderPage: NextPage = () => {
     if (authCarregado) {
       axios
         .get(
-          `${env.apiURL}/pages/item-builder?id=${router.query.id}&clienteId=${pedido.cliente.id}&tipo=${router.query.tipo}`
+          `${env.apiURL}/pages/item-builder?id=${router.query.id}&pedidoId=${pedido.id}&tipo=${router.query.tipo}`
         )
         .then((res) => {
           setBuilder(res.data);
         })
         .catch((err) => {
-          toast.error("Erro ao carregar dados");
+          toast.error("Oops, esse produto não está disponível no momento!");
+          router.back();
           console.error(err);
         });
     }

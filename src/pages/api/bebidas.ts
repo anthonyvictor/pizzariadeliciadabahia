@@ -5,10 +5,10 @@ import { BebidasModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
 import { sortBebidas } from "@util/bebidas";
-import { produtoDispPelasRegras } from "@util/regras";
-import { obterCliente } from "@routes/clientes";
+import { analisarRegras } from "@util/regras";
 import { ObterProduto, ObterProdutos } from "src/infra/dtos";
-import { HTTPError } from "@models/error";
+import { obterPedido } from "./pedidos";
+import { deve_estar, dvEst } from "@models/deveEstar";
 
 // Função handler da rota
 export default async function handler(
@@ -20,12 +20,12 @@ export default async function handler(
     if (req.query.id) {
       data = await obterBebida({
         id: req.query.id as string,
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         deveEstar: req.query.deveEstar as any,
       });
     } else {
       data = await obterBebidas({
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         deveEstar: req.query.deveEstar as any,
       });
     }
@@ -35,36 +35,37 @@ export default async function handler(
   }
 }
 
-export const obterBebida = async ({
-  id,
-  _cliente,
-  deveEstar = "emCondicoes",
-}: ObterProduto) => {
+export const obterBebida = async ({ id, _pedido }: ObterProduto) => {
   await conectarDB();
 
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
 
   const data = (await ffid({ m: BebidasModel, id })) as unknown as IBebida;
 
-  if (!produtoDispPelasRegras(data, cliente, deveEstar))
-    throw new HTTPError("Bebida indisponível", 404);
-
-  return data;
+  const { v } = analisarRegras({ item: data, pedido });
+  return { ...data, emCondicoes: v };
 };
 
 export const obterBebidas = async ({
-  _cliente,
-  deveEstar = "emCondicoes",
+  _pedido,
+  ignorar,
+  deveEstar = dvEst.visivel,
 }: ObterProdutos) => {
   await conectarDB();
 
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
 
   const data = sortBebidas(
-    ((await ff({ m: BebidasModel })) as unknown as IBebida[]).filter((x) =>
-      produtoDispPelasRegras(x, cliente, deveEstar)
+    deve_estar(
+      ((await ff({ m: BebidasModel })) as unknown as IBebida[]).map((x) => ({
+        ...x,
+        emCondicoes: (() => {
+          const { v } = analisarRegras({ item: x, pedido, ignorar });
+          return v;
+        })(),
+      })),
+      deveEstar
     )
   );
-
   return data;
 };

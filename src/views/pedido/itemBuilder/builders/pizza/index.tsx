@@ -1,4 +1,4 @@
-import { ICombo, IPizzaPedido } from "tpdb-lib";
+import { IPizzaPedido } from "tpdb-lib";
 import { IItemBuilderPizza } from "tpdb-lib";
 import {
   IPizzaBorda,
@@ -14,7 +14,7 @@ import { PizzaBuilderStyle } from "./styles";
 import { Checklist } from "@components/Checklist";
 import { rolarEl } from "@util/dom";
 import { MultiChecklist } from "@components/MultiChecklist";
-import { useItemBuilder } from "@context/itemContext";
+import { useItemBuilder } from "src/views/pedido/itemBuilder/context";
 import { ItemBuilderObservacoes } from "../../observacoes";
 
 export const PizzaBuilder = ({
@@ -68,9 +68,9 @@ export const PizzaBuilder = ({
 
     let valorBorda =
       borda?.valores?.find?.((x) => x.tamanhoId === tamanho.id)?.valor ?? 0;
-    let valorEspessura = espessura?.valor ?? 0;
-    let valorPonto = ponto?.valor ?? 0;
-    let valorExtras = extras.reduce((acc, curr) => acc + curr.valor, 0);
+    const valorEspessura = espessura?.valor ?? 0;
+    const valorPonto = ponto?.valor ?? 0;
+    const valorExtras = extras.reduce((acc, curr) => acc + curr.valor, 0);
     // const subTotal = valorSabores + valorBorda + valorExtras;
     if (valorSabores > 0 || valorBorda > 0)
       (acoes ?? []).forEach((acao) => {
@@ -127,6 +127,8 @@ export const PizzaBuilder = ({
     return valorFinal;
   };
 
+  type Pizza = "pizza";
+
   const { setItensFinais } = useItemBuilder();
   useEffect(() => {
     setItensFinais((_prev) => {
@@ -141,7 +143,7 @@ export const PizzaBuilder = ({
         ponto: pizza.ponto?.id,
         extras: pizza.extras.map((x) => x.id),
         builderId: builder.id,
-        tipo: "pizza" as "pizza",
+        tipo: "pizza" as Pizza,
         observacoes: pizza.observacoes,
       };
       if (i > -1) {
@@ -152,7 +154,7 @@ export const PizzaBuilder = ({
 
       return prev;
     });
-  }, [pizza]);
+  }, [pizza]); //eslint-disable-line
   const bordasDisp = (builder?.bordas ?? []).filter((x) => x.disponivel);
   const pontosDisp = (builder.pontos ?? []).filter((x) => x.disponivel);
   const espDisp = (builder.espessuras ?? []).filter((x) => x.disponivel);
@@ -172,7 +174,7 @@ export const PizzaBuilder = ({
       }
       setPizza((prev) => ({ ...prev, ...obj }));
     }
-  }, []);
+  }, []); //eslint-disable-line
 
   const pizzaNumberStr = `${pizzaNumber ? `da ${pizzaNumber}ª pizza ` : ""}`;
 

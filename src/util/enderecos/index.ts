@@ -52,7 +52,7 @@ export const viaCep = async (
   cep: string,
   rua?: string,
   _bairro?: string,
-  tentativa: number = 1
+  tentativa = 1
 ): Promise<
   | {
       cep: string;

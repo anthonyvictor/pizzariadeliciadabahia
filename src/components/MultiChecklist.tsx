@@ -7,6 +7,7 @@ import {
   checklistSearchFilter,
   ChecklistStyle,
   groupItems,
+  GroupOrItem,
   GroupStyle,
   IChecklistBase,
   IChecklistItem,
@@ -15,6 +16,8 @@ import {
 import { CgChevronDoubleRight, CgChevronRight } from "react-icons/cg";
 import Image from "next/image";
 import { X } from "@upstash/redis/zmscore-CgRD7oFR";
+import { rolarEl } from "@util/dom";
+import { array } from "zod";
 
 export const MultiChecklist = ({
   name,
@@ -66,6 +69,20 @@ export const MultiChecklist = ({
       <li
         key={item.id}
         className={`checklist-item`}
+        onClick={(e) => {
+          e.stopPropagation();
+          const novoValor =
+            (value.filter((x) => x === item.id)?.length ?? 0) + 1;
+          if (value.filter((x) => x !== item.id).length + novoValor <= max) {
+            const prev = [...value].filter((x) => x !== item.id);
+            prev.push(...new Array(novoValor).fill(item.id));
+            setValue(prev);
+            if (prev.length === max) {
+              setCollapsed(true);
+              onDone?.();
+            }
+          }
+        }}
         style={{
           pointerEvents: item.disabled ? "none" : undefined,
           opacity: item.disabled ? "0.5" : undefined,
@@ -109,6 +126,12 @@ export const MultiChecklist = ({
   };
   const isDone = value.length === max;
 
+  useEffect(() => {
+    if (isDone) {
+      rolarEl(`checklist-${name}`, true);
+    }
+  }, [isDone]);
+
   return (
     <MultiChecklistStyle checked={!!value} id={`checklist-${name}`}>
       <ChecklistHeader
@@ -122,7 +145,7 @@ export const MultiChecklist = ({
       <ul>
         {(isDone && collapsed
           ? groupItems(items.filter((x) => value.includes(x.id)))
-          : collapsed
+          : _collapsed
           ? groupItems(
               checklistSearchFilter(items, search).slice(
                 0,
@@ -130,7 +153,7 @@ export const MultiChecklist = ({
               )
             )
           : groupItems(checklistSearchFilter(items, search))
-        ).map((gi) => {
+        ).map((gi, _, arr) => {
           return "items" in gi ? (
             <Group key={gi.name} group={gi} />
           ) : (
@@ -138,7 +161,7 @@ export const MultiChecklist = ({
           );
         })}
       </ul>
-      {collapsed && (
+      {collapsed && items.length > 1 && (
         <button className="show-more" onClick={() => setCollapsed(false)}>
           {collapsedLabel ?? "Mostrar mais itens..."}
         </button>

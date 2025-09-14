@@ -1,4 +1,4 @@
-import { useItemBuilder } from "@context/itemContext";
+import { useItemBuilder } from "src/views/pedido/itemBuilder/context";
 import { useState } from "react";
 import { ItemBuilderFooterStyle } from "./styles";
 import { NumberInput } from "@components/NumberInput";

@@ -2,7 +2,7 @@ import { normalizarOrdinal } from "@util/format";
 import { IEndereco, IRegraEndereco } from "tpdb-lib";
 
 export const entreEnderecos = (
-  { bairro, rua, cep, distancia_metros }: IEndereco,
+  { bairro, rua, cep }: IEndereco,
   regra: IRegraEndereco
 ) => {
   if (regra.tipo === "bairros") {
@@ -14,8 +14,6 @@ export const entreEnderecos = (
   } else if (regra.tipo === "ruas") {
     const f = (v) => normalizarOrdinal(v?.toLowerCase?.());
     return regra.valor.some((y) => f(y) === f(rua));
-  } else if (regra.tipo === "distancias") {
-    return regra.valor.some((y) => y <= distancia_metros);
   }
   return true;
 };

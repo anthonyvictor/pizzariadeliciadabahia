@@ -2,12 +2,14 @@ import { CheckerStyle } from "./styles";
 
 export const Checker = ({
   checked,
+  label,
   check,
   disabled,
   disabledText,
 }: {
   checked: boolean;
   check?: () => void;
+  label?: string;
   disabled?: boolean;
   disabledText?: string;
 }) => {
@@ -18,6 +20,7 @@ export const Checker = ({
         if (!disabled) check?.();
       }}
     >
+      {label && <small>{label}</small>}
       {disabled ? (
         <h5>{disabledText ?? `Indisp.`}</h5>
       ) : (

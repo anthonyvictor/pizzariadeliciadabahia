@@ -47,7 +47,7 @@ export const ProdutosView = () => {
     <ProdutosViewStyle>
       <TextContainer title="Produtos" subtitle="Escolha uma das opções" />
       {buttons.map((bt) => (
-        <MyButton {...bt} />
+        <MyButton key={bt.url} {...bt} />
       ))}
     </ProdutosViewStyle>
   );

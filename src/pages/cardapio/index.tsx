@@ -4,6 +4,7 @@ import { IPizzaSabor, IPizzaTamanho } from "tpdb-lib";
 import { formatCurrency, getValueString } from "@util/format";
 import { obterTamanhos } from "@routes/pizzas/tamanhos";
 import { obterSabores } from "@routes/pizzas/sabores";
+import { dvEst } from "@models/deveEstar";
 
 const Cardapio: NextPage = ({
   sabores,
@@ -88,14 +89,14 @@ export default Cardapio;
 export const getStaticProps: GetStaticProps = async () => {
   try {
     const sabores = await obterSabores({
-      _cliente: null,
-      deveEstar: "visivel",
+      _pedido: null,
+      deveEstar: dvEst.visivel,
     });
 
     const tamanhos = await obterTamanhos({
-      _cliente: null,
+      _pedido: null,
       sabores,
-      deveEstar: "visivel",
+      deveEstar: dvEst.visivel,
     });
 
     return {

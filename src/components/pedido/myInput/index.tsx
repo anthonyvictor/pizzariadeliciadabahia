@@ -97,13 +97,14 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
       placeholder: placeholder,
       autoCorrect: "off",
       autoComplete: "one-time-code",
-      role: "presentation",
+      // role: "presentation",
       spellCheck: false,
       min: min ?? undefined,
       maxLength: maxLength ?? undefined,
       minLength: minLength ?? undefined,
       max: max ?? undefined,
       step: type === "number" ? 0.5 : undefined,
+      tabIndex: tabIndex ?? 0,
       onBlur,
       onKeyUp,
       onKeyDown: (e) => {
@@ -133,7 +134,7 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
     };
     const inputProps = {
       name: `myInput-${id ?? name}`,
-      id: (id || name).replace(/[* ]/g, ""),
+      id: id ? id : `myInput-${name}`, // (id || name).replace(/[* ]/g, ""),
       disabled: disabled,
       autoFocus: autoFocus,
       tabIndex: tabIndex,
@@ -179,11 +180,7 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
     if (!PhoneInput) return <></>;
 
     return (
-      <MyInputStyle
-        id={`myInput-${name}`}
-        className={`myInput ${className}`}
-        ref={ref}
-      >
+      <MyInputStyle className={`myInput ${className}`} ref={ref}>
         <div
           className="input-label"
           style={{ flexDirection: type === "checkbox" ? "row" : "column" }}

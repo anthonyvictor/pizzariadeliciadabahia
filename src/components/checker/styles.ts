@@ -4,6 +4,10 @@ import styled, { css } from "styled-components";
 export const CheckerStyle = styled.div.attrs(
   (props: { checked: boolean }) => props
 )`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
   .checker {
     width: 25px;
     height: 25px;

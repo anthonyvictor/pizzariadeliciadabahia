@@ -33,21 +33,34 @@ import { sleep } from "./misc";
 //   return window; // Se não achar, retorna a janela principal
 // }
 
-export const rolarEl = async (id: string, block?: ScrollLogicalPosition) => {
+export const rolarEl = async (
+  id: string,
+  skipWait?: boolean,
+  block?: ScrollLogicalPosition
+) => {
   const el = document.querySelector<HTMLElement>(`#${id}`);
   if (el) {
     const container = getScrollParent(el);
-    await sleep(500);
+    if (!skipWait) await sleep(200);
     if (container instanceof HTMLElement) {
       const y = el.offsetTop; // offset do header
-      container.scrollTo({ top: y, behavior: "smooth" });
+      container.scrollTo({ top: y, behavior: skipWait ? "auto" : "smooth" });
     } else {
       el.scrollIntoView({
-        behavior: "smooth",
+        behavior: skipWait ? "auto" : "smooth",
         block: block ?? "nearest",
       });
     }
+    // destaque visual somente se não for skipWait
+    if (!skipWait) {
+      highlightEl(el);
+    }
   }
+};
+
+export const highlightEl = (el: HTMLElement) => {
+  el.classList.add("highlight-overlay");
+  setTimeout(() => el.classList.remove("highlight-overlay"), 2000);
 };
 
 function getScrollParent(el: HTMLElement): HTMLElement | Window {

@@ -18,6 +18,9 @@ import { useEffect, useState } from "react";
 import { useClienteStore } from "src/infra/zustand/cliente";
 import { useConfigsStore } from "src/infra/zustand/configs";
 import { IConfigEntregaAvancada } from "tpdb-lib";
+import { highlightEl } from "@util/dom";
+import { sleep } from "@util/misc";
+import { sortByDate } from "@util/array";
 
 export const TipoView = () => {
   const router = useRouter();
@@ -50,6 +53,14 @@ export const TipoView = () => {
       tipo?.type === "entrega" && !!tipo.endereco && !tipo.endereco.metodo
     );
   }, [tipo]);
+
+  useEffect(() => {
+    (async () => {
+      await sleep(200);
+      const el = document.querySelector<HTMLElement>(".endereco-novo");
+      if (el) highlightEl(el);
+    })();
+  }, []);
   return (
     <TipoViewStyle>
       <menu className="no-scroll">
@@ -78,6 +89,7 @@ export const TipoView = () => {
 
         <ul className="tipos">
           {(cliente?.enderecos ?? [])
+            .sort((a, b) => sortByDate(a.criadoEm, b.criadoEm))
             .filter((x) => x.visivel)
             .map((e) => (
               <Endereco key={e.id} e={e} />
@@ -86,7 +98,11 @@ export const TipoView = () => {
 
         <EnderecoStyle
           onClick={() => router.push("/cliente/novo-endereco")}
-          className={`item`}
+          className={`item ${
+            cliente.enderecos.filter((x) => x.visivel).length === 3
+              ? "disabled"
+              : ""
+          }`}
         >
           <aside className="item-left">
             <h2 className="item-type">Cadastre um endereço 🛵</h2>

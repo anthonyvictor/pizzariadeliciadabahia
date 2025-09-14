@@ -89,8 +89,10 @@ export const analisarCodigoCupom = (
 ) =>
   !cupom
     ? false
-    : !cupom.condicoes.some((y) => y.tipo === "codigo") ||
-      cupom.condicoes.some((y) => y.tipo === "codigo" && y.valor === codigo);
+    : !cupom.condicoes.some((y) => y.tipo === "codigo_cupom") ||
+      cupom.condicoes.some(
+        (y) => y.tipo === "codigo_cupom" && y.valor === codigo
+      );
 
 export const obterDescontos = (
   pedido: IPedido,

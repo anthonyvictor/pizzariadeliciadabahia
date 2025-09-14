@@ -5,7 +5,7 @@ import { breakpointsMQ } from "@styles/mediaQueries";
 // import BackgroundImage from "@assets/images/pizzas_pattern.svg";
 
 export const NavigationStyle = styled.nav.attrs(
-  (props: { menuOpen: Boolean }) => props
+  (props: { menuOpen: boolean }) => props
 )`
   display: flex;
   padding: 10px 10;

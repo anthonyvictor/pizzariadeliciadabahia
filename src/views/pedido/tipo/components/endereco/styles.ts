@@ -11,6 +11,11 @@ export const EnderecoStyle = styled.li`
   grid-template-columns: 1fr auto;
   gap: 10px;
 
+  &.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
   .deletar {
     background-color: transparent;
     border: none;

@@ -4,11 +4,15 @@ import { ff, ffid } from "tpdb-lib";
 import { PizzaTamanhosModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
-import { produtoDispPelasRegras } from "@util/regras";
-import { obterCliente } from "@routes/clientes";
+import { analisarRegras } from "@util/regras";
 import { ObterProduto, ObterProdutos } from "src/infra/dtos";
-import { HTTPError } from "@models/error";
-import { aplicarValorMinTamanhos, sortTamanhos } from "@util/pizza";
+import {
+  aplicarValorMinTamanho,
+  aplicarValorMinTamanhos,
+  sortTamanhos,
+} from "@util/pizza";
+import { deve_estar, dvEst } from "@models/deveEstar";
+import { obterPedido } from "@routes/pedidos";
 
 // Função handler da rota
 export default async function handler(
@@ -20,12 +24,12 @@ export default async function handler(
     if (req.query.id) {
       data = await obterTamanho({
         id: req.query.id as string,
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         deveEstar: req.query.deveEstar as any,
       });
     } else {
       data = await obterTamanhos({
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         deveEstar: req.query.deveEstar as any,
       });
     }
@@ -37,40 +41,52 @@ export default async function handler(
 
 export const obterTamanho = async ({
   id,
-  _cliente,
-  deveEstar = "emCondicoes",
+  _pedido,
   sabores,
 }: ObterProduto & { sabores?: IPizzaSabor[] | undefined }) => {
   await conectarDB();
 
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
 
-  const _data = (await ffid({
+  let data = (await ffid({
     m: PizzaTamanhosModel,
     id,
   })) as unknown as IPizzaTamanho;
 
-  if (!produtoDispPelasRegras(_data, cliente, deveEstar))
-    throw new HTTPError("Tamanho indisponível", 404);
+  data = aplicarValorMinTamanho(data, sabores);
 
-  const data = aplicarValorMinTamanhos([_data], sabores)[0];
-
-  return data as IPizzaTamanho;
+  return {
+    ...data,
+    emCondicoes: (() => {
+      const { v } = analisarRegras({ item: data, pedido });
+      return v;
+    })(),
+  } as IPizzaTamanho;
 };
 
 export const obterTamanhos = async ({
-  _cliente,
-  deveEstar = "emCondicoes",
+  _pedido,
+  deveEstar = dvEst.visivel,
+  ignorar,
   sabores,
 }: ObterProdutos & { sabores?: IPizzaSabor[] | undefined }) => {
   await conectarDB();
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
 
   const data = sortTamanhos(
     aplicarValorMinTamanhos(
-      (
-        (await ff({ m: PizzaTamanhosModel })) as unknown as IPizzaTamanho[]
-      ).filter((x) => produtoDispPelasRegras(x, cliente, deveEstar)),
+      deve_estar(
+        (
+          (await ff({ m: PizzaTamanhosModel })) as unknown as IPizzaTamanho[]
+        ).map((x) => ({
+          ...x,
+          emCondicoes: (() => {
+            const { v } = analisarRegras({ item: x, pedido, ignorar });
+            return v;
+          })(),
+        })),
+        deveEstar
+      ),
       sabores
     )
   );

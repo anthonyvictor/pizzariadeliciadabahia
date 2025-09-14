@@ -5,10 +5,10 @@ import { CuponsModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
 import { sortCupons } from "@util/cupons";
-import { produtoDispPelasRegras } from "@util/regras";
-import { obterCliente } from "@routes/clientes";
 import { ObterProduto, ObterProdutos } from "src/infra/dtos";
-import { HTTPError } from "@models/error";
+import { obterPedido } from "./pedidos";
+import { deve_estar, dvEst } from "@models/deveEstar";
+import { analisarRegras } from "@util/regras";
 
 // Função handler da rota
 export default async function handler(
@@ -20,12 +20,12 @@ export default async function handler(
     if (req.query.id) {
       data = await obterCupom({
         id: req.query.id as string,
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         deveEstar: req.query.deveEstar as any,
       });
     } else {
       data = await obterCupons({
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         codigo: req.query.codigo as any,
         deveEstar: req.query.deveEstar as any,
       });
@@ -38,53 +38,72 @@ export default async function handler(
 
 export const obterCupom = async ({
   id,
-  _cliente,
-  deveEstar = "emCondicoes",
+  _pedido,
+  deveEstar = dvEst.visivel,
 }: ObterProduto) => {
   await conectarDB();
 
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
 
   const data = (await ffid({ m: CuponsModel, id })) as unknown as ICupom;
 
-  if (!produtoDispPelasRegras(data, cliente, deveEstar))
-    throw new HTTPError("Cupom indisponível", 404);
-
-  return data;
+  return {
+    ...data,
+    emCondicoes: (() => {
+      const { v } = analisarRegras({ item: data, pedido });
+      return v;
+    })(),
+  };
 };
 
 export const obterCupons = async ({
-  _cliente,
+  _pedido,
   codigo,
-  deveEstar = "emCondicoes",
+  ignorar,
+  deveEstar = dvEst.tudo,
 }: ObterProdutos & { codigo?: string }) => {
   await conectarDB();
 
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
   const q: any = {};
 
   if (!!codigo && typeof codigo === "string") {
     q.codigo = codigo;
   }
+
   const data = sortCupons(
-    ((await ff({ m: CuponsModel, q })) as unknown as ICupom[]).filter((x) =>
-      produtoDispPelasRegras(x, cliente, deveEstar)
+    deve_estar(
+      (
+        (await ff({
+          m: CuponsModel,
+          q,
+        })) as unknown as ICupom[]
+      ).map((x) => ({
+        ...x,
+        emCondicoes: (() => {
+          const { v } = analisarRegras({ item: x, pedido, ignorar });
+          return v;
+        })(),
+      })),
+      deveEstar
     )
   );
 
-  const comRegras = data
-    .map((x) =>
-      deveEstar === "emCondicoes"
-        ? x
-          ? {
-              ...x,
-              condicoes: (x?.condicoes ?? []).filter((y) => y.ativa),
-              excecoes: (x?.excecoes ?? []).filter((y) => y.ativa),
-            }
-          : x
-        : undefined
-    )
-    .filter(Boolean);
+  return data;
 
-  return comRegras;
+  // const comRegras = data
+  //   .map((x) =>
+  //     deveEstar.emCondicoes
+  //       ? x
+  //         ? {
+  //             ...x,
+  //             condicoes: (x?.condicoes ?? []).filter((y) => y.ativa),
+  //             excecoes: (x?.excecoes ?? []).filter((y) => y.ativa),
+  //           }
+  //         : x
+  //       : undefined
+  //   )
+  //   .filter(Boolean);
+
+  // return comRegras;
 };

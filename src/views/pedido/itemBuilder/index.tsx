@@ -1,9 +1,8 @@
 import { ItemBuilderStyle } from "./styles";
-import { useItemBuilder } from "@context/itemContext";
+import { useItemBuilder } from "src/views/pedido/itemBuilder/context";
 import { ItemBuilderHeader } from "./header";
 import { ComboBuilder } from "./builders/combo";
 import { PizzaBuilder } from "./builders/pizza";
-import { ItemBuilderObservacoes } from "./observacoes";
 import { ItemBuilderFooter } from "./footer";
 import { BebidaBuilder } from "./builders/bebida";
 import { LancheBuilder } from "./builders/lanche";

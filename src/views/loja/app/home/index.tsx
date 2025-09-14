@@ -56,7 +56,7 @@ export const HomeView = () => {
         subtitle="Escolha uma das opções"
       />
       {buttons.map((bt) => (
-        <MyButton {...bt} />
+        <MyButton key={bt.url} {...bt} />
       ))}
     </HomeViewStyle>
   );

@@ -1,12 +1,14 @@
 import { IDeveEstar } from "@models/deveEstar";
-import { ICliente } from "tpdb-lib";
+import { IPedido, IRegra } from "tpdb-lib";
 
-export interface ObterProduto {
-  id: string;
-  _cliente: ICliente | string | undefined;
+interface Base {
+  _pedido: IPedido | string | undefined;
   deveEstar?: IDeveEstar;
 }
-export interface ObterProdutos {
-  _cliente: ICliente | string | undefined;
-  deveEstar?: IDeveEstar;
+export interface ObterProduto extends Base {
+  id: string;
+}
+export interface ObterProdutos extends Base {
+  q?: any;
+  ignorar?: IRegra["tipo"][];
 }

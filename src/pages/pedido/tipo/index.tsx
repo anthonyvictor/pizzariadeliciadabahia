@@ -21,7 +21,7 @@ const TipoPage: NextPage = () => {
   useEffect(() => {
     if (authCarregado) {
       axios
-        .get(`${env.apiURL}/cupons?clienteId=${pedido.cliente.id}`)
+        .get(`${env.apiURL}/cupons?pedidoId=${pedido.id}`)
         .then((res) => {
           if (!res.data || !Array.isArray(res.data) || !res.data.length) return;
 

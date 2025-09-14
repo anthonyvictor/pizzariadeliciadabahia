@@ -51,10 +51,18 @@ export const ButtonPrimary = styled(Button).attrs(
   border: 5px solid ${colors.elements};
   transform: scale(1);
 
-  &.pulse,
-  &:not(:disabled) {
-    animation: ${animations.pulse(colors.elements)} 2s ease-in-out infinite;
-  }
+  ${(props) =>
+    props.pulse === false
+      ? css`
+          animation: none;
+        `
+      : css`
+          &.pulse,
+          &:not(:disabled) {
+            animation: ${animations.pulse(colors.elements)} 2s ease-in-out
+              infinite;
+          }
+        `}
 `;
 
 export const ButtonSecondary = styled(Button)`
@@ -65,26 +73,28 @@ export const ButtonSecondary = styled(Button)`
   background-color: transparent;
 `;
 
-export const FloatButton = styled(ButtonPrimary)`
+export const FloatButton = styled.button`
   position: fixed;
-  bottom: ${sizes.footer}px;
+  bottom: 0;
   right: 0;
-  margin: 0 0.5rem 4rem 0%;
-  width: min(9em, 25vw);
-  height: min(9em, 25vw);
   flex-grow: 0;
   flex-shrink: 0;
   border-radius: 50%;
-  transition: all 0.2s;
+  width: 3rem;
+  height: 3rem;
+  margin: 0 30px 30px 0;
+  background-color: ${colors.elements};
+  border: 3px solid ${colors.backgroundDark};
+  opacity: 0.8;
   padding: 0;
-  z-index: 99;
-  display: block;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  p {
-    font-size: min(0.9rem, 2.5vw);
-  }
-  b {
-    font-size: min(1.5rem, 4vw);
+  &::after {
+    content: "+";
+    font-size: 1.5rem;
     font-weight: 800;
   }
 

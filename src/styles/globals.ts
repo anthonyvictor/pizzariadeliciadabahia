@@ -85,6 +85,7 @@ body{
     .no-scroll {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE 10+ */
+    min-height: 0;
 
     overflow: auto; /* ainda permite rolagem */
 
@@ -112,6 +113,56 @@ body{
       }
 
     }
+
+
+
+
+.highlight-scroll {
+  animation: highlight-pulse 2s ease-out;
+}
+
+@keyframes highlight-pulse {
+  0% {
+    box-shadow: 0 0 0px 0px rgba(255, 200, 0, 0.8);
+    background-color: rgba(255, 235, 100, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px 5px rgba(255, 200, 0, 0.6);
+    background-color: rgba(255, 235, 100, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 0px 0px rgba(255, 200, 0, 0);
+    background-color: transparent;
+  }
+}
+
+
+.highlight-overlay {
+  position: relative;
+}
+
+.highlight-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0; /* cobre todo o elemento */
+  background: rgba(255, 235, 100, 0.7);
+  pointer-events: none; /* não bloqueia clique */
+  animation: overlay-fade 2s ease-out forwards;
+  border-radius: inherit; /* respeita borda arredondada */
+}
+
+@keyframes overlay-fade {
+  0% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 
 `;
 

@@ -1,5 +1,5 @@
 import { env } from "@config/env";
-import { analisarRegrasTempo } from "@util/regras";
+import { analisarRegras } from "@util/regras";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -40,7 +40,7 @@ export const useAuth = (
 
   useEffect(() => {
     temClientePedido();
-  }, []);
+  }, []); //eslint-disable-line
 
   const temClientePedido = async () => {
     if (router.pathname === pages.finalizado) {
@@ -84,7 +84,10 @@ export const useAuth = (
       )
         return false;
 
-      const pelasRegrasTempo = analisarRegrasTempo(configHorarioFunc);
+      const { v: pelasRegrasTempo } = analisarRegras({
+        item: configHorarioFunc,
+        pedido: null,
+      });
 
       if (pelasRegrasTempo) return true;
 

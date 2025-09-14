@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import { OutroBuilderStyle } from "./styles";
 import { Checklist } from "@components/Checklist";
 import { rolarEl } from "@util/dom";
-import { ItemComBuilder, useItemBuilder } from "@context/itemContext";
+import {
+  ItemComBuilder,
+  useItemBuilder,
+} from "src/views/pedido/itemBuilder/context";
 import { abreviarBebida } from "@util/bebidas";
 import { abreviarLanche } from "@util/lanches";
 import {
@@ -14,12 +17,10 @@ import {
 } from "tpdb-lib";
 import { ItemBuilderObservacoes } from "../../observacoes";
 
-let vx = 0;
 export const OutroBuilder = ({
   currentItem,
   builder,
   isCombo = false,
-  nextEl,
   outroNumber = 0,
 }: {
   currentItem?: IBebida | ILanche;
@@ -147,7 +148,6 @@ export const OutroBuilder = ({
       });
     }
   }, [outro, observacoes]);
-
   const outroNumberStr = `${outroNumber ? `da ${outroNumber}ª outro ` : ""}`;
   const prods = builder.tipo === "bebida" ? builder.bebidas : builder.lanches;
 

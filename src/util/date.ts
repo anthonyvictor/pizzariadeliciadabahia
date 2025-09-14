@@ -5,6 +5,7 @@ import {
   IPeriodoDia,
   IPeriodoHorario,
 } from "tpdb-lib";
+import { dateOrNull } from "./conversion";
 
 export function entreHorarios(_h: Date, periodos: IPeriodoHorario[]): boolean {
   const h = new Date(_h);
@@ -79,4 +80,55 @@ export function entrePeriodosDias(d: Date, periodos: IPeriodoDia[]): boolean {
       return diaSemana >= de || diaSemana <= ate;
     }
   });
+}
+
+export const ehNiver = (_dataNasc) => {
+  const dataNasc = dateOrNull(_dataNasc);
+  if (!dataNasc) return false;
+  const hoje = new Date();
+
+  return (
+    dataNasc.getDate() === hoje.getDate() &&
+    dataNasc.getMonth() === hoje.getMonth()
+  );
+};
+
+type TimeUnit =
+  | "years"
+  | "months"
+  | "weeks"
+  | "days"
+  | "hours"
+  | "minutes"
+  | "seconds";
+
+export function dateDiff(_date1: Date, _date2: Date, unit: TimeUnit): number {
+  // garante que d1 <= d2
+  const date1 = new Date(_date1);
+  const date2 = new Date(_date2);
+  const [d1, d2] =
+    date1.getTime() <= date2.getTime() ? [date1, date2] : [date2, date1];
+  const msDiff = d2.getTime() - d1.getTime(); // já não precisa de Math.abs
+
+  switch (unit) {
+    case "seconds":
+      return Math.floor(msDiff / 1000);
+    case "minutes":
+      return Math.floor(msDiff / (1000 * 60));
+    case "hours":
+      return Math.floor(msDiff / (1000 * 60 * 60));
+    case "days":
+      return Math.floor(msDiff / (1000 * 60 * 60 * 24));
+    case "weeks":
+      return Math.floor(msDiff / (1000 * 60 * 60 * 24 * 7));
+    case "months": {
+      const years = d2.getFullYear() - d1.getFullYear();
+      const months = d2.getMonth() - d1.getMonth();
+      return years * 12 + months;
+    }
+    case "years":
+      return d2.getFullYear() - d1.getFullYear();
+    default:
+      throw new Error(`Unidade inválida: ${unit}`);
+  }
 }

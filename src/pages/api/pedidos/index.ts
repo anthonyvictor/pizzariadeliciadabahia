@@ -128,15 +128,18 @@ export const obterPedidos = async ({
   return r;
 };
 
-export const obterPedido = async (id: string) => {
-  if (!Types.ObjectId.isValid(id)) {
+export const obterPedido = async (id: string | IPedido) => {
+  if (!id) return null;
+  if ((id as IPedido)?.id) return id as IPedido;
+
+  if (!Types.ObjectId.isValid(id as unknown as string)) {
     throw new Error("ID inválido");
   }
   await conectarDB();
 
   const pedido = await ffid({
     m: PedidosModel,
-    id: id,
+    id: id as unknown as string,
     populates: populates.pedidos,
   });
 

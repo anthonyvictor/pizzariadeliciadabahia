@@ -1,5 +1,6 @@
 import Loading from "@components/loading";
 import { env } from "@config/env";
+import { sortDisp } from "@util/array";
 import axios from "axios";
 import {
   createContext,
@@ -10,14 +11,7 @@ import {
 } from "react";
 import { toast } from "react-toastify";
 import { usePedidoStore } from "src/infra/zustand/pedido";
-import {
-  IBebida,
-  ICombo,
-  IHome,
-  ILanche,
-  IPedido,
-  IPizzaTamanho,
-} from "tpdb-lib";
+import { IBebida, ICombo, IHome, ILanche, IPizzaTamanho } from "tpdb-lib";
 export type IProdutoHome =
   | ICombo
   | IPizzaTamanho
@@ -50,7 +44,7 @@ export const PedidoPageProvider = ({
 
   useEffect(() => {
     axios
-      .get(`${env.apiURL}/pages/home?clienteId=${pedido.cliente.id}`)
+      .get(`${env.apiURL}/pages/home?pedidoId=${pedido.id}`)
       .then((res) => {
         setHome(res.data);
       })
@@ -65,24 +59,65 @@ export const PedidoPageProvider = ({
 
   const maxDestaques = 6;
   function fmv<T>(arr: T[], max = 2) {
-    return arr
-      .sort((a, b) => (b["vendidos"] ?? 0) - (a["vendidos"] ?? 0))
-      .slice(0, max);
+    return sortDisp(
+      [...arr]
+        .sort((a, b) => (b["vendidos"] ?? 0) - (a["vendidos"] ?? 0))
+        .slice(0, max)
+    );
   }
 
   const destaques = home
     ? (() => {
-        const combos = fmv(home.combos, 4);
+        const combos = fmv(home.combos, 4).filter(
+          (x) => x.emCondicoes && x.disponivel && x.visivel && x.estoque !== 0
+        );
         const tamanhos = fmv(
           home.tamanhos,
           maxDestaques - (combos.length + 2)
-        ).filter((x) => !x.somenteEmCombos);
+        ).filter(
+          (x) =>
+            !x.somenteEmCombos &&
+            x.emCondicoes &&
+            x.disponivel &&
+            x.visivel &&
+            x.estoque !== 0
+        );
         const bebidas = fmv(
           home.bebidas,
           maxDestaques - (combos.length + tamanhos.length + 1)
-        ).filter((x) => !x.somenteEmCombos);
-        const lanches = fmv(home.lanches, 1).filter((x) => !x.somenteEmCombos);
+        ).filter(
+          (x) =>
+            !x.somenteEmCombos &&
+            x.emCondicoes &&
+            x.disponivel &&
+            x.visivel &&
+            x.estoque !== 0
+        );
+        const lanches = fmv(home.lanches, 1).filter(
+          (x) =>
+            !x.somenteEmCombos &&
+            x.emCondicoes &&
+            x.disponivel &&
+            x.visivel &&
+            x.estoque !== 0
+        );
+
         const itens = [...combos, ...tamanhos, ...bebidas, ...lanches];
+
+        if (itens.length < maxDestaques) {
+          const diff = maxDestaques - itens.length;
+
+          const tams = fmv(
+            home.tamanhos.filter((x) => tamanhos.every((y) => y.id !== x.id)),
+            diff
+          );
+          const coms = fmv(
+            home.combos.filter((x) => combos.every((y) => y.id !== x.id)),
+            diff
+          );
+
+          itens.push(...fmv([...coms, ...tams], diff));
+        }
 
         return fmv(itens, maxDestaques);
       })()

@@ -1,4 +1,4 @@
-import { FlagEmojiToPNG } from "@util/conversion";
+// import { FlagEmojiToPNG } from "@util/conversion";
 import { SaborStyle } from "./styles";
 
 export const Sabor = ({
@@ -42,7 +42,7 @@ export const Sabor = ({
           <input
             type="checkbox"
             checked={checked}
-            onChange={(e) => active && setChecked(!checked)}
+            onChange={() => active && setChecked(!checked)}
           />
           <span />
         </label>

@@ -4,11 +4,11 @@ import { ff, ffid } from "tpdb-lib";
 import { PizzaPontosModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
-import { produtoDispPelasRegras } from "@util/regras";
-import { obterCliente } from "@routes/clientes";
-import { ObterProduto, ObterProdutos } from "src/infra/dtos";
-import { HTTPError } from "@models/error";
 import { sortPontos } from "@util/pizza";
+import { analisarRegras } from "@util/regras";
+import { ObterProduto, ObterProdutos } from "src/infra/dtos";
+import { obterPedido } from "../pedidos";
+import { deve_estar, dvEst } from "@models/deveEstar";
 
 // Função handler da rota
 export default async function handler(
@@ -20,12 +20,12 @@ export default async function handler(
     if (req.query.id) {
       data = await obterPonto({
         id: req.query.id as string,
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         deveEstar: req.query.deveEstar as any,
       });
     } else {
       data = await obterPontos({
-        _cliente: req.query.clienteId as any,
+        _pedido: req.query.pedidoId as any,
         deveEstar: req.query.deveEstar as any,
       });
     }
@@ -35,39 +35,47 @@ export default async function handler(
   }
 }
 
-export const obterPonto = async ({
-  id,
-  _cliente,
-  deveEstar = "emCondicoes",
-}: ObterProduto) => {
+export const obterPonto = async ({ id, _pedido }: ObterProduto) => {
   await conectarDB();
 
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
 
   const data = (await ffid({
     m: PizzaPontosModel,
     id,
   })) as unknown as IPizzaPonto;
 
-  if (!produtoDispPelasRegras(data, cliente, deveEstar))
-    throw new HTTPError("Ponto indisponível", 404);
-
-  return data;
+  return {
+    ...data,
+    emCondicoes: (() => {
+      const { v } = analisarRegras({ item: data, pedido });
+      return v;
+    })(),
+  };
 };
 
 export const obterPontos = async ({
-  _cliente,
-  deveEstar = "emCondicoes",
+  _pedido,
+  ignorar,
+  deveEstar = dvEst.visivel,
 }: ObterProdutos) => {
   await conectarDB();
 
-  const cliente = await obterCliente(_cliente);
+  const pedido = await obterPedido(_pedido);
 
   const data = sortPontos(
-    ((await ff({ m: PizzaPontosModel })) as unknown as IPizzaPonto[]).filter(
-      (x) => produtoDispPelasRegras(x, cliente, deveEstar)
+    deve_estar(
+      ((await ff({ m: PizzaPontosModel })) as unknown as IPizzaPonto[]).map(
+        (x) => ({
+          ...x,
+          emCondicoes: (() => {
+            const { v } = analisarRegras({ item: x, pedido, ignorar });
+            return v;
+          })(),
+        })
+      ),
+      deveEstar
     )
   );
-
   return data;
 };

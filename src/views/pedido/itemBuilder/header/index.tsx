@@ -1,4 +1,4 @@
-import { useItemBuilder } from "@context/itemContext";
+import { useItemBuilder } from "src/views/pedido/itemBuilder/context";
 import { ItemBuilderHeaderStyle } from "./styles";
 import { formatCurrency } from "@util/format";
 import Image from "next/image";
@@ -41,6 +41,7 @@ export const ItemBuilderHeader = () => {
               ? builder.lanche.imagemUrl
               : builder.combo.imagemUrl
           }
+          alt=""
           layout={"fill"}
           objectFit={
             builder.tipo === "pizza"

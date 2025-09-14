@@ -8,7 +8,7 @@ export const ItemBuilderFooterStyle = styled.footer`
   border-top: 2px solid ${colors.backgroundDark};
 
   .avancar {
-    flex: 1;
+    flex-grow: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -16,5 +16,6 @@ export const ItemBuilderFooterStyle = styled.footer`
     border: none;
     border-radius: 5px;
     background-color: ${colors.elements};
+    color: #000;
   }
 `;

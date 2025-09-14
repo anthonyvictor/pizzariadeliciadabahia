@@ -1,15 +1,13 @@
 import { IItemBuilderLanche } from "tpdb-lib";
 import { LancheBuilderStyle } from "./styles";
 import { useEffect, useState } from "react";
-import { useItemBuilder } from "@context/itemContext";
+import { useItemBuilder } from "src/views/pedido/itemBuilder/context";
 import { ILanche } from "tpdb-lib";
 import { IItemPedidoIds } from "tpdb-lib";
 import { ItemBuilderObservacoes } from "../../observacoes";
 
 export const LancheBuilder = ({
-  currentItem,
   builder,
-  nextEl,
 }: {
   currentItem?: ILanche;
   builder: IItemBuilderLanche;
@@ -33,15 +31,15 @@ export const LancheBuilder = ({
         const i = prev.findIndex((x) => x.builderId === builder.id);
 
         if (i > -1) {
-          prev[i] = prod as any;
+          prev[i] = prod;
         } else {
-          prev.push(prod as any);
+          prev.push(prod);
         }
 
         return prev;
       });
     }
-  }, []);
+  }, []); //eslint-disable-line
   return (
     <LancheBuilderStyle id={`builder-${builder.id}`}>
       <ItemBuilderObservacoes

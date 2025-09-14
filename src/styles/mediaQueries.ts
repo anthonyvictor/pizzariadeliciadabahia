@@ -1,6 +1,6 @@
 import { breakpoints } from "./breakpoints";
 
-const t = (min: String, max: String) =>
+const t = (min: string, max: string) =>
   `(min-width: ${min})${max ? ` and (max-width: calc(${max} - 1px))` : ""}`;
 export const breakpointsMQ = {
   mobile: t("0px", breakpoints.tablet),

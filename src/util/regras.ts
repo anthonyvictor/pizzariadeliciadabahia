@@ -1,12 +1,4 @@
-import {
-  ICombo,
-  IProdutoComboPizza,
-  IProdutoComboBebida,
-  IProdutoComboLanche,
-  IEndereco,
-  IPedido,
-} from "tpdb-lib";
-import { ICliente } from "tpdb-lib";
+import { IPedido, IPagamentoTipo, IEndereco } from "tpdb-lib";
 import { IRegra } from "tpdb-lib";
 import {
   entreDatas,
@@ -14,360 +6,273 @@ import {
   entrePeriodosDatas,
   entreHorarios,
   entrePeriodosDias,
+  ehNiver,
+  dateDiff,
 } from "./date";
-import { IDeveEstar } from "@models/deveEstar";
 import { entreEnderecos } from "./enderecos/regras";
+import { obterValoresDoPedido } from "./pedidos";
+import { formatPhoneNumber } from "react-phone-number-input";
+import { pedidoAtendeRegraProduto } from "./produtos/regras";
 
-export const produtoDispPelasRegras = (
-  prod:
-    | {
-        disponivel: boolean;
-        visivel: boolean;
-        condicoes?: IRegra[] | undefined;
-        excecoes?: IRegra[] | undefined;
-        estoque?: number;
-      }
-    | undefined,
-  cliente: ICliente,
-  deveEstar: IDeveEstar = "emCondicoes"
-) => {
-  if (!prod) return false;
-  if (deveEstar == "visivel" && !prod.visivel) return false;
-  const temEstoque = estoqueDisp(prod.estoque);
-  if (
-    deveEstar == "disponivel" &&
-    (!prod.visivel || !prod.disponivel || !temEstoque)
-  )
-    return false;
+type StatusRegra = { v: boolean; r?: IRegra["tipo"]; f?: string; m?: string };
 
-  if (
-    deveEstar === "emCondicoes" &&
-    (!prod.visivel ||
-      !prod.disponivel ||
-      !temEstoque ||
-      !analisarRegrasBasicas(prod, cliente))
-  )
-    return false;
-
-  return true;
-};
-
-export const estoqueDisp = (estoque: undefined | null | number) => {
-  if (estoque === undefined || estoque === null) return true;
-  return estoque > 0;
-};
-
-export const analisarRegrasTempo = ({
-  condicoes,
-  excecoes,
+export const analisarRegras = ({
+  item,
+  para,
+  pedido,
+  ignorar,
 }: {
-  condicoes?: IRegra[];
-  excecoes?: IRegra[];
-}) => {
-  const hoje = new Date();
-  let condicoesDatas = [];
-  for (const condicao of (condicoes ?? []).filter((x) => x.ativa)) {
-    if (condicao.tipo === "periodos_horarios" && condicao.valor.length) {
-      if (!entreHorarios(hoje, condicao.valor)) {
-        return false;
-      }
-    }
-
-    if (condicao.tipo === "datas" && condicao.valor.length) {
-      if (!entreDatas(hoje, condicao.valor)) {
-        condicoesDatas.push(false);
-      } else {
-        condicoesDatas.push(true);
-      }
-    } else if (condicao.tipo === "dias" && condicao.valor.length) {
-      if (!entreDias(hoje, condicao.valor)) {
-        condicoesDatas.push(false);
-      } else {
-        condicoesDatas.push(true);
-      }
-    } else if (condicao.tipo === "periodos_dias" && condicao.valor.length) {
-      if (!entrePeriodosDias(hoje, condicao.valor)) {
-        condicoesDatas.push(false);
-      } else {
-        condicoesDatas.push(true);
-      }
-    } else if (condicao.tipo === "periodos_datas" && condicao.valor.length) {
-      if (!entrePeriodosDatas(hoje, condicao.valor)) {
-        condicoesDatas.push(false);
-      } else {
-        condicoesDatas.push(true);
-      }
-    }
-  }
-
-  if (condicoesDatas.length && condicoesDatas.every((x) => x === false))
-    return false;
-
-  for (const excecao of (excecoes ?? []).filter((x) => x.ativa)) {
-    if (excecao.tipo === "datas" && excecao.valor.length) {
-      if (entreDatas(hoje, excecao.valor)) {
-        return false;
-      }
-    } else if (excecao.tipo === "dias" && excecao.valor.length) {
-      if (entreDias(hoje, excecao.valor)) {
-        return false;
-      }
-    } else if (excecao.tipo === "periodos_horarios" && excecao.valor.length) {
-      if (entreHorarios(hoje, excecao.valor)) {
-        return false;
-      }
-    } else if (excecao.tipo === "periodos_datas" && excecao.valor.length) {
-      if (entrePeriodosDatas(hoje, excecao.valor)) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-};
-export const analisarRegrasEndereco = (
-  {
-    condicoes,
-    excecoes,
-  }: {
+  item: {
+    id?: string;
     condicoes?: IRegra[];
     excecoes?: IRegra[];
-  },
-  enderecoOriginal: IEndereco
-) => {
-  if (
-    !enderecoOriginal?.cep ||
-    !enderecoOriginal?.bairro ||
-    !enderecoOriginal?.rua ||
-    !enderecoOriginal?.distancia_metros
-  )
-    return false;
+  };
+  pedido: IPedido;
+  para?:
+    | { tipo: "endereco"; enderecoOriginal: IEndereco }
+    | { tipo: "metodo_pagamento"; metodo: IPagamentoTipo };
+
+  ignorar?: IRegra["tipo"][];
+}): StatusRegra => {
+  const { condicoes, excecoes } = item;
+
+  const regras: (IRegra & { as: "condicao" | "excecao" })[] = [
+    ...(condicoes ?? []).map((x) => ({ ...x, as: "condicao" as "condicao" })),
+    ...(excecoes ?? []).map((x) => ({ ...x, as: "excecao" as "excecao" })),
+  ].filter(
+    (x) =>
+      x.ativa &&
+      (x.validaAte ? hoje.getTime() < x.validaAte.getTime() : true) &&
+      !(ignorar ?? []).includes(x.tipo)
+  );
+
   const hoje = new Date();
-  const { cep, bairro, rua, distancia_metros } = enderecoOriginal;
-  let condicoesEnderecos = [];
-  for (const condicao of (condicoes ?? []).filter((x) => x.ativa)) {
-    if (condicao.tipo === "enderecos_horarios") {
-      condicao.valor.forEach((x) => {
-        if (!entreHorarios(hoje, [x.horario])) return true;
-        x.enderecos.forEach((e) => {
-          condicoesEnderecos.push(entreEnderecos(enderecoOriginal, e));
-        });
-      });
+
+  // TEMPO
+  let condicoesDatas: { r: IRegra["tipo"]; v: boolean }[] = [];
+  for (const regra of regras) {
+    if (regra.tipo === "periodos_horarios" && regra.valor.length) {
+      if (!entreHorarios(hoje, regra.valor)) {
+        return { v: false, r: "periodos_horarios" };
+      } else if (regra.as === "excecao") {
+        return { v: false, r: "periodos_horarios" };
+      }
+    }
+
+    if (regra.tipo === "datas" && regra.valor.length) {
+      if (!entreDatas(hoje, regra.valor)) {
+        condicoesDatas.push({ r: "datas", v: false });
+      } else {
+        if (regra.as === "excecao") return { v: false, r: "datas" };
+        condicoesDatas.push({ r: "datas", v: true });
+      }
+    } else if (regra.tipo === "dias" && regra.valor.length) {
+      if (!entreDias(hoje, regra.valor)) {
+        condicoesDatas.push({ r: "dias", v: false });
+      } else {
+        if (regra.as === "excecao") return { v: false, r: "dias" };
+        condicoesDatas.push({ r: "dias", v: true });
+      }
+    } else if (regra.tipo === "periodos_dias" && regra.valor.length) {
+      if (!entrePeriodosDias(hoje, regra.valor)) {
+        condicoesDatas.push({ r: "periodos_dias", v: false });
+      } else {
+        if (regra.as === "excecao") return { v: false, r: "periodos_dias" };
+        condicoesDatas.push({ r: "periodos_dias", v: true });
+      }
+    } else if (regra.tipo === "periodos_datas" && regra.valor.length) {
+      if (!entrePeriodosDatas(hoje, regra.valor)) {
+        condicoesDatas.push({ r: "periodos_datas", v: false });
+      } else {
+        if (regra.as === "excecao") return { v: false, r: "periodos_datas" };
+        condicoesDatas.push({ r: "periodos_datas", v: true });
+      }
     }
   }
 
-  if (condicoesEnderecos.length && condicoesEnderecos.every((x) => x === false))
-    return false;
+  if (condicoesDatas.length && condicoesDatas.every((x) => x.v === false))
+    return condicoesDatas[0];
 
-  condicoesEnderecos = [];
-
-  for (const condicao of (condicoes ?? []).filter((x) => x.ativa)) {
-    if (condicao.tipo === "enderecos") {
-      condicao.valor.forEach((x) => {
-        condicoesEnderecos.push(entreEnderecos(enderecoOriginal, x));
-      });
+  // ------------------------------------------------------------------------------
+  //
+  // CLIENTE
+  for (const regra of regras) {
+    if (!pedido?.cliente) break;
+    if (regra.tipo === "min_pontos_cliente") {
+      if (pedido.cliente.pontos < regra.valor) {
+        return { v: false, r: "min_pontos_cliente" };
+      } else if (regra.as === "excecao") {
+        return { v: false, r: "min_pontos_cliente" };
+      }
+    } else if (regra.tipo === "aniversariante") {
+      if (!ehNiver(pedido.cliente.dataNasc)) {
+        return { v: !regra.valor, r: "aniversariante" };
+      } else {
+        if (regra.as === "excecao")
+          return { v: !regra.valor, r: "aniversariante" };
+      }
+    } else if (regra.tipo === "min_dias_de_cadastro") {
+      if (dateDiff(hoje, pedido.cliente.criadoEm, "days") < regra.valor) {
+        return { v: false, r: "min_dias_de_cadastro" };
+      } else if (regra.as === "excecao") {
+        return { v: false, r: "min_dias_de_cadastro" };
+      }
+    } else if (regra.tipo === "whatsapp") {
+      const f = (x) => formatPhoneNumber(x).replace(/\D/g, "").slice(-8);
+      const contatos = [
+        pedido.cliente.whatsapp,
+        ...(pedido.cliente.contatosExtras ?? []),
+      ].map((x) => f(x));
+      if (contatos.every((x) => x !== f(regra.valor))) {
+        return { v: false, r: "whatsapp" };
+      } else if (regra.as === "excecao") {
+        return { v: false, r: "whatsapp" };
+      }
     }
   }
-  if (condicoesEnderecos.length && condicoesEnderecos.every((x) => x === false))
-    return false;
+  // ------------------------------------------------------------------------------
+  //
+  // ENDEREÇO
+  const enderecoOriginal =
+    para?.tipo === "endereco"
+      ? para.enderecoOriginal
+      : pedido?.endereco?.enderecoOriginal;
 
-  for (const excecao of (excecoes ?? []).filter((x) => x.ativa)) {
-    if (excecao.tipo === "enderecos") {
-      return excecao.valor.some((x) => {
-        !entreEnderecos(enderecoOriginal, x);
-      });
-    }
-  }
-
-  return true;
-};
-
-export const analisarRegrasBasicas = (
-  {
-    condicoes,
-    excecoes,
-  }: { condicoes?: IRegra[] | undefined; excecoes?: IRegra[] | undefined },
-  cliente: ICliente
-) => {
-  const ehTempo = analisarRegrasTempo({ condicoes, excecoes });
-  if (!ehTempo) return false;
-
-  for (const condicao of (condicoes ?? []).filter((x) => x.ativa)) {
-    if (condicao.tipo === "min_pontos") {
-      if (cliente.pontos < condicao.valor) return false;
-    }
-  }
-
-  return true;
-};
-
-export const comboDispPelasRegras = (
-  combo: ICombo,
-  cliente: ICliente,
-  deveEstar: "visivel" | "disponivel" | "emCondicoes" | null = "emCondicoes"
-) => {
-  if (!produtoDispPelasRegras(combo, cliente, deveEstar)) return false;
-  const produtosDevemEstar = deveEstar === "visivel" ? null : deveEstar;
-
-  const tamanhos = combo.produtos
-    .filter((x) => x.tipo === "pizza")
-    .map((x) => (x as IProdutoComboPizza).tamanho)
-    .filter(
-      (tamanho, index, self) =>
-        index === self.findIndex((t) => t.id === tamanho.id)
-    );
-
-  if (
-    tamanhos.length &&
-    tamanhos.some(
-      (x) => !produtoDispPelasRegras(x, cliente, produtosDevemEstar)
+  if (pedido?.tipo === "entrega" && enderecoOriginal) {
+    if (
+      !enderecoOriginal?.cep ||
+      !enderecoOriginal?.bairro ||
+      !enderecoOriginal?.rua ||
+      !enderecoOriginal?.distancia_metros
     )
-  )
-    return false;
+      return { v: false };
 
-  const sabores = combo.produtos
-    .filter((x) => x.tipo === "pizza")
-    .map((x) => (x as IProdutoComboPizza).sabores ?? [])
-    .flat()
-    .filter(
-      (sabor, index, self) => index === self.findIndex((t) => t.id === sabor.id)
-    );
-  const saboresDisponiveis =
-    sabores.length &&
-    sabores.filter((x) =>
-      produtoDispPelasRegras(x, cliente, produtosDevemEstar)
-    );
+    let condicoesEnderecos = [];
 
-  const bebidas = combo.produtos
-    .filter((x) => x.tipo === "bebida")
-    .map((x) => (x as IProdutoComboBebida).bebidas ?? [])
-    .flat()
-    .filter(
-      (bebida, index, self) =>
-        index === self.findIndex((t) => t.id === bebida.id)
-    );
-  const bebidasDisponiveis =
-    bebidas.length &&
-    bebidas.filter((x) =>
-      produtoDispPelasRegras(x, cliente, produtosDevemEstar)
-    );
+    for (const regra of regras.filter((x) => x.ativa)) {
+      if (regra.tipo === "enderecos_horarios") {
+        regra.valor.forEach((x) => {
+          if (!entreHorarios(hoje, [x.horario])) return true;
+          x.enderecos.forEach((e) => {
+            if (!entreEnderecos(enderecoOriginal, e)) {
+              condicoesEnderecos.push(false);
+            } else {
+              if (regra.as === "excecao") return false;
+              condicoesEnderecos.push(true);
+            }
+          });
+        });
+      }
+    }
 
-  const lanches = combo.produtos
-    .filter((x) => x.tipo === "lanche")
-    .map((x) => (x as IProdutoComboLanche).lanches ?? [])
-    .flat()
-    .filter(
-      (lanche, index, self) =>
-        index === self.findIndex((t) => t.id === lanche.id)
-    );
-  const lanchesDisponiveis =
-    lanches.length &&
-    lanches.filter((x) =>
-      produtoDispPelasRegras(x, cliente, produtosDevemEstar)
-    );
+    if (
+      condicoesEnderecos.length &&
+      condicoesEnderecos.every((x) => x === false)
+    )
+      return condicoesEnderecos[0];
 
-  for (const produto of combo.produtos) {
-    if (produto.tipo === "pizza") {
-      if (
-        saboresDisponiveis?.length &&
-        produto.sabores?.length &&
-        produto.sabores.every(
-          (x) => !saboresDisponiveis.map((x) => x.id).includes(x.id)
-        )
-      )
-        return false;
-    } else if (produto.tipo === "bebida") {
-      if (
-        bebidasDisponiveis?.length &&
-        produto.bebidas?.length &&
-        produto.bebidas.every(
-          (x) => !bebidasDisponiveis.map((x) => x.id).includes(x.id)
-        )
-      )
-        return false;
-    } else if (produto.tipo === "lanche") {
-      if (
-        lanchesDisponiveis?.length &&
-        produto.lanches?.length &&
-        produto.lanches.every(
-          (x) => !lanchesDisponiveis.map((x) => x.id).includes(x.id)
-        )
-      )
-        return false;
+    condicoesEnderecos = [];
+
+    for (const regra of regras) {
+      if (regra.tipo === "enderecos") {
+        regra.valor.forEach((x) => {
+          if (!entreEnderecos(enderecoOriginal, x)) {
+            condicoesEnderecos.push(false);
+          } else {
+            if (regra.as === "excecao") return false;
+          }
+        });
+      } else if (regra.tipo === "max_distancia") {
+        if (enderecoOriginal.distancia_metros > regra.valor) {
+          return { v: false, r: "max_distancia" };
+        } else if (regra.as === "excecao") {
+          return { v: false, r: "max_distancia" };
+        }
+      } else if (regra.tipo === "min_distancia") {
+        if (enderecoOriginal.distancia_metros < regra.valor) {
+          return { v: false, r: "min_distancia" };
+        } else if (regra.as === "excecao") {
+          return { v: false, r: "min_distancia" };
+        }
+      }
+    }
+    if (
+      condicoesEnderecos.length &&
+      condicoesEnderecos.every((x) => x === false)
+    )
+      return condicoesEnderecos[0];
+  }
+  // ------------------------------------------------------------------------------
+  //
+  // PEDIDO
+  if (pedido) {
+    const { valorItensComDesconto, valorTotalComDescontos, valorPagamentos } =
+      obterValoresDoPedido(pedido);
+    for (const regra of regras) {
+      if (regra.tipo === "min_valor_pedido") {
+        if (valorItensComDesconto < regra.valor) {
+          return { v: false, r: "min_valor_pedido" };
+        } else if (regra.as === "excecao") {
+          return { v: false, r: "min_valor_pedido" };
+        }
+      } else if (regra.tipo === "max_valor_pedido") {
+        if (valorItensComDesconto > regra.valor) {
+          return { v: false, r: "max_valor_pedido" };
+        } else if (regra.as === "excecao") {
+          return { v: false, r: "max_valor_pedido" };
+        }
+      } else if (regra.tipo === "codigo_cupom") {
+        if (pedido?.codigoCupom !== regra.valor) {
+          return { v: false, r: "codigo_cupom" };
+        } else if (regra.as === "excecao") {
+          return { v: false, r: "codigo_cupom" };
+        }
+      } else if (regra.tipo === "tem_combo") {
+        if (!pedido.itens.some((x) => x.comboId)) {
+          return { v: !regra.valor, r: "tem_combo" };
+        } else {
+          if (regra.as === "excecao")
+            return { v: !regra.valor, r: "tem_combo" };
+        }
+      } else if (regra.tipo === "tem_desconto") {
+        if (
+          !pedido.itens.some((x) => x.desconto) &&
+          !pedido?.endereco?.desconto
+        ) {
+          return { v: !regra.valor, r: "tem_desconto" };
+        } else {
+          if (regra.as === "excecao")
+            return { v: !regra.valor, r: "tem_desconto" };
+        }
+      } else if (regra.tipo === "tipo") {
+        if (pedido.tipo !== regra.valor) {
+          return { v: false, r: "tipo" };
+        } else if (regra.as === "excecao") {
+          return { v: false, r: "tipo" };
+        }
+      } else if (regra.tipo === "produtos") {
+        for (const regraProduto of regra.valor) {
+          const valido = pedidoAtendeRegraProduto(pedido.itens, regraProduto);
+          if (!valido) return { v: false, r: "produtos" };
+          if (regra.as === "excecao") return { v: false, r: "produtos" };
+        }
+      } else if (regra.tipo === "metodo_pagamento") {
+        const valorPagoNoMetodo = pedido.pagamentos
+          .filter((x) => (regra.valor as IPagamentoTipo[]).includes(x.tipo))
+          .reduce((acc, curr) => acc + curr.valor, 0);
+        if (
+          valorPagamentos.total.total > 0 &&
+          valorTotalComDescontos > valorPagoNoMetodo
+        ) {
+          return { v: false, r: "metodo_pagamento" };
+        } else if (regra.as === "excecao") {
+          return { v: false, r: "metodo_pagamento" };
+        }
+      }
     }
   }
-  return true;
+
+  return {
+    v: true,
+  };
 };
-
-// if (
-//       !cupom ||
-//       (!ignorarTotalMetodo &&
-//         (!totalMetodo ||
-//           totalMetodo < (cupom.alvo === "itens" ? valorItens : valorTotal)))
-//     )
-//       return false;
-
-//************************************************************** */
-//   export const analisarRegras = ({condicoes, excecoes}:{condicoes?:IRegra[], excecoes?:IRegra[]}, pedido:IPedido, {}) => {
-//     if(!analisarRegrasTempo({condicoes, excecoes})) return false
-//     if(pedido.tipo === 'entrega' && !analisarRegrasEndereco({condicoes, excecoes}, pedido?.endereco?.enderecoOriginal)) return false
-
-//       const {valorTotalComDescontos} = obterValoresDoPedido(pedido)
-
-//     for (let cond of condicoes ?? []) {
-//       if (
-//         cond.tipo in ["enderecos", "max_distancia", "min_distancia"] &&
-//        pedido.tipo==='entrega' && !pedido.endereco?.enderecoOriginal?.cep
-//       )
-//         return false;
-//       if (
-//         cond.tipo === "metodo_pagamento"
-
-//       ){
-// if(!pedido.pagamentos.length )return true
-// if(pedido.pagamentos.length > 1 )return false
-
-// !cond.valor.some((x) => x === pedido.pagamentos[0].tipo)
-//         return false;
-//       }
-//       if (
-//         cond.tipo === "min_valor_pedido" &&
-//         cond.valor > valorTotalComDescontos
-//       )
-//         return false;
-
-//       if (
-//         cond.tipo === "max_distancia" &&
-//         cond.valor > (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
-//       )
-//         return false;
-//       if (
-//         cond.tipo === "min_distancia" &&
-//         cond.valor <
-//           (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
-//       )
-//         return false;
-//     }
-//     for (let exc of excecoes ?? []) {
-//       if (!pedido.endereco?.enderecoOriginal?.cep) return true;
-//       if (
-//         exc.tipo === "metodo_pagamento" &&
-//         exc.valor.some((x) => x === m.tipo)
-//       )
-//         return false;
-
-//       if (
-//         exc.tipo === "max_distancia" &&
-//         exc.valor < (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
-//       )
-//         return false;
-//       if (
-//         exc.tipo === "min_distancia" &&
-//         exc.valor >
-//           (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
-//       )
-//         return false;
-//     }
-
-//     return true;
-//   };

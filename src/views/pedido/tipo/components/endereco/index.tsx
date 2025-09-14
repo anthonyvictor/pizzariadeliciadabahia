@@ -12,10 +12,11 @@ import { useTipoPage } from "../../context";
 import { CgTrash } from "react-icons/cg";
 import { api } from "@util/axios";
 import { useClienteStore } from "src/infra/zustand/cliente";
-import { analisarRegrasEndereco } from "@util/regras";
+import { analisarRegras } from "@util/regras";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { obterValoresDoPedido } from "@util/pedidos";
 import { useConfigsStore } from "src/infra/zustand/configs";
+import { dateDiff } from "@util/date";
 
 export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   const { cupomEntrega: cupom, tipo, setTipo } = useTipoPage();
@@ -42,7 +43,12 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
 
   function cupomAplicavel() {
     if (!cupom) return false;
-    if (!analisarRegrasEndereco(cupom, e?.enderecoOriginal)) return false;
+    const { v: emCondicoes } = analisarRegras({
+      item: cupom,
+      pedido,
+      para: { tipo: "endereco", enderecoOriginal: e?.enderecoOriginal },
+    });
+    if (!emCondicoes) return false;
 
     for (let cond of cupom?.condicoes ?? []) {
       if (
@@ -103,7 +109,6 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
     descontoReal && metodoBasico
       ? (e.enderecoOriginal.taxa ?? 0) - descontoReal
       : e.enderecoOriginal.taxa ?? 0;
-
   return (
     <EnderecoStyle
       onClick={async () => {
@@ -116,6 +121,10 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
         });
       }}
       className={`item ${
+        e.criadoEm && dateDiff(e.criadoEm, new Date(), "minutes") < 10
+          ? "endereco-novo"
+          : ""
+      } ${
         tipo?.type === "entrega" && tipo?.endereco?.id === e.id ? "checked" : ""
       }`}
     >

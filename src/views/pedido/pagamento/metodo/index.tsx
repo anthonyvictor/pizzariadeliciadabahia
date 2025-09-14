@@ -1,9 +1,4 @@
-import {
-  IPagamentoPedido,
-  IPagamentoPedidoEspecie,
-  IPagamentoTipo,
-  IPedido,
-} from "tpdb-lib";
+import { IPagamentoPedidoEspecie, IPagamentoTipo } from "tpdb-lib";
 import { IMetodo } from "../types";
 import { MetodoStyle } from "./styles";
 import { MdDiscount } from "react-icons/md";
@@ -16,7 +11,7 @@ import { useRouter } from "next/router";
 import { usePagamentoStore } from "src/infra/zustand/pagamentos";
 import { MetodoModal } from "../metodoModal";
 import { usePedidoStore } from "src/infra/zustand/pedido";
-import { analisarRegrasEndereco } from "@util/regras";
+import { analisarRegras } from "@util/regras";
 import { obterValoresDoPedido } from "@util/pedidos";
 
 export const Metodo = ({
@@ -35,7 +30,6 @@ export const Metodo = ({
   // const [open, setOpen] = useState(false);
 
   const { pedido } = usePedidoStore();
-  const { valorTotalComDescontos } = obterValoresDoPedido(pedido);
 
   const padding = "20px 15px";
   const { pagamentos, addPagamento, deletePagamento } = usePagamentoStore();
@@ -63,49 +57,19 @@ export const Metodo = ({
       )
         return false;
 
-      if (
-        cond.tipo === "min_valor_pedido" &&
-        valorTotalComDescontos < cond.valor
-      )
-        return false;
-      if (
-        cond.tipo === "max_valor_pedido" &&
-        valorTotalComDescontos > cond.valor
-      )
-        return false;
-
-      if (!analisarRegrasEndereco(cupom, pedido?.endereco?.enderecoOriginal))
-        return false;
-
-      if (
-        cond.tipo === "max_distancia" &&
-        cond.valor < (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
-      )
-        return false;
-      if (
-        cond.tipo === "min_distancia" &&
-        cond.valor >
-          (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
-      )
-        return false;
+      const { v: emCondicoes } = analisarRegras({
+        item: cupom,
+        pedido,
+        ignorar: ["metodo_pagamento"],
+      });
+      if (!emCondicoes) return false;
     }
+
     for (let exc of cupom.excecoes ?? []) {
       if (!pedido.endereco?.enderecoOriginal?.cep) return true;
       if (
         exc.tipo === "metodo_pagamento" &&
         exc.valor.some((x) => x === m.tipo)
-      )
-        return false;
-
-      if (
-        exc.tipo === "max_distancia" &&
-        exc.valor > (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 0)
-      )
-        return false;
-      if (
-        exc.tipo === "min_distancia" &&
-        exc.valor <
-          (pedido.endereco?.enderecoOriginal?.distancia_metros ?? 1000000000)
       )
         return false;
     }
@@ -131,7 +95,7 @@ export const Metodo = ({
     : totalMetodo;
 
   const router = useRouter();
-  const { metodo, ...rest } = router.query;
+  const { metodo, ...rest } = router.query; //eslint-disable-line
   const openModal = (metodo: IPagamentoTipo) => {
     router.push(
       { pathname: router.pathname, query: { ...router.query, metodo } },
@@ -141,7 +105,7 @@ export const Metodo = ({
   };
 
   const closeModal = () => {
-    const { metodo, ...rest } = router.query;
+    const { metodo, ...rest } = router.query; //eslint-disable-line
     router.replace({ pathname: router.pathname, query: rest }, undefined, {
       shallow: true,
     });
