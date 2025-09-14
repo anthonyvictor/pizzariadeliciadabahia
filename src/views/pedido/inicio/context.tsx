@@ -110,10 +110,19 @@ export const PedidoPageProvider = ({
           const tams = fmv(
             home.tamanhos.filter((x) => tamanhos.every((y) => y.id !== x.id)),
             diff
+          ).filter(
+            (x) =>
+              !x.somenteEmCombos &&
+              x.emCondicoes &&
+              x.disponivel &&
+              x.visivel &&
+              x.estoque !== 0
           );
           const coms = fmv(
             home.combos.filter((x) => combos.every((y) => y.id !== x.id)),
             diff
+          ).filter(
+            (x) => x.emCondicoes && x.disponivel && x.visivel && x.estoque !== 0
           );
 
           itens.push(...fmv([...coms, ...tams], diff));
