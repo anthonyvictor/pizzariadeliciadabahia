@@ -109,7 +109,7 @@ export const PedidoPageProvider = ({
 
           const tams = fmv(
             home.tamanhos.filter((x) => tamanhos.every((y) => y.id !== x.id)),
-            diff
+            maxDestaques
           ).filter(
             (x) =>
               !x.somenteEmCombos &&
@@ -120,7 +120,7 @@ export const PedidoPageProvider = ({
           );
           const coms = fmv(
             home.combos.filter((x) => combos.every((y) => y.id !== x.id)),
-            diff
+            maxDestaques
           ).filter(
             (x) => x.emCondicoes && x.disponivel && x.visivel && x.estoque !== 0
           );

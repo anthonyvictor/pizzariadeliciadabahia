@@ -8,7 +8,7 @@ import {
   FaMap,
 } from "react-icons/fa";
 import { IMyButton } from "../util/types";
-import { MyButton } from "../components/myButton";
+import { MyButton } from "../../components/myButton";
 import { useAuth } from "../../auth";
 import TextContainer from "@components/textContainer";
 import { IoPizza } from "react-icons/io5";

@@ -1,25 +1,23 @@
 import TextContainer from "@components/textContainer";
 import { TamanhoViewStyle } from "./styles";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IPizzaTamanho } from "tpdb-lib";
-import Image from "next/image";
 import { useRouter } from "next/router";
-import { MyInput } from "@components/pedido/myInput";
-import { isImageUrl, isValidUrl } from "@util/conversion";
 import { toast } from "react-toastify";
 import { Regras } from "src/views/loja/components/regras";
 import { useTamanhos } from "../context";
-import { MyInputStyle } from "@components/pedido/myInput/styles";
-import { ButtonPrimary, ButtonSecondary } from "@styles/components/buttons";
-import { FaClipboard, FaTrash } from "react-icons/fa";
 import z from "zod";
 import Loading from "@components/loading";
-import { SetState } from "@config/react";
 import { NumberInput } from "src/views/loja/components/numberInput";
 import { ImageEditor } from "src/views/loja/components/imageEditor";
-import { EditorBottom } from "src/views/loja/components/editorBottom";
 import { EditorForm } from "src/views/loja/components/editorForm";
-import { colors } from "@styles/colors";
+import {
+  Checkers,
+  DescricaoInput,
+  EstoqueInput,
+  NomeInput,
+} from "src/views/loja/components/inputs";
+import { api } from "@util/axios";
 
 // type FormData = {
 //     fatias: number;
@@ -101,9 +99,9 @@ export const TamanhoView = () => {
       //   whatsapp,
       // };
 
-      // const res = await api.post(`/clientes/cadastro`, {
-      //   cliente,
-      // });
+      const res = await api.post(`/tamanhos`, {
+        tamanho,
+      });
 
       // if (axiosOk(res.status)) {
       //   if (res.data) {
@@ -137,66 +135,27 @@ export const TamanhoView = () => {
           />
 
           <div className="nome-descricao-section">
-            <MyInput
-              name="Nome"
-              type="text"
+            <NomeInput
               value={tamanho.nome ?? ""}
-              setValue={(val) =>
-                setTamanho((prev) => ({ ...prev, nome: String(val) }))
-              }
+              setValue={(val) => setTamanho((prev) => ({ ...prev, nome: val }))}
             />
 
-            <NumberInput
-              id={"estoque"}
-              disabled={tamanho.estoque == null}
-              value={tamanho.estoque ?? ("" as unknown as number)}
-              setValue={(val) => {
+            <EstoqueInput
+              value={tamanho.estoque || 0}
+              setValue={(val) =>
                 setTamanho((prev) => ({
                   ...prev,
                   estoque: val,
-                }));
-              }}
-              label={
-                <label
-                  htmlFor="estoque"
-                  style={{
-                    display: "flex",
-                    gap: "5px",
-                    alignItems: "center",
-                  }}
-                >
-                  <span>Estoque</span>
-                  <input
-                    type="checkbox"
-                    checked={tamanho.estoque != null}
-                    onChange={(e) => {
-                      setTamanho((prev) => ({
-                        ...prev,
-                        estoque: e.target.checked ? 1 : undefined,
-                      }));
-                      setTimeout(() => {
-                        console.log("vai mudar");
-                        const el = document.querySelector(
-                          "#estoque"
-                        ) as HTMLInputElement;
-                        el?.focus();
-                        el?.select();
-                      }, 0);
-                    }}
-                  />
-                </label>
+                }))
               }
             />
           </div>
         </div>
 
-        <MyInput
-          name="Descrição"
-          type="text"
-          maxLength={80}
+        <DescricaoInput
           value={tamanho.descricao ?? ""}
           setValue={(val) =>
-            setTamanho((prev) => ({ ...prev, descricao: String(val) }))
+            setTamanho((prev) => ({ ...prev, descricao: val }))
           }
         />
 
@@ -236,32 +195,18 @@ export const TamanhoView = () => {
           />
         </div>
 
-        <div className="checkers">
-          <MyInput
-            name="Disponível"
-            type="checkbox"
-            checked={tamanho.disponivel == null ? true : tamanho.disponivel}
-            setChecked={(checked) =>
-              setTamanho((prev) => ({ ...prev, disponivel: checked }))
-            }
-          />
-          <MyInput
-            name="Visível"
-            type="checkbox"
-            checked={tamanho.visivel == null ? true : tamanho.visivel}
-            setChecked={(checked) =>
-              setTamanho((prev) => ({ ...prev, visivel: checked }))
-            }
-          />
-          <MyInput
-            name="Só combos"
-            type="checkbox"
-            checked={!!tamanho.somenteEmCombos}
-            setChecked={(checked) =>
-              setTamanho((prev) => ({ ...prev, somenteEmCombos: checked }))
-            }
-          />
-        </div>
+        <Checkers
+          disponivel={tamanho.disponivel}
+          setDisp={(val) =>
+            setTamanho((prev) => ({ ...prev, disponivel: val }))
+          }
+          visivel={tamanho.visivel}
+          setVis={(val) => setTamanho((prev) => ({ ...prev, visivel: val }))}
+          somenteEmCombos={tamanho.somenteEmCombos}
+          setSoCombos={(val) =>
+            setTamanho((prev) => ({ ...prev, somenteEmCombos: val }))
+          }
+        />
         <Regras condicoes={tamanho.condicoes} excecoes={tamanho.excecoes} />
       </EditorForm>
     </TamanhoViewStyle>

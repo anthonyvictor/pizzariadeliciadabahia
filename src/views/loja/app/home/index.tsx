@@ -2,7 +2,7 @@ import { MdLocalOffer, MdPeople } from "react-icons/md";
 import { HomeViewStyle } from "./styles";
 import { FaCogs, FaMap } from "react-icons/fa";
 import { IMyButton } from "../util/types";
-import { MyButton } from "../components/myButton";
+import { MyButton } from "../../components/myButton";
 import { useAuth } from "../../auth";
 import TextContainer from "@components/textContainer";
 import { IoPizza } from "react-icons/io5";
@@ -55,9 +55,11 @@ export const HomeView = () => {
         title="Sistema Gestor PDB"
         subtitle="Escolha uma das opções"
       />
-      {buttons.map((bt) => (
-        <MyButton key={bt.url} {...bt} />
-      ))}
+      <ul>
+        {buttons.map((bt) => (
+          <MyButton key={bt.url} {...bt} />
+        ))}
+      </ul>
     </HomeViewStyle>
   );
 };

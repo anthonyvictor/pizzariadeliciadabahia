@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MyButtonStyle } from "./styles";
-import { IMyButton } from "../../util/types";
+import { IMyButton } from "../../app/util/types";
 
 export const MyButton = ({ Icone, titulo, url, cor }: IMyButton) => {
   return (

@@ -9,7 +9,7 @@ export const MyInputStyle = styled.div`
 
   .input-label {
     display: flex;
-    padding: 5px;
+    padding: 5px 0;
     gap: 5px;
     min-width: 0;
   }
@@ -29,9 +29,10 @@ export const MyInputStyle = styled.div`
     text-transform: uppercase;
     font-size: 1.1rem;
     padding: 0.3rem;
-    border: 0.15em solid #000;
-    border-radius: 10px;
+    border: none;
+    border-radius: 5px;
     line-height: 100%;
+
     &::placeholder {
       font-size: min(1rem, 3vw);
       color: #00000095;

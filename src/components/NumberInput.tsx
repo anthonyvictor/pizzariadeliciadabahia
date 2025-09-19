@@ -13,11 +13,14 @@ interface INumberInput {
   forceMin?: boolean;
   editable?: boolean;
   style?: HTMLProps<HTMLDivElement>["style"];
+  disabled?: boolean;
+  allowVoid?: boolean;
 }
 
 export const NumberInput = ({
   value: numValue,
   setValue: setNumValue,
+  disabled = false,
   decimalPlaces = 0,
   editable = false,
   max = 10000000000000,
@@ -25,6 +28,7 @@ export const NumberInput = ({
   beforeUp = () => true,
   beforeDown = () => true,
   forceMin = false,
+  allowVoid = true,
   style,
 }: INumberInput) => {
   const [strValue, setStrValue] = useState(numValue.toString());
@@ -55,7 +59,7 @@ export const NumberInput = ({
   return (
     <NumberInputStyle style={style}>
       <button
-        disabled={downDisabled}
+        disabled={disabled || downDisabled}
         style={{
           visibility: editable
             ? "initial"
@@ -88,7 +92,7 @@ export const NumberInput = ({
             ? "initial"
             : "hidden",
         }}
-        disabled={!editable}
+        disabled={disabled || !editable}
         onKeyDown={(e) => {
           const allowedKeys = [
             "Backspace",
@@ -132,11 +136,18 @@ export const NumberInput = ({
             setNumValue(novoNum);
           }
         }}
+        onBlur={(e) => {
+          if (!allowVoid) {
+            if (numValue === 0 && strValue.trim() === "") {
+              setStrValue("0");
+            }
+          }
+        }}
       />
 
       <button
         style={{ color: colors.elements }}
-        disabled={upDisabled}
+        disabled={disabled || upDisabled}
         onClick={(e) => {
           e.stopPropagation();
 
@@ -171,6 +182,9 @@ const NumberInputStyle = styled.div`
     flex: 1;
 
     height: 100%;
+    &:disabled {
+      opacity: 0.5;
+    }
   }
 
   button {

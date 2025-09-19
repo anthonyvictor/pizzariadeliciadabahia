@@ -19,7 +19,7 @@ export const NumberInput = ({
   style?: HTMLProps<HTMLDivElement>["style"];
 }) => {
   return (
-    <MyInputStyle className={id}>
+    <MyInputStyle className={id} style={{ border: "none" }}>
       <div className="input-label" style={{ flexDirection: "column" }}>
         {label && (typeof label === "string" ? <label>{label}</label> : label)}
 
@@ -62,7 +62,8 @@ export const NumberInput = ({
           forceMin={true}
           editable={true}
           min={0}
-          // disabled={disabled}
+          disabled={disabled}
+          allowVoid={false}
           value={value}
           setValue={(e) => {
             setValue(e);

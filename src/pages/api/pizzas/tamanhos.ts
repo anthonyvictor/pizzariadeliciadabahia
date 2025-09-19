@@ -6,6 +6,7 @@ import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
 import { analisarRegras } from "@util/regras";
 import { ObterProduto, ObterProdutos } from "src/infra/dtos";
+import qs from "qs";
 import {
   aplicarValorMinTamanho,
   aplicarValorMinTamanhos,
@@ -21,16 +22,18 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     let data;
+    const { pedidoId, deveEstar } = qs.parse(req.query);
     if (req.query.id) {
       data = await obterTamanho({
         id: req.query.id as string,
-        _pedido: req.query.pedidoId as any,
-        deveEstar: req.query.deveEstar as any,
+        _pedido: pedidoId as any,
+        deveEstar: deveEstar as any,
       });
     } else {
+      console.log("req.query", req.query.deveEstar);
       data = await obterTamanhos({
-        _pedido: req.query.pedidoId as any,
-        deveEstar: req.query.deveEstar as any,
+        _pedido: pedidoId as any,
+        deveEstar: deveEstar as any,
       });
     }
     res.status(200).json(data);
