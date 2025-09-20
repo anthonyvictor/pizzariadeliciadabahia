@@ -17,10 +17,6 @@ export const Bebida = ({
   const [locked, setLocked] = useState(false);
   const router = useRouter();
 
-  if (prod.id === "6716c7d3399e4f23ba4f87c8") {
-    console.log(prod);
-  }
-
   return (
     <BebidaStyle
       disabled={

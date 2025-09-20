@@ -30,7 +30,6 @@ export default async function handler(
         deveEstar: deveEstar as any,
       });
     } else {
-      console.log("req.query", req.query.deveEstar);
       data = await obterTamanhos({
         _pedido: pedidoId as any,
         deveEstar: deveEstar as any,

@@ -41,7 +41,7 @@ export const ItemBuilderProvider = ({
   const { pedido } = usePedidoStore();
   const continuar = async (qtd: number) => {
     try {
-      const itens = [];
+      const itens: IItemPedidoIds[] = [];
       const comboId = builder.tipo === "combo" ? builder.combo.id : undefined;
       const arr = Array(qtd).fill("");
 
@@ -55,6 +55,19 @@ export const ItemBuilderProvider = ({
         });
         itens.push(..._itens);
       });
+
+      const pizza = itens.find((x) => x.tipo === "pizza");
+      if (pizza) {
+        localStorage.setItem("preferencias_borda", pizza.borda ?? "");
+        localStorage.setItem("preferencias_ponto", pizza.ponto ?? "");
+        let saboresPref = (
+          localStorage.getItem("preferencias_sabores") ?? ""
+        ).split(",");
+        saboresPref = Array.from(
+          new Set([...(pizza.sabores ?? []), ...saboresPref])
+        ).slice(0, 4); // guarda só os 3 últimos sabores
+        localStorage.setItem("preferencias_sabores", saboresPref.join(","));
+      }
 
       await axios.post(`${env.apiURL}/pedidos/itens`, {
         pedidoId: pedido.id,

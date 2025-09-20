@@ -26,6 +26,7 @@ export const MultiChecklist = ({
   min = 0,
   max = 10000000000000,
   items,
+  highlights = [],
   value,
   setValue,
   search: goSearch,
@@ -36,6 +37,7 @@ export const MultiChecklist = ({
 }: IChecklistBase & {
   min?: number;
   max?: number;
+  highlights?: string[];
   value: string[];
   setValue: (newValues: string[]) => void;
 }) => {
@@ -103,6 +105,7 @@ export const MultiChecklist = ({
           <h5>Em falta</h5>
         ) : (
           <NumberInput
+            // style={{ backgroundColor: "#00000050", borderRadius: 5 }}
             value={value.filter((x) => x === item.id)?.length ?? 0}
             setValue={(novoValor) => {
               const prev = [...value].filter((x) => x !== item.id);
@@ -152,14 +155,24 @@ export const MultiChecklist = ({
                 maxItemsCollapsed ?? 3
               )
             )
-          : groupItems(checklistSearchFilter(items, search))
-        ).map((gi, _, arr) => {
-          return "items" in gi ? (
-            <Group key={gi.name} group={gi} />
-          ) : (
-            <Item key={gi.id} item={gi} />
-          );
-        })}
+          : [
+              highlights?.length && !search
+                ? ({
+                    items: items.filter((x) => highlights.includes(x.id)),
+                    name: "Recentes",
+                  } as GroupOrItem)
+                : undefined,
+              ...groupItems(checklistSearchFilter(items, search)),
+            ]
+        )
+          .filter(Boolean)
+          .map((gi, _, arr) => {
+            return "items" in gi ? (
+              <Group key={gi.name} group={gi} />
+            ) : (
+              <Item key={gi.id} item={gi} />
+            );
+          })}
       </ul>
       {collapsed && items.length > 1 && (
         <button className="show-more" onClick={() => setCollapsed(false)}>

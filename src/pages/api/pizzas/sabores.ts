@@ -4,7 +4,7 @@ import { ff, ffid } from "tpdb-lib";
 import { PizzaSaboresModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
-import { sortSabores } from "@util/pizza";
+import { aplicarValorMedSabores, sortSabores } from "@util/pizza";
 import { analisarRegras } from "@util/regras";
 import { ObterProduto, ObterProdutos } from "src/infra/dtos";
 import { obterPedido } from "../pedidos";
@@ -64,17 +64,19 @@ export const obterSabores = async ({
   const pedido = await obterPedido(_pedido);
 
   const data = sortSabores(
-    deve_estar(
-      ((await ff({ m: PizzaSaboresModel })) as unknown as IPizzaSabor[]).map(
-        (x) => ({
-          ...x,
-          emCondicoes: (() => {
-            const { v } = analisarRegras({ item: x, pedido, ignorar });
-            return v;
-          })(),
-        })
-      ),
-      deveEstar
+    aplicarValorMedSabores(
+      deve_estar(
+        ((await ff({ m: PizzaSaboresModel })) as unknown as IPizzaSabor[]).map(
+          (x) => ({
+            ...x,
+            emCondicoes: (() => {
+              const { v } = analisarRegras({ item: x, pedido, ignorar });
+              return v;
+            })(),
+          })
+        ),
+        deveEstar
+      )
     )
   );
   return data;

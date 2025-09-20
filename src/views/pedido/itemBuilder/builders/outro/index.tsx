@@ -16,6 +16,7 @@ import {
   ILanche,
 } from "tpdb-lib";
 import { ItemBuilderObservacoes } from "../../observacoes";
+import { elegivel } from "@util/produtos";
 
 export const OutroBuilder = ({
   currentItem,
@@ -160,26 +161,42 @@ export const OutroBuilder = ({
         }`}
         description={"Selecione um item"}
         required={true}
-        items={prods.map((x) => ({
-          id: x.id,
-          imageUrl: x.imagemUrl,
-          imageWidth: builder.tipo === "bebida" ? "35px" : undefined,
-          imageFit: builder.tipo === "bebida" ? "scale-down" : undefined,
-          title:
-            builder.tipo === "bebida"
-              ? abreviarBebida(x.nome)
-              : abreviarLanche(x.nome),
-          description: x.descricao,
-          disabled: !x.disponivel,
-          oldPrice: Math.max(valorMax, x.valor),
-          price:
-            valorMax > -1
-              ? x.valor > valorMax
-                ? x.valor - valorMax
-                : 0
-              : x.valor,
-          isSum: isCombo,
-        }))}
+        items={prods
+          .sort((a, b) => b.vendidos - a.vendidos)
+          .sort((a, b) => a.valor - b.valor)
+          .sort((a, b) => {
+            const aE = elegivel(a);
+            const bE = elegivel(b);
+            return aE && !bE
+              ? 1
+              : !aE && bE
+              ? -1
+              : a.disponivel === b.disponivel
+              ? 0
+              : a.disponivel
+              ? -1
+              : 1;
+          })
+          .map((x) => ({
+            id: x.id,
+            imageUrl: x.imagemUrl,
+            imageWidth: builder.tipo === "bebida" ? "35px" : undefined,
+            imageFit: builder.tipo === "bebida" ? "scale-down" : undefined,
+            title:
+              builder.tipo === "bebida"
+                ? abreviarBebida(x.nome)
+                : abreviarLanche(x.nome),
+            description: x.descricao,
+            disabled: !x.disponivel,
+            oldPrice: Math.max(valorMax, x.valor),
+            price:
+              valorMax > -1
+                ? x.valor > valorMax
+                  ? x.valor - valorMax
+                  : 0
+                : x.valor,
+            isSum: isCombo,
+          }))}
         search={prods.length > 10}
         value={outro?.id}
         setValue={(value) => {

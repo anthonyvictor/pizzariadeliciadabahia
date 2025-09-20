@@ -315,7 +315,13 @@ export const ChecklistItemInfo = ({
       ) : (
         item.description
       )}
-      <b style={{ fontSize: "0.7rem" }}>
+
+      <b
+        style={{
+          fontSize: "0.7rem",
+          opacity: !item.oldPrice && !item.price && !item.minPrice ? "0" : "1",
+        }}
+      >
         {item.minPrice != null
           ? `À partir de ${formatCurrency(item.minPrice)}`
           : item.price != null

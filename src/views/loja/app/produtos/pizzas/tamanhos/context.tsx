@@ -43,7 +43,7 @@ export const TamanhosProvider = ({ children }: { children: ReactNode }) => {
         console.error(err);
       });
   }, []);
-  console.log("editando !== undefined", editando !== undefined, editando);
+
   return (
     <TamanhosContext.Provider
       value={{ tamanhos, setTamanhos, editando, setEditando }}

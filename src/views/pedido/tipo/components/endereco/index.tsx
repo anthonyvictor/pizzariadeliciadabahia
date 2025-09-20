@@ -62,13 +62,6 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
       )
         return false;
 
-      cond.tipo === "max_distancia" &&
-        console.log(
-          cond.tipo,
-          cond.valor,
-          e?.enderecoOriginal?.distancia_metros,
-          cond.valor < (e?.enderecoOriginal?.distancia_metros ?? 0)
-        );
       if (
         cond.tipo === "max_distancia" &&
         cond.valor < (e?.enderecoOriginal?.distancia_metros ?? 0)

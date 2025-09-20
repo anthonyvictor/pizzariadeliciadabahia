@@ -155,10 +155,18 @@ export const PizzaBuilder = ({
       return prev;
     });
   }, [pizza]); //eslint-disable-line
-  const bordasDisp = (builder?.bordas ?? []).filter((x) => x.disponivel);
-  const pontosDisp = (builder.pontos ?? []).filter((x) => x.disponivel);
-  const espDisp = (builder.espessuras ?? []).filter((x) => x.disponivel);
-  const extrasDisp = (builder.espessuras ?? []).filter((x) => x.disponivel);
+  const bordasDisp = (builder?.bordas ?? []).filter(
+    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel
+  );
+  const pontosDisp = (builder.pontos ?? []).filter(
+    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel
+  );
+  const espDisp = (builder.espessuras ?? []).filter(
+    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel
+  );
+  const extrasDisp = (builder.espessuras ?? []).filter(
+    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel
+  );
 
   useEffect(() => {
     if (bordasDisp.length && pontosDisp.length && espDisp.length) {
@@ -177,6 +185,48 @@ export const PizzaBuilder = ({
   }, []); //eslint-disable-line
 
   const pizzaNumberStr = `${pizzaNumber ? `da ${pizzaNumber}ª pizza ` : ""}`;
+
+  const grupos = builder.sabores.reduce<Record<string, IPizzaSabor[]>>(
+    (acc, item) => {
+      if (!acc[item.categoria]) {
+        acc[item.categoria] = [];
+      }
+      acc[item.categoria].push(item);
+      return acc;
+    },
+    {}
+  );
+
+  const gruposArray = Object.entries(grupos)
+    .map(([grupo, itens]) => ({
+      grupo,
+      itens,
+    }))
+    .sort((a, b) => {
+      const vm = (x) =>
+        x.itens.reduce((acc, curr) => acc + (curr.valorMedio ?? 0), 0) /
+        x.itens.length;
+      return vm(a) - vm(b);
+    })
+    .map((g) => g.itens)
+    .flat();
+  const [saboresPref, setSaboresPref] = useState<string[]>([]);
+
+  useEffect(() => {
+    const pontoPref = localStorage.getItem("preferencias_ponto");
+    if (pontoPref) {
+      setPizza((prev) => ({
+        ...prev,
+        ponto: builder.pontos.find((x) => x.id === pontoPref) ?? prev.ponto,
+      }));
+    }
+    const _saboresPref = (
+      localStorage.getItem("preferencias_sabores") ?? ""
+    ).split(",");
+    if (_saboresPref?.length) {
+      setSaboresPref(_saboresPref);
+    }
+  }, []);
 
   return (
     <PizzaBuilderStyle id={`builder-${builder.id}`}>
@@ -211,7 +261,8 @@ export const PizzaBuilder = ({
         // collapsed={true}
         // maxItemsCollapsed={6}
         // collapsedLabel="Mostrar mais sabores..."
-        items={builder.sabores
+        highlights={saboresPref}
+        items={gruposArray
           .filter((x) => (isCombo ? !x.somenteEmCombos : true))
           .map((sab) => ({
             id: sab.id,
