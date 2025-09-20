@@ -121,9 +121,10 @@ export const ItemBuilderFooter = () => {
       />
       <button
         className="avancar"
-        disabled={avancarDisabled || !aberto}
+        disabled={avancarDisabled}
         onClick={async () => {
           try {
+            if (!aberto) return toast.error("Estamos fechados no momento!");
             setAvancarDisabled(true);
             const result = validarItens();
             if (result === true) await continuar(qtd);

@@ -311,11 +311,11 @@ export const PizzaBuilder = ({
         search={true}
         onDone={() => {
           rolarEl(
-            bordasDisp.length > 1
+            bordasDisp.length > 1 && !pizza.borda
               ? `checklist-borda-${builder.id}`
-              : espDisp.length > 1
+              : espDisp.length > 1 && !pizza.espessura
               ? `checklist-espessura-${builder.id}`
-              : pontosDisp.length > 1
+              : pontosDisp.length > 1 && !pizza.ponto
               ? `checklist-ponto-${builder.id}`
               : !!extrasDisp.length
               ? `checklist-extras-${builder.id}`
