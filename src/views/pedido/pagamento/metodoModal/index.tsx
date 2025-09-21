@@ -62,6 +62,7 @@ export const MetodoModal = ({
                   className="troco"
                   type="currency"
                   name="Preciso de troco para"
+                  max={500}
                   placeholder="Troco para..."
                   disabled={naoPrecisaTroco}
                   // min={Number(valor)}

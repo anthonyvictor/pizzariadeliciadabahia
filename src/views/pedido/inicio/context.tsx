@@ -1,6 +1,9 @@
 import Loading from "@components/loading";
+import ConsoleLogger from "@components/loading/consoleLogger";
+import TextContainer from "@components/textContainer";
 import { env } from "@config/env";
 import { sortDisp } from "@util/array";
+import { sleep } from "@util/misc";
 import axios from "axios";
 import {
   createContext,
@@ -133,7 +136,19 @@ export const PedidoPageProvider = ({
     : [];
 
   if (carregandoHome) return <Loading />;
-  if (!home) return <div>Oops, tivemos um erro ao carregar os dados!</div>;
+  if (!home)
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "20px",
+        }}
+      >
+        <TextContainer title="Erro ao carregar os dados" />
+      </div>
+    );
 
   return (
     <PedidoPageContext.Provider

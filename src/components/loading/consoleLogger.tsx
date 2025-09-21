@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MdClose } from "react-icons/md";
 
 export default function ConsoleLogger() {
   const [logs, setLogs] = useState<string[]>([]);
@@ -12,7 +13,9 @@ export default function ConsoleLogger() {
     function intercept(type: "log" | "warn" | "error") {
       return (...args: any[]) => {
         const message = args.map(String).join(" ");
-        setLogs((prev) => [...prev, `[${type.toUpperCase()}] ${message}`]);
+        if (type === "error")
+          setLogs((prev) => [...prev, `[${type.toUpperCase()}] ${message}`]);
+
         // mantém o comportamento original no console
         if (type === "error") originalError(...args);
         if (type === "warn") originalWarn(...args);
@@ -32,9 +35,25 @@ export default function ConsoleLogger() {
     };
   }, []);
 
-  return (
+  return !logs.length ? (
+    <></>
+  ) : (
     <div style={{ background: "#111", color: "#eee", padding: "1rem" }}>
-      <h2>Console em Tela</h2>
+      <header style={{ display: "flex", justifyContent: "space-between" }}>
+        <h2>Console</h2>
+        <button
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#eee",
+            cursor: "pointer",
+            fontSize: "1.5rem",
+          }}
+          onClick={() => setLogs([])}
+        >
+          <MdClose />
+        </button>
+      </header>
       <div style={{ maxHeight: "300px", overflowY: "auto" }}>
         {logs.map((log, i) => (
           <div key={i} style={{ whiteSpace: "pre-wrap" }}>

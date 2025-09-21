@@ -1,4 +1,5 @@
 import { env } from "@config/env";
+import { NoLogError } from "@models/error";
 import { analisarRegras } from "@util/regras";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -126,7 +127,7 @@ export const useAuth = (
           Array.isArray(res.data) ? res.data[0] : res.data
         ) as IPedido;
         if (!ped?.id)
-          throw new Error("Oops, não foi possível obter o pedido atual!");
+          throw new NoLogError("Oops, não foi possível obter o pedido atual!");
         localStorage.setItem("pedidoId", ped.id);
         return ped;
       } catch (err) {

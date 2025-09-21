@@ -9,6 +9,7 @@ import { obterLanches } from "@routes/lanches";
 import { obterBebidas } from "@routes/bebidas";
 import { obterPedido } from "@routes/pedidos";
 import { sortDisp } from "@util/array";
+import { sleep } from "@util/misc";
 
 // Função handler da rota
 export default async function handler(

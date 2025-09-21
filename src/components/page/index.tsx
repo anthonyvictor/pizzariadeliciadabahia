@@ -4,6 +4,7 @@ import {
   PageStyleWithoutElements,
   PageStyleWithoutHeader,
 } from "./styles";
+import ConsoleLogger from "@components/loading/consoleLogger";
 
 export default function Page({ children }) {
   const router = useRouter();
@@ -11,5 +12,10 @@ export default function Page({ children }) {
     return <PageStyleWithoutElements>{children}</PageStyleWithoutElements>;
   if (["/loja"].some((x) => router.pathname.includes(x)))
     return <PageStyleWithoutHeader>{children}</PageStyleWithoutHeader>;
-  return <PageStyle>{children}</PageStyle>;
+  return (
+    <PageStyle>
+      {children}
+      <ConsoleLogger />
+    </PageStyle>
+  );
 }
