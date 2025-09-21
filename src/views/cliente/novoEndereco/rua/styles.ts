@@ -14,7 +14,7 @@ export const RuaViewStyle = styled.main`
   gap: 5px;
   flex: 1;
 
-  @media ${breakpointsMQ.desktopSmUp} {
+  @media ${breakpointsMQ.tabletSmUp} {
     width: 500px;
     justify-self: center;
   }

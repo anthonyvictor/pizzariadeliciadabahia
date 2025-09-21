@@ -42,11 +42,29 @@ export const MultiChecklist = ({
   setValue: (newValues: string[]) => void;
 }) => {
   const [search, setSearch] = useState("");
+  const [searchBlocked, setSearchBlocked] = useState(false);
   const [collapsed, setCollapsed] = useState(_collapsed);
 
+  // useEffect(() => {
+  //   if (goSearch && search) {
+  //     setSearch("");
+  //   }
+  // }, [value]);
+
   useEffect(() => {
-    if (goSearch && search) {
-      setSearch("");
+    if (goSearch && search && value.length < (max ?? 10000)) {
+      rolarEl(`checklist-ul-${name}`, {
+        padding: -55,
+        skipWait: true,
+      });
+    }
+  }, [search]);
+
+  useEffect(() => {
+    if (value.length === (max ?? 10000)) {
+      setSearchBlocked(true);
+    } else {
+      setSearchBlocked(false);
     }
   }, [value]);
 
@@ -131,7 +149,7 @@ export const MultiChecklist = ({
 
   useEffect(() => {
     if (isDone) {
-      rolarEl(`checklist-${name}`, true);
+      rolarEl(`checklist-${name}`, { skipWait: true });
     }
   }, [isDone]);
 
@@ -140,12 +158,13 @@ export const MultiChecklist = ({
       <ChecklistHeader
         label={label}
         description={description}
+        searchBlocked={searchBlocked}
         currMax={{ curr: value.length, max }}
         checked={value.length >= min}
         required={min > 0}
         s={goSearch ? { search, setSearch } : undefined}
       />
-      <ul>
+      <ul id={`checklist-ul-${name}`}>
         {(isDone && collapsed
           ? groupItems(items.filter((x) => value.includes(x.id)))
           : _collapsed

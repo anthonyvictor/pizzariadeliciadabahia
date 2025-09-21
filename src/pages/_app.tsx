@@ -34,20 +34,31 @@ export default function App({ Component, pageProps }) {
   const novoPedido = () => {
     localStorage.removeItem("pedidoId");
     localStorage.removeItem("clienteId");
-    router.replace("/pedido");
+    if (router.pathname !== "/pedido") {
+      router.replace("/pedido").then(() => router.reload());
+    } else {
+      router.reload();
+    }
   };
-  const { showWarning, countdown } = useInactivityTimer({
-    warningVisible() {
-      return (
-        modo === "autoatendimento" && router.pathname.startsWith("/pedido")
-      );
+  const { showWarning, countdown } = useInactivityTimer(
+    {
+      warningVisible() {
+        console.log("modo, router.pathname", modo, router.pathname);
+        return (
+          modo === "autoatendimento" && router.pathname.startsWith("/pedido")
+        );
+      },
+      onTimeout: () => {
+        if (
+          modo === "autoatendimento" &&
+          router.pathname.startsWith("/pedido")
+        ) {
+          novoPedido();
+        }
+      },
     },
-    onTimeout: () => {
-      if (modo === "autoatendimento" && router.pathname.startsWith("/pedido")) {
-        novoPedido();
-      }
-    },
-  });
+    [modo, router.pathname]
+  );
 
   useEffect(() => {
     const handleStart = () => setLoading(true);
@@ -73,9 +84,7 @@ export default function App({ Component, pageProps }) {
         <meta charSet="UTF-8" />
         <meta
           name="description"
-          content={`Pizzaria Delicia da Bahia,
-            desde 2013, servindo as pizzas mais
-            deliciosas de Salvador!`}
+          content={`Pizzaria Delicia da Bahia, desde 2013 servindo alegria!`}
         />
         <meta
           name="viewport"
@@ -85,7 +94,7 @@ export default function App({ Component, pageProps }) {
       <>
         <NavigationProvider>
           <Layout>
-            {showWarning && (
+            {showWarning && router.pathname.startsWith("/pedido") && (
               <Inatividade>
                 <TextContainer
                   title="Oi, você ainda tá aí?"
@@ -95,9 +104,15 @@ export default function App({ Component, pageProps }) {
                 <BottomControls
                   secondaryButton={{
                     text: "Iniciar novo pedido",
-                    click: () => {},
+                    click: () => {
+                      novoPedido();
+                    },
                   }}
-                  primaryButton={{ text: "Continuar", click: () => {} }}
+                  primaryButton={{
+                    text: "Continuar",
+                    click: () => {},
+                    fixed: true,
+                  }}
                 />
               </Inatividade>
             )}
@@ -119,7 +134,7 @@ export default function App({ Component, pageProps }) {
 }
 
 const Inatividade = styled.div`
-  background-color: #000000cf;
+  background-color: #000000f0;
   position: fixed;
   z-index: 999;
   inset: 0;

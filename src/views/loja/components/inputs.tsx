@@ -71,7 +71,6 @@ export const EstoqueInput = ({
               //   estoque: e.target.checked ? 1 : undefined,
               // }));
               setTimeout(() => {
-                console.log("vai mudar");
                 const el = document.querySelector(
                   "#estoque"
                 ) as HTMLInputElement;

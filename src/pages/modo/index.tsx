@@ -7,8 +7,6 @@ import styled from "styled-components";
 const ModoPage: NextPage = () => {
   const { modo, setModo } = useModoStore();
 
-  console.log(modo);
-
   return (
     <Style>
       <TextContainer

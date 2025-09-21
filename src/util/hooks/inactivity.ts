@@ -9,12 +9,15 @@ interface UseInactivityTimerOptions {
   warningVisible: () => boolean;
 }
 
-export function useInactivityTimer({
-  inactivityLimit = 15,
-  warningLimit = 30,
-  warningVisible = () => true,
-  onTimeout,
-}: UseInactivityTimerOptions) {
+export function useInactivityTimer(
+  {
+    inactivityLimit = 15,
+    warningLimit = 30,
+    warningVisible = () => true,
+    onTimeout,
+  }: UseInactivityTimerOptions,
+  deps: any[]
+) {
   const router = useRouter();
 
   const [showWarning, setShowWarning] = useState(false);
@@ -68,7 +71,7 @@ export function useInactivityTimer({
       if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
       if (warningTimer.current) clearInterval(warningTimer.current);
     };
-  }, []);
+  }, [...deps]);
 
   return { showWarning, countdown, resetTimers };
 }

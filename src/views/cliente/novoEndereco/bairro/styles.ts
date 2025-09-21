@@ -25,7 +25,7 @@ export const BairroViewStyle = styled.main`
     }
   }
 
-  @media ${breakpointsMQ.desktopSmUp} {
+  @media ${breakpointsMQ.tabletSmUp} {
     width: 500px;
     justify-self: center;
   }

@@ -199,6 +199,7 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
                 setValue(value);
               }}
               onBlur={onBlur}
+              onKeyDown={_onKeyDown}
             />
           ) : type === "currency" ? (
             <CurrencyInput

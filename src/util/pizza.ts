@@ -127,3 +127,13 @@ export const tamanhoDescricao = (t: IPizzaTamanho) => {
     t.maxSabores > 1 ? "es" : ""
   }, ${t.tamanhoAprox}cm`;
 };
+
+export const abrevTamanho = (prod: string) => {
+  let res = prod
+    .replace(/PEQUENA/gi, "PEQ")
+    .replace(/MÉDIA/gi, "MED")
+    .replace(/GRANDE/gi, "GRA")
+    .replace(/FAMÍLIA/gi, "FAM");
+
+  return res;
+};

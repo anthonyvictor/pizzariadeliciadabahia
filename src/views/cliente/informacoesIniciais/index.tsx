@@ -13,6 +13,7 @@ import { normalizePhone } from "@util/enderecos/format";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import Loading from "@components/loading";
 import { useModoStore } from "src/infra/zustand/modo";
+import { NoLogError } from "@models/error";
 
 type FormData = {
   nome: string;
@@ -121,15 +122,16 @@ export const InformacoesIniciaisView = () => {
     contatosExtras: z.array(telefoneSchema).optional(),
   });
 
-  const logar = async () => {
+  const logar = async (noLog?: boolean) => {
     try {
       setCarregando(true);
       const { whatsapp } = formData;
       const resultado = telefoneSchema.safeParse(whatsapp);
 
       if (!resultado.success) {
-        toast.error(`${resultado.error.issues[0].message}`);
-        return;
+        if (!noLog)
+          throw new NoLogError(`${resultado.error.issues[0].message}`);
+        return false;
       }
 
       const res = await api.post(`/clientes/login`, {
@@ -141,12 +143,17 @@ export const InformacoesIniciaisView = () => {
           setCliente(res.data);
           localStorage.setItem("clienteId", res.data.id);
           router.replace("/pedido");
+          return true;
         } else {
           setAchouCliente("naoAchou");
+          throw new NoLogError("Cliente não encontrado");
         }
+      } else {
+        throw new NoLogError("Cliente não encontrado");
       }
     } catch (err) {
-      toast.error("Oops, não foi possível fazer seu cadastro no momento!");
+      if (!noLog) toast.error(err.message);
+      return false;
     } finally {
       setCarregando(false);
     }
@@ -189,7 +196,7 @@ export const InformacoesIniciaisView = () => {
     if (achouCliente === "naoProcurou") {
       logar();
     } else if (achouCliente === "naoAchou") {
-      cadastrar();
+      if (!(await logar(true))) cadastrar();
     }
   };
 
@@ -221,6 +228,7 @@ export const InformacoesIniciaisView = () => {
               minLength={3}
               maxLength={15}
               type="name"
+              autoFocus={true}
               value={formData.nome}
               setValue={(value) =>
                 setFormData((prev) => ({
@@ -272,6 +280,19 @@ export const InformacoesIniciaisView = () => {
                   ...prev,
                   nome: e.target.value.trim(),
                 }));
+              }}
+              onKeyUp={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  const form = e.currentTarget.form;
+                  if (!form) return;
+
+                  const index = Array.from(form.elements).indexOf(
+                    e.currentTarget
+                  );
+                  const next = form.elements[index + 1] as HTMLElement;
+                  next?.focus();
+                }
               }}
             />
 
@@ -332,6 +353,34 @@ export const InformacoesIniciaisView = () => {
                   sobrenome: e.target.value.trim(),
                 }));
               }}
+              onKeyUp={(e) => {
+                if (e.key === "Enter") {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const form = e.currentTarget.form;
+                    if (!form) return;
+
+                    const elements = Array.from(form.elements) as HTMLElement[];
+                    let index = elements.indexOf(
+                      e.currentTarget as HTMLElement
+                    );
+
+                    // anda para frente até achar alguém com tabindex válido
+                    while (index + 1 < elements.length) {
+                      index++;
+                      const next = elements[index];
+                      if (
+                        next &&
+                        next.tabIndex !== -1 &&
+                        !next.hasAttribute("disabled")
+                      ) {
+                        next.focus();
+                        break;
+                      }
+                    }
+                  }
+                }
+              }}
             />
           </div>
         )}
@@ -357,8 +406,33 @@ export const InformacoesIniciaisView = () => {
             }
           }}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && achouCliente === "naoProcurou") {
-              handleSubmit();
+            if (e.key === "Enter") {
+              if (achouCliente === "naoProcurou") {
+                handleSubmit();
+              } else {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  const form = e.currentTarget.form;
+                  if (!form) return;
+
+                  const elements = Array.from(form.elements) as HTMLElement[];
+                  let index = elements.indexOf(e.currentTarget as HTMLElement);
+
+                  // anda para frente até achar alguém com tabindex válido
+                  while (index + 1 < elements.length) {
+                    index++;
+                    const next = elements[index];
+                    if (
+                      next &&
+                      next.tabIndex !== -1 &&
+                      !next.hasAttribute("disabled")
+                    ) {
+                      next.focus();
+                      break;
+                    }
+                  }
+                }
+              }
             }
           }}
         />
@@ -415,6 +489,7 @@ export const InformacoesIniciaisView = () => {
 
       <BottomControls
         secondaryButton={{
+          type: "button",
           click: () => {
             achouCliente === "naoProcurou"
               ? router.replace("/")
@@ -422,6 +497,7 @@ export const InformacoesIniciaisView = () => {
           },
         }}
         primaryButton={{
+          type: "submit",
           click: handleSubmit,
         }}
       />

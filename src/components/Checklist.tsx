@@ -6,6 +6,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { CgChevronRight, CgClose, CgSearch } from "react-icons/cg";
 import styled from "styled-components";
 import { Checker } from "./checker";
+import { rolarEl } from "@util/dom";
 
 export interface IChecklistItem {
   id: string;
@@ -89,10 +90,28 @@ export const Checklist = ({
 }) => {
   const [search, setSearch] = useState("");
   const [collapsed, setCollapsed] = useState(_collapsed);
+  const [searchBlocked, setSearchBlocked] = useState(false);
+
+  // useEffect(() => {
+  //   if (goSearch && search) {
+  //     setSearch("");
+  //   }
+  // }, [value]);
 
   useEffect(() => {
-    if (goSearch && search) {
-      setSearch("");
+    if (goSearch && search && !value) {
+      rolarEl(`checklist-ul-${name}`, {
+        padding: -55,
+        skipWait: true,
+      });
+    }
+  }, [search]);
+
+  useEffect(() => {
+    if (!!value) {
+      setSearchBlocked(true);
+    } else {
+      setSearchBlocked(false);
     }
   }, [value]);
 
@@ -151,11 +170,12 @@ export const Checklist = ({
       <ChecklistHeader
         label={label}
         description={description}
+        searchBlocked={searchBlocked}
         required={required}
         checked={!!value}
         s={goSearch ? { search, setSearch } : undefined}
       />
-      <ul>
+      <ul id={`checklist-ul-${name}`}>
         {(isDone && collapsed
           ? groupItems(items.filter((x) => value === x.id))
           : collapsed
@@ -203,12 +223,14 @@ export const ChecklistHeader = ({
   required,
   checked,
   currMax,
+  searchBlocked,
   s,
 }: {
   label: string;
   description: string;
   required: boolean;
   checked: boolean;
+  searchBlocked: boolean;
   currMax?: { curr: number; max: number };
   s: ISearch;
 }) => {
@@ -227,7 +249,9 @@ export const ChecklistHeader = ({
                 : `Obrig. ⚠️`}
             </small>
           )}
-          {!!s && <ChecklistSearch search={s.search} setSearch={s.setSearch} />}
+          {!!s && !searchBlocked && (
+            <ChecklistSearch search={s.search} setSearch={s.setSearch} />
+          )}
         </aside>
       </div>
     </ChecklistHeaderStyle>

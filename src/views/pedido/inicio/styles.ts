@@ -11,7 +11,7 @@ export const PedidoStyle = styled.main`
   padding: 10px 0 50px 0;
   position: relative;
 
-  @media ${breakpointsMQ.desktopSmUp} {
+  @media ${breakpointsMQ.tabletSmUp} {
     width: 500px;
     justify-self: center;
   }

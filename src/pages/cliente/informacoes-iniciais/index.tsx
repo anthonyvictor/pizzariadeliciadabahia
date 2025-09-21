@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { InformacoesIniciaisView } from "src/views/pedido/informacoesIniciais";
+import { InformacoesIniciaisView } from "src/views/cliente/informacoesIniciais";
 
 const InformacoesIniciais: NextPage = () => {
   return <InformacoesIniciaisView />;

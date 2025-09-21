@@ -13,12 +13,15 @@ interface BottomControlsProps {
     disabled?: boolean;
     text?: string;
     badge?: number;
+    type?: "button" | "submit" | "reset";
   };
   primaryButton?: {
     click: () => void;
     disabled?: boolean;
     text?: string;
     badge?: number;
+    fixed?: boolean;
+    type?: "button" | "submit" | "reset";
   };
 }
 
@@ -67,6 +70,8 @@ const BottomControls: FC<BottomControlsProps> = ({
       )}
       {primaryButton && (
         <ButtonPrimary
+          pulse={!primaryButton.fixed}
+          type={primaryButton.type ?? undefined}
           disabled={!!primaryButton.disabled || disabled.primary}
           onClick={async () => {
             setDisabled((prev) => ({ ...prev, primary: true }));

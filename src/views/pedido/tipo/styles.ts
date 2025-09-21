@@ -51,7 +51,7 @@ export const TipoViewStyle = styled.main`
     background-color: transparent;
   }
 
-  @media ${breakpointsMQ.desktopSmUp} {
+  @media ${breakpointsMQ.tabletSmUp} {
     width: 500px;
     justify-self: center;
   }

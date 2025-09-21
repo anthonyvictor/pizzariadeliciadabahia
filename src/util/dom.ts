@@ -35,8 +35,18 @@ import { sleep } from "./misc";
 
 export const rolarEl = async (
   id: string,
-  skipWait?: boolean,
-  block?: ScrollLogicalPosition
+  {
+    skipWait,
+    block,
+    padding,
+  }: {
+    skipWait?: boolean;
+    block?: ScrollLogicalPosition;
+    padding?: number;
+  } = {
+    skipWait: false,
+    block: "nearest",
+  }
 ) => {
   const el = document.querySelector<HTMLElement>(`#${id}`);
   if (el) {
@@ -44,7 +54,10 @@ export const rolarEl = async (
     if (!skipWait) await sleep(200);
     if (container instanceof HTMLElement) {
       const y = el.offsetTop; // offset do header
-      container.scrollTo({ top: y, behavior: skipWait ? "auto" : "smooth" });
+      container.scrollTo({
+        top: y + (padding ?? 0),
+        behavior: skipWait ? "auto" : "smooth",
+      });
     } else {
       el.scrollIntoView({
         behavior: skipWait ? "auto" : "smooth",

@@ -3,6 +3,7 @@ import TextContainer from "@components/textContainer";
 import { env } from "@config/env";
 import { sortDisp } from "@util/array";
 import axios from "axios";
+import { useRouter } from "next/router";
 import {
   createContext,
   ReactNode,
@@ -42,23 +43,28 @@ export const PedidoPageProvider = ({
   const [home, setHome] = useState<IHome>();
   const [carregandoHome, setCarregandoHome] = useState(true);
   const { pedido } = usePedidoStore();
+  const router = useRouter();
 
   useEffect(() => {
-    axios
-      .get(`${env.apiURL}/pages/home?pedidoId=${pedido.id}`)
-      .then((res) => {
-        setHome(res.data);
-      })
-      .catch((err) => {
-        toast.error("Erro ao carregar dados");
-        console.error(err);
-      })
-      .finally(() => {
-        setCarregandoHome(false);
-      });
+    if (!pedido?.id) {
+      router.reload();
+    } else {
+      axios
+        .get(`${env.apiURL}/pages/home?pedidoId=${pedido.id}`)
+        .then((res) => {
+          setHome(res.data);
+        })
+        .catch((err) => {
+          toast.error("Erro ao carregar dados");
+          console.error(err);
+        })
+        .finally(() => {
+          setCarregandoHome(false);
+        });
+    }
   }, []);
 
-  const maxDestaques = 6;
+  const maxDestaques = 8;
   function fmv<T>(arr: T[], max = 2) {
     return sortDisp(
       [...arr]

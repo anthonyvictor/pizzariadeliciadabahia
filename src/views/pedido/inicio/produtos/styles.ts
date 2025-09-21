@@ -18,7 +18,6 @@ export const ProdutoStyle = styled.li.attrs(
   /* background-color: #00000005; */
   color: #fff;
   padding: 5px;
-  display: flex;
   gap: 5px;
   display: flex;
   align-items: center;
@@ -35,7 +34,8 @@ export const ProdutoStyle = styled.li.attrs(
     flex-shrink: 0;
     img {
       display: none;
-      background-color: #fff;
+      overflow: hidden;
+      /* background-color: #fff; */
       border-radius: 10px;
       transform: scale(106%);
       transform-origin: center center;
@@ -63,16 +63,16 @@ export const ProdutoStyle = styled.li.attrs(
 export const Grid = styled.div`
   display: grid;
   flex-wrap: wrap;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   list-style: none;
   min-height: min-content;
-  padding: 0 15px;
-  gap: 5px;
+  /* padding: 0 15px; */
+  gap: 2px;
 `;
 
 export const List = styled.div`
   display: flex;
   flex-direction: column;
   list-style: none;
-  gap: 5px;
+  gap: 1px;
 `;

@@ -4,8 +4,9 @@ import { DestaqueStyle } from "./styles";
 import Image from "next/image";
 import { abreviarBebida } from "@util/bebidas";
 import { abreviarLanche } from "@util/lanches";
-import { capitalize, formatCurrency } from "@util/format";
+import { formatCurrency } from "@util/format";
 import { useRouter } from "next/router";
+import { abrevTamanho } from "@util/pizza";
 
 export const Destaque = ({ prod }: { prod: IProdutoHome }) => {
   const [locked, setLocked] = useState(false);
@@ -36,7 +37,7 @@ export const Destaque = ({ prod }: { prod: IProdutoHome }) => {
       <aside className="conteudo">
         <h6 className="nome">
           {("maxSabores" in prod
-            ? `P. ${prod.nome}`
+            ? `Pizza ${abrevTamanho(prod.nome)}`
             : "produtos" in prod
             ? prod.nome
             : prod.tipo === "bebida"
