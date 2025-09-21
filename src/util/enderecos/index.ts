@@ -5,7 +5,7 @@ import axios from "axios";
 import { enderecoPizzaria } from "@util/dados";
 import { query_cepaberto, query_nominatim, query_photon } from "./query";
 import { cep_cepAberto } from "./cep";
-import { HTTPError } from "@models/error";
+import { HTTPError, NoLogError } from "@models/error";
 import { enderecosParecidos } from "./comparar";
 // const viaCep = async (cep: string, rua?: string, _bairro?: string) => {
 //   let data: any;
@@ -81,11 +81,11 @@ export const viaCep = async (
   try {
     const res = await axios.get(url);
 
-    if (!axiosOk(res.status)) throw new Error("ViaCEP falhou");
+    if (!axiosOk(res.status)) throw new NoLogError("ViaCEP falhou");
 
     let data: any = res.data;
 
-    if (data.erro) throw new Error("CEP inválido");
+    if (data.erro) throw new NoLogError("CEP inválido");
 
     data = Array.isArray(res.data) ? res.data : [res.data];
 

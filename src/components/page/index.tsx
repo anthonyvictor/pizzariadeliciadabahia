@@ -4,7 +4,7 @@ import {
   PageStyleWithoutElements,
   PageStyleWithoutHeader,
 } from "./styles";
-import ConsoleLogger from "@components/loading/consoleLogger";
+import ConsoleLogger from "@components/consoleLogger";
 
 export default function Page({ children }) {
   const router = useRouter();

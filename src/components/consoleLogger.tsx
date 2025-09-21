@@ -1,3 +1,4 @@
+import { NoLogError } from "@models/error";
 import React, { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 
@@ -13,7 +14,7 @@ export default function ConsoleLogger() {
     function intercept(type: "log" | "warn" | "error") {
       return (...args: any[]) => {
         const message = args.map(String).join(" ");
-        if (type === "error")
+        if (type === "error" && !(args[0] instanceof NoLogError))
           setLogs((prev) => [...prev, `[${type.toUpperCase()}] ${message}`]);
 
         // mantém o comportamento original no console

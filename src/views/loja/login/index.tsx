@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import TextContainer from "@components/textContainer";
 import { AxiosError } from "axios";
+import { NoLogError } from "@models/error";
 
 export const LoginView = () => {
   const [login, setLogin] = useState<{ email: string; senha: string }>({
@@ -20,7 +21,7 @@ export const LoginView = () => {
         ...login,
       });
 
-      if (!axiosOk(res.status)) throw new Error();
+      if (!axiosOk(res.status)) throw new NoLogError("Erro de login");
 
       localStorage.setItem("loja-token", res.data);
 

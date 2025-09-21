@@ -1,7 +1,7 @@
 import Text from "@components/text";
 import { useEffect, useState, type FC } from "react";
 import { LoadingStyle } from "./styles";
-import ConsoleLogger from "./consoleLogger";
+import ConsoleLogger from "../consoleLogger";
 
 const Loading: FC = () => {
   const [erro, setErro] = useState(null);

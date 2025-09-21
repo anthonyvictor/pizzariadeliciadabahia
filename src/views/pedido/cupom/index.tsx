@@ -10,6 +10,7 @@ import { env } from "@config/env";
 import axios from "axios";
 import { axiosOk } from "@util/axios";
 import { usePedidoStore } from "src/infra/zustand/pedido";
+import { NoLogError } from "@models/error";
 
 export const CupomView = () => {
   const { pedido } = usePedidoStore();
@@ -50,7 +51,7 @@ export const CupomView = () => {
 
               if (axiosOk(res.status)) {
                 const cupomValido = !!res.data.length;
-                if (!cupomValido) throw new Error("Cupom inválido");
+                if (!cupomValido) throw new NoLogError("Cupom inválido");
                 await axios.patch(
                   `${env.apiURL}/pedidos`,
                   {
@@ -67,7 +68,7 @@ export const CupomView = () => {
                 );
                 router.replace("/pedido");
               } else {
-                throw new Error("Cupom inválido");
+                throw new NoLogError("Cupom inválido");
               }
             } catch (err) {
               toast.error(
