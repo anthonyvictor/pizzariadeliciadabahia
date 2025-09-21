@@ -40,7 +40,14 @@ export default function ConsoleLogger() {
   ) : (
     <div style={{ background: "#111", color: "#eee", padding: "1rem" }}>
       <header style={{ display: "flex", justifyContent: "space-between" }}>
-        <h2>Console</h2>
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+        >
+          <h2>Erros:</h2>
+          <p>
+            Por gentileza, mande um print ou informe à pizzaria os erros abaixo:
+          </p>
+        </div>
         <button
           style={{
             background: "transparent",
