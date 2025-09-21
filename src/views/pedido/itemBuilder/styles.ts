@@ -1,3 +1,4 @@
+import { breakpointsMQ } from "@styles/mediaQueries";
 import { sizes } from "@styles/sizes";
 import styled from "styled-components";
 
@@ -14,5 +15,10 @@ export const ItemBuilderStyle = styled.main`
     position: relative;
     overflow-y: auto;
     min-height: 0;
+  }
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    width: 500px;
+    justify-self: center;
   }
 `;

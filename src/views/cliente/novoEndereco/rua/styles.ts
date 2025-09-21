@@ -1,3 +1,4 @@
+import { breakpointsMQ } from "@styles/mediaQueries";
 import styled from "styled-components";
 
 export const RuaViewStyle = styled.main`
@@ -12,4 +13,9 @@ export const RuaViewStyle = styled.main`
   padding: 5px;
   gap: 5px;
   flex: 1;
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    width: 500px;
+    justify-self: center;
+  }
 `;

@@ -1,3 +1,4 @@
+import { breakpointsMQ } from "@styles/mediaQueries";
 import styled from "styled-components";
 
 export const InformacoesIniciaisStyle = styled.main`
@@ -19,6 +20,12 @@ export const InformacoesIniciaisStyle = styled.main`
     .nome-sobrenome {
       display: grid;
       grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
+  }
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    width: 500px;
+    justify-self: center;
   }
 `;

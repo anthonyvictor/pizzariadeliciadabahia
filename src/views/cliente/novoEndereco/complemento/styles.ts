@@ -1,4 +1,5 @@
 import { colors } from "@styles/colors";
+import { breakpointsMQ } from "@styles/mediaQueries";
 import styled from "styled-components";
 
 export const ComplementoViewStyle = styled.main`
@@ -53,5 +54,10 @@ export const ComplementoViewStyle = styled.main`
         color: ${colors.elements};
       }
     }
+  }
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    width: 500px;
+    justify-self: center;
   }
 `;

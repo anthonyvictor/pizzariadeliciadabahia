@@ -156,7 +156,7 @@ export const MultiChecklist = ({
               )
             )
           : [
-              highlights?.length && !search
+              items.filter((x) => highlights.includes(x.id))?.length && !search
                 ? ({
                     items: items.filter((x) => highlights.includes(x.id)),
                     name: "Recentes",

@@ -5,11 +5,12 @@ import { IMetodo } from "../types";
 import { IPagamentoPedido } from "tpdb-lib";
 import { colors } from "@styles/colors";
 import { MyInput } from "@components/pedido/myInput";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { formatCurrency } from "@util/format";
 import BottomControls from "@components/pedido/bottomControls";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
+import { toNum } from "@util/conversion";
 
 export const MetodoModal = ({
   m,
@@ -29,6 +30,8 @@ export const MetodoModal = ({
   );
   const [trocoStr, setTrocoStr] = useState("");
   const [naoPrecisaTroco, setNaoPrecisaTroco] = useState(false);
+
+  // const [valTroco, setValTroco] = useState<{tipo: 'semTroco'}|{tipo: 'comTroco', troco: number}>()
 
   return (
     <ModalOverlay>
@@ -100,22 +103,20 @@ export const MetodoModal = ({
               text: "Continuar",
 
               click: () => {
-                const valor = valorStr.replace(/\./g, "").replace(",", ".");
-                const troco = (trocoStr ?? "")
-                  .replace(/\./g, "")
-                  .replace(",", ".");
+                const valor = valorStr;
+                const troco = trocoStr;
 
                 if (
                   !valor.replace(/,\./g, "") ||
-                  isNaN(Number(valor)) ||
-                  Number(valor) <= 0
+                  isNaN(toNum(valor)) ||
+                  toNum(valor) <= 0
                 ) {
                   toast.error("Valor do pagamento inválido!");
 
                   return;
                 } else if (
                   !!troco &&
-                  (isNaN(Number(troco)) || Number(troco) < Number(valor))
+                  (isNaN(toNum(troco)) || toNum(troco) < toNum(valor))
                 ) {
                   toast.error('"Troco para..." inválido!');
 
@@ -129,8 +130,8 @@ export const MetodoModal = ({
                 onConfirm({
                   id: uuidv4(),
                   tipo: m.tipo,
-                  trocoPara: troco ? Number(troco) : Number(valor),
-                  valor: Number(valor),
+                  trocoPara: troco ? toNum(troco) : toNum(valor),
+                  valor: toNum(valor),
                 } as IPagamentoPedido);
               },
             }}

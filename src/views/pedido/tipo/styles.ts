@@ -1,3 +1,4 @@
+import { breakpointsMQ } from "@styles/mediaQueries";
 import styled from "styled-components";
 
 export const TipoViewStyle = styled.main`
@@ -48,5 +49,10 @@ export const TipoViewStyle = styled.main`
     color: #fff;
     border-bottom: 1px solid #fff;
     background-color: transparent;
+  }
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    width: 500px;
+    justify-self: center;
   }
 `;

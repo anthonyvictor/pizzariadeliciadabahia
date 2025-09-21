@@ -1,3 +1,4 @@
+import { breakpointsMQ } from "@styles/mediaQueries";
 import styled from "styled-components";
 
 export const CupomStyle = styled.main`
@@ -12,5 +13,10 @@ export const CupomStyle = styled.main`
     display: flex;
     flex-direction: column;
     gap: 20px;
+  }
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    width: 500px;
+    justify-self: center;
   }
 `;

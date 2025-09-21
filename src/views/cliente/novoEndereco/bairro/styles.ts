@@ -1,4 +1,5 @@
 import { colors } from "@styles/colors";
+import { breakpointsMQ } from "@styles/mediaQueries";
 import styled from "styled-components";
 
 export const BairroViewStyle = styled.main`
@@ -22,5 +23,10 @@ export const BairroViewStyle = styled.main`
       border-radius: 5px;
       text-align: center;
     }
+  }
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    width: 500px;
+    justify-self: center;
   }
 `;

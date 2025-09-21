@@ -1,6 +1,7 @@
 import { IBebida, ILanche, ICombo, IPizzaTamanho } from "tpdb-lib";
 import { colors } from "@styles/colors";
 import styled, { css } from "styled-components";
+import { breakpointsMQ } from "@styles/mediaQueries";
 
 export const PedidoStyle = styled.main`
   display: flex;
@@ -9,6 +10,11 @@ export const PedidoStyle = styled.main`
   gap: 5px;
   padding: 10px 0 50px 0;
   position: relative;
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    width: 500px;
+    justify-self: center;
+  }
 
   .menu {
     display: flex;

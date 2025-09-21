@@ -43,3 +43,16 @@ export const dateOrNull = (d: any): Date | undefined => {
       : undefined
     : undefined;
 };
+
+export function toNum(value: string): number {
+  // remove espaços
+  let v = value.trim();
+
+  // remove pontos de milhar
+  v = v.replace(/\./g, ",");
+
+  // troca vírgula por ponto
+  v = v.replace(",", ".");
+
+  return Number(v);
+}

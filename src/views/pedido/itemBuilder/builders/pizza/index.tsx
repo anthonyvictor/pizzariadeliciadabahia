@@ -271,26 +271,29 @@ export const PizzaBuilder = ({
             title: sab.nome,
             description: sab.descricao,
             disabled: !sab.disponivel,
-            price: sab.valores
-              .filter((x) => x.tamanhoId === builder.tamanho.id)
-              .map((v) => {
-                let valorExtra = v.valor;
+            price:
+              pizza.sabores.length === builder.tamanho.maxSabores
+                ? ("" as unknown as number)
+                : sab.valores
+                    .filter((x) => x.tamanhoId === builder.tamanho.id)
+                    .map((v) => {
+                      let valorExtra = v.valor;
 
-                const valorSaboresAntes = calcularValor({
-                  ...pizza,
-                  sabores: pizza.sabores,
-                  acoes: builder.acoes,
-                });
-                const valorSaboresDepois = calcularValor({
-                  ...pizza,
-                  sabores: [...pizza.sabores, sab],
-                  acoes: builder.acoes,
-                });
+                      const valorSaboresAntes = calcularValor({
+                        ...pizza,
+                        sabores: pizza.sabores,
+                        acoes: builder.acoes,
+                      });
+                      const valorSaboresDepois = calcularValor({
+                        ...pizza,
+                        sabores: [...pizza.sabores, sab],
+                        acoes: builder.acoes,
+                      });
 
-                valorExtra = valorSaboresDepois - valorSaboresAntes;
+                      valorExtra = valorSaboresDepois - valorSaboresAntes;
 
-                return valorExtra;
-              })[0],
+                      return valorExtra;
+                    })[0],
             isSum: isCombo,
           }))}
         value={pizza.sabores.map((x) => x.id)}

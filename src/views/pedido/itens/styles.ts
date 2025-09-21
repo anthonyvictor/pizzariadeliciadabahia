@@ -114,4 +114,9 @@ export const ItensStyle = styled.main`
       }
     }
   }
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    width: 500px;
+    justify-self: center;
+  }
 `;
