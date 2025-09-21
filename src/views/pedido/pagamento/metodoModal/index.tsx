@@ -24,8 +24,10 @@ export const MetodoModal = ({
   valorTotal: number;
   valorDefinido: number;
 }) => {
-  const [valor, setValor] = useState((valorTotal - valorDefinido).toString());
-  const [troco, setTroco] = useState("");
+  const [valorStr, setValorStr] = useState(
+    (valorTotal - valorDefinido).toString()
+  );
+  const [trocoStr, setTrocoStr] = useState("");
   const [naoPrecisaTroco, setNaoPrecisaTroco] = useState(false);
 
   return (
@@ -44,8 +46,8 @@ export const MetodoModal = ({
                 name="Valor:"
                 max={valorTotal - valorDefinido}
                 //   autoFocus={true}
-                value={valor}
-                setValue={(v) => setValor(v as string)}
+                value={valorStr}
+                setValue={(v) => setValorStr(v as string)}
               />
               {/* <button onClick={() => setValor(valorTotal.toString())}>
                       Total
@@ -62,8 +64,8 @@ export const MetodoModal = ({
                   // min={Number(valor)}
                   // max={(valor ? Number(valor) : 1) + 199}
                   // autoFocus={true}
-                  value={naoPrecisaTroco ? "" : troco}
-                  setValue={(v) => setTroco(v as string)}
+                  value={naoPrecisaTroco ? "" : trocoStr}
+                  setValue={(v) => setTrocoStr(v as string)}
                 />
                 <MyInput
                   className="sem-troco"
@@ -98,7 +100,16 @@ export const MetodoModal = ({
               text: "Continuar",
 
               click: () => {
-                if (!valor || isNaN(Number(valor)) || Number(valor) <= 0) {
+                const valor = valorStr.replace(/\./g, "").replace(",", ".");
+                const troco = (trocoStr ?? "")
+                  .replace(/\./g, "")
+                  .replace(",", ".");
+
+                if (
+                  !valor.replace(/,\./g, "") ||
+                  isNaN(Number(valor)) ||
+                  Number(valor) <= 0
+                ) {
                   toast.error("Valor do pagamento inválido!");
 
                   return;
