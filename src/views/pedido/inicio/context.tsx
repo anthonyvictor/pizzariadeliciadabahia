@@ -1,9 +1,7 @@
 import Loading from "@components/loading";
-import ConsoleLogger from "@components/loading/consoleLogger";
 import TextContainer from "@components/textContainer";
 import { env } from "@config/env";
 import { sortDisp } from "@util/array";
-import { sleep } from "@util/misc";
 import axios from "axios";
 import {
   createContext,
