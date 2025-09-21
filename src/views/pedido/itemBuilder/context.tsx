@@ -4,6 +4,7 @@ import {
   IItemPedidoIds,
   ILanchePedido,
   IPedido,
+  IPizzaPedidoId,
 } from "tpdb-lib";
 import { IItemBuilder } from "tpdb-lib";
 import { createContext, ReactNode, useContext, useState } from "react";
@@ -56,7 +57,7 @@ export const ItemBuilderProvider = ({
         itens.push(..._itens);
       });
 
-      const pizza = itens.find((x) => x.tipo === "pizza");
+      const pizza = itens.find((x) => x.tipo === "pizza") as IPizzaPedidoId;
       if (pizza) {
         localStorage.setItem("preferencias_borda", pizza.borda ?? "");
         localStorage.setItem("preferencias_ponto", pizza.ponto ?? "");
