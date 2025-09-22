@@ -75,65 +75,73 @@ export const PedidoPageProvider = ({
 
   const destaques = home
     ? (() => {
-        const combos = fmv(home.combos, 4).filter(
-          (x) => x.emCondicoes && x.disponivel && x.visivel && x.estoque !== 0
+        const combos = fmv(
+          home.combos.filter(
+            (x) => x.emCondicoes && x.disponivel && x.visivel && x.estoque !== 0
+          ),
+          4
         );
         const tamanhos = fmv(
-          home.tamanhos,
-          maxDestaques - (combos.length + 2)
-        ).filter(
-          (x) =>
-            !x.somenteEmCombos &&
-            x.emCondicoes &&
-            x.disponivel &&
-            x.visivel &&
-            x.estoque !== 0
-        );
-        const bebidas = fmv(
-          home.bebidas,
-          maxDestaques - (combos.length + tamanhos.length + 1)
-        ).filter(
-          (x) =>
-            !x.somenteEmCombos &&
-            x.emCondicoes &&
-            x.disponivel &&
-            x.visivel &&
-            x.estoque !== 0
-        );
-        const lanches = fmv(home.lanches, 1).filter(
-          (x) =>
-            !x.somenteEmCombos &&
-            x.emCondicoes &&
-            x.disponivel &&
-            x.visivel &&
-            x.estoque !== 0
-        );
-
-        const itens = [...combos, ...tamanhos, ...bebidas, ...lanches];
-
-        if (itens.length < maxDestaques) {
-          const diff = maxDestaques - itens.length;
-
-          const tams = fmv(
-            home.tamanhos.filter((x) => tamanhos.every((y) => y.id !== x.id)),
-            maxDestaques
-          ).filter(
+          home.tamanhos.filter(
             (x) =>
               !x.somenteEmCombos &&
               x.emCondicoes &&
               x.disponivel &&
               x.visivel &&
               x.estoque !== 0
-          );
-          const coms = fmv(
-            home.combos.filter((x) => combos.every((y) => y.id !== x.id)),
-            maxDestaques
-          ).filter(
-            (x) => x.emCondicoes && x.disponivel && x.visivel && x.estoque !== 0
-          );
+          ),
+          2
+        );
+        const bebidas = fmv(
+          home.bebidas.filter((x) => {
+            return (
+              !x.somenteEmCombos &&
+              !!x.emCondicoes &&
+              !!x.disponivel &&
+              !!x.visivel &&
+              x.estoque !== 0
+            );
+          }),
+          1
+        );
 
-          itens.push(...fmv([...coms, ...tams], diff));
-        }
+        const lanches = fmv(
+          home.lanches.filter(
+            (x) =>
+              !x.somenteEmCombos &&
+              x.emCondicoes &&
+              x.disponivel &&
+              x.visivel &&
+              x.estoque !== 0
+          ),
+          1
+        );
+
+        const itens = [...combos, ...tamanhos, ...bebidas, ...lanches];
+
+        // if (itens.length < maxDestaques) {
+        //   const diff = maxDestaques - itens.length;
+
+        //   const tams = fmv(
+        //     home.tamanhos.filter((x) => tamanhos.every((y) => y.id !== x.id)),
+        //     maxDestaques
+        //   ).filter(
+        //     (x) =>
+        //       !x.somenteEmCombos &&
+        //       x.emCondicoes &&
+        //       x.disponivel &&
+        //       x.visivel &&
+        //       x.estoque !== 0
+        //   );
+        //   const coms = fmv(
+        //     home.combos.filter((x) => combos.every((y) => y.id !== x.id)),
+        //     maxDestaques
+        //   ).filter(
+        //     (x) => x.emCondicoes && x.disponivel && x.visivel && x.estoque !== 0
+        //   );
+
+        //   itens.push(...fmv([...coms, ...tams], diff));
+        // }
 
         return fmv(itens, maxDestaques);
       })()

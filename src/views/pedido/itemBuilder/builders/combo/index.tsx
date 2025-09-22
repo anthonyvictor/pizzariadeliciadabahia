@@ -4,6 +4,7 @@ import { PizzaBuilder } from "../pizza";
 import { ComboBuilderStyle } from "./styles";
 import React from "react";
 import { OutroBuilder } from "../outro";
+import { OutrosBuilder } from "../outros";
 export const ComboBuilder = ({
   builder,
   nextEl,
@@ -61,7 +62,34 @@ export const ComboBuilder = ({
                           ? prod.lanches
                           : builder.lanches,
                       };
-                return (
+
+                console.log(
+                  prod.tipo,
+                  (prod.max ?? 1) > 1 || (prod.min ?? 1) > 1
+                );
+                return (prod.max ?? 1) > 1 || (prod.min ?? 1) > 1 ? (
+                  <OutrosBuilder
+                    isCombo={true}
+                    builder={{
+                      id: prod.id,
+                      ...(obj as any),
+                      ...prod,
+                      acoes: prod.acoes,
+                      tipo: prod.tipo,
+                    }}
+                    nextEl={nextBuilder}
+                    outroNumber={
+                      builder.combo.produtos.filter((x) => x.tipo === prod.tipo)
+                        .length > 1
+                        ? builder.combo.produtos
+                            .filter((x) => x.tipo === prod.tipo)
+                            .findIndex((x) => {
+                              return x.id === prod.id;
+                            }) + 1
+                        : 0
+                    }
+                  />
+                ) : (
                   <OutroBuilder
                     isCombo={true}
                     builder={{

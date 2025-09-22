@@ -14,7 +14,7 @@ export interface IChecklistItem {
   group?: string;
   imageUrl?: string;
   imageWidth?: string;
-  imageFit?: "cover" | "scale-down";
+  imageFit?: "cover" | "scale-down" | undefined;
   description?: string | ReactNode;
   price?: number;
   oldPrice?: number;
@@ -356,7 +356,7 @@ export const ChecklistItemInfo = ({
               )}`
           : "+R$ 0,00"}
       </b>
-      {item.oldPrice && (
+      {item.oldPrice && item.oldPrice > item.price && (
         <i className="old-price">{formatCurrency(item.oldPrice)}</i>
       )}
     </ChecklistItemInfoStyle>

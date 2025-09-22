@@ -5071,10 +5071,10 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-tpdb-lib@^1.0.26:
-  version "1.0.31"
-  resolved "https://registry.yarnpkg.com/tpdb-lib/-/tpdb-lib-1.0.31.tgz#f9cf00a6d52df0d02f48f2ffde41f4f6aed148a3"
-  integrity sha512-KlHr72TqLVqLC/atQLxWyBKPh1jhRIt0iJrnUAvhzsIBIZxxqZNnOj8rZp9R0DKGm/LrO/fOtbZsSgRZ/XCxBA==
+tpdb-lib@^1.0.33:
+  version "1.0.34"
+  resolved "https://registry.yarnpkg.com/tpdb-lib/-/tpdb-lib-1.0.34.tgz#027ddc860b1070c65430f75fbd02e676cbe351fa"
+  integrity sha512-a3djOtRHH36cUXK4BVeDKHjZ5mAaSN1SKFQ47+OJVuIWVsw+1DqlBHFhyTgqM3nvN3CO3W9Jr64zW/OSnYBW4A==
 
 tr46@^1.0.1:
   version "1.0.1"

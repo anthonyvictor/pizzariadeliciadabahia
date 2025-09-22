@@ -17,22 +17,21 @@ import {
 } from "tpdb-lib";
 import { ItemBuilderObservacoes } from "../../observacoes";
 import { elegivel } from "@util/produtos";
+import { MultiChecklist } from "@components/MultiChecklist";
 
-export const OutroBuilder = ({
-  currentItem,
+export const OutrosBuilder = ({
+  // currentItem,
   builder,
   isCombo = false,
   outroNumber = 0,
 }: {
-  currentItem?: IBebida | ILanche;
+  // currentItem?: IBebida | ILanche;
   builder: IItemBuilderBebidas | IItemBuilderLanches;
   nextEl: string;
   outroNumber?: number;
   isCombo?: boolean;
 }) => {
-  const [outro, setOutro] = useState<IBebida | ILanche | undefined>(
-    currentItem
-  );
+  const [outros, setOutros] = useState<(IBebida | ILanche)[]>([]);
   const [observacoes, setObservacoes] = useState("");
 
   /**
@@ -73,8 +72,8 @@ export const OutroBuilder = ({
   const valorMax = obterValorMax(builder.acoes);
   const { setItensFinais } = useItemBuilder();
 
-  const calcularValor = (o: IBebida | ILanche) => {
-    const valorBase = o?.valor ?? 0;
+  const calcularValor = (outro: IBebida | ILanche) => {
+    const valorBase = outro?.valor ?? 0;
     let valorFinal = valorBase;
 
     if (valorBase > 0)
@@ -98,6 +97,9 @@ export const OutroBuilder = ({
           case "valor_fixo":
             (() => {
               if (acao.maxValor != null) {
+                console.log("valorBase", valorBase);
+                console.log("acao.maxValor", acao.maxValor);
+                console.log("acao.valor", acao.valor);
                 if (valorBase <= acao.maxValor) {
                   valorFinal = acao.valor;
                 } else {
@@ -105,6 +107,7 @@ export const OutroBuilder = ({
                   valorFinal = acao.valor + valorSaboresExtra;
                 }
               } else {
+                console.log("acao.valor", acao.valor);
                 valorFinal = acao.valor;
               }
             })();
@@ -117,50 +120,58 @@ export const OutroBuilder = ({
   };
 
   useEffect(() => {
-    if (outro) {
+    if (outros.length <= (builder.max ?? 9999999)) {
       setItensFinais((_prev) => {
-        const prev = [..._prev];
-        const i = prev.findIndex((x) => x.builderId === builder.id);
-        const _obj =
-          builder.tipo === "bebida"
-            ? {
-                bebidaOriginal: outro.id,
-              }
-            : {
-                lancheOriginal: outro.id,
-              };
+        const prev = [..._prev].filter((x) => x.builderId !== builder.id);
 
-        const obj: ItemComBuilder = {
-          ...outro,
-          builderId: builder.id,
-          tipo: builder.tipo,
-          ...(_obj as any),
-          valor: calcularValor(outro),
-          observacoes,
-        };
+        const objs = outros.map((outro) => {
+          const _obj =
+            builder.tipo === "bebida"
+              ? {
+                  bebidaOriginal: outro.id,
+                }
+              : {
+                  lancheOriginal: outro.id,
+                };
 
-        if (i > -1) {
-          prev[i] = obj;
-        } else {
-          prev.push(obj as any);
-        }
+          const obj: ItemComBuilder = {
+            ...outro,
+            builderId: builder.id,
+            tipo: builder.tipo,
+            ...(_obj as any),
+            observacoes,
+          };
+
+          return obj;
+        });
+
+        prev.push(...objs);
 
         return prev;
       });
     }
-  }, [outro, observacoes]);
+  }, [outros, observacoes]);
+
   const outroNumberStr = `${outroNumber ? `da ${outroNumber}ª outro ` : ""}`;
   const prods = builder.tipo === "bebida" ? builder.bebidas : builder.lanches;
-
   return (
     <OutroBuilderStyle id={`builder-${builder.id}`}>
-      <Checklist
+      <MultiChecklist
         name={`ids-${builder.id}`}
         label={`${outroNumberStr}${
           builder.tipo === "bebida" ? `Bebida 🍹` : `Lanche 🍔`
         }`}
-        description={"Selecione um item"}
-        required={true}
+        description={`Selecione ${
+          builder.min && builder.max === builder.min ? `${builder.min}` : "os"
+        } item(s) abaixo${
+          builder.max === builder.min
+            ? ``
+            : (builder.max ?? 1) > 1
+            ? `, de ${builder.min ?? 1} até ${builder.max}`
+            : `, pelo menos ${builder.min ?? 1} `
+        }`}
+        max={builder.max}
+        min={builder.min}
         items={prods
           .sort((a, b) => b.vendidos - a.vendidos)
           .sort((a, b) => a.valor - b.valor)
@@ -198,14 +209,21 @@ export const OutroBuilder = ({
             isSum: isCombo,
           }))}
         search={prods.length > 10}
-        value={outro?.id}
-        setValue={(value) => {
-          setOutro(prods.find((x) => x.id === value));
+        value={outros.map((x) => x.id)}
+        setValue={(novosOutros) => {
+          const atuais =
+            builder.tipo === "bebida" ? builder.bebidas : builder.lanches;
+          const _outros = novosOutros.map(
+            (x) => atuais.find((y) => y.id === x)!
+          );
+
+          setOutros(_outros.map((x) => ({ ...x, valor: calcularValor(x) })));
         }}
         onDone={() => {
           rolarEl(`observacoes-${builder.id}`);
         }}
       />
+
       <ItemBuilderObservacoes
         builderId={builder.id}
         de={builder.tipo === "bebida" ? "da bebida" : "do lanche"}
