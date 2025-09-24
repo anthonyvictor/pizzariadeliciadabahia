@@ -43,7 +43,6 @@ export default function App({ Component, pageProps }) {
   const { showWarning, countdown } = useInactivityTimer(
     {
       warningVisible() {
-        console.log("modo, router.pathname", modo, router.pathname);
         return (
           modo === "autoatendimento" && router.pathname.startsWith("/pedido")
         );

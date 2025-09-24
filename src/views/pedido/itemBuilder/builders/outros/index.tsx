@@ -17,7 +17,6 @@ import {
 } from "tpdb-lib";
 import { ItemBuilderObservacoes } from "../../observacoes";
 import { elegivel } from "@util/produtos";
-import { MultiChecklist } from "@components/MultiChecklist";
 
 export const OutrosBuilder = ({
   // currentItem,
@@ -97,9 +96,6 @@ export const OutrosBuilder = ({
           case "valor_fixo":
             (() => {
               if (acao.maxValor != null) {
-                console.log("valorBase", valorBase);
-                console.log("acao.maxValor", acao.maxValor);
-                console.log("acao.valor", acao.valor);
                 if (valorBase <= acao.maxValor) {
                   valorFinal = acao.valor;
                 } else {
@@ -107,7 +103,6 @@ export const OutrosBuilder = ({
                   valorFinal = acao.valor + valorSaboresExtra;
                 }
               } else {
-                console.log("acao.valor", acao.valor);
                 valorFinal = acao.valor;
               }
             })();
@@ -156,7 +151,7 @@ export const OutrosBuilder = ({
   const prods = builder.tipo === "bebida" ? builder.bebidas : builder.lanches;
   return (
     <OutroBuilderStyle id={`builder-${builder.id}`}>
-      <MultiChecklist
+      <Checklist
         name={`ids-${builder.id}`}
         label={`${outroNumberStr}${
           builder.tipo === "bebida" ? `Bebida 🍹` : `Lanche 🍔`
@@ -166,7 +161,7 @@ export const OutrosBuilder = ({
         } item(s) abaixo${
           builder.max === builder.min
             ? ``
-            : (builder.max ?? 1) > 1
+            : (builder.max ?? 1) > 1 && (builder.max ?? 100) < 100
             ? `, de ${builder.min ?? 1} até ${builder.max}`
             : `, pelo menos ${builder.min ?? 1} `
         }`}
@@ -208,7 +203,6 @@ export const OutrosBuilder = ({
             //   : x.valor,
             isSum: isCombo,
           }))}
-        search={prods.length > 10}
         value={outros.map((x) => x.id)}
         setValue={(novosOutros) => {
           const atuais =

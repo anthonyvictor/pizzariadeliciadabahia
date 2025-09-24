@@ -6,6 +6,7 @@ import { formatCurrency } from "@util/format";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import { rolarEl } from "@util/dom";
+import { IProdutoComboPizza } from "tpdb-lib";
 
 export const ItemBuilderFooter = () => {
   const [qtd, setQtd] = useState(1);
@@ -102,6 +103,46 @@ export const ItemBuilderFooter = () => {
     }
   };
   const [avancarDisabled, setAvancarDisabled] = useState(false);
+  // const total = itensFinais.reduce((acc, curr) => acc + curr.valor, 0) * qtd;
+  // const valorMinCadaItem =
+  //   builder.tipo === "combo"
+  //     ? builder.combo.produtos.reduce((acc, curr) => acc + curr.valorMin, 0)
+  //     : builder.tipo === "pizza"
+  //     ? builder.tamanho.valorMin
+  //     : 0;
+  const totalComExtra =
+    builder.tipo === "combo"
+      ? builder.combo.produtos.reduce((acc, curr) => {
+          const valorMin = curr.valorMin;
+          const itfs = itensFinais.filter((y) => y.builderId === curr.id);
+          const valorFinal = itfs
+            .map((itf) => {
+              const r =
+                (itf?.valor ?? 0) +
+                (itf?.tipo !== "pizza"
+                  ? 0
+                  : itf.sabores.length
+                  ? 0
+                  : curr.valorMin);
+
+              return r;
+            })
+            .reduce((acc, curr) => acc + curr, 0);
+
+          return acc + Math.max(valorMin, valorFinal);
+        }, 0)
+      : builder.tipo === "pizza" && itensFinais[0]?.tipo === "pizza"
+      ? (() => {
+          const itf = itensFinais[0];
+          return Math.max(
+            itf.sabores.length
+              ? itf.valor
+              : itf.valor + builder.tamanho.valorMin,
+            builder.tamanho.valorMin
+          );
+        })()
+      : // Math.max(itensFinais[0].valor, builder.tamanho.valorMin)
+        0;
   return (
     <ItemBuilderFooterStyle>
       <NumberInput
@@ -167,7 +208,12 @@ export const ItemBuilderFooter = () => {
         <h4>Continuar</h4>
         <h4>
           {formatCurrency(
-            itensFinais.reduce((acc, curr) => acc + curr.valor, 0) * qtd
+            totalComExtra
+            // builder.tipo === "combo"
+            //   ? Math.max(total, builder.combo.valorMin)
+            //   : builder.tipo === "pizza"
+            //   ? Math.max(total, builder.tamanho.valorMin)
+            //   : total
           )}
         </h4>
       </button>

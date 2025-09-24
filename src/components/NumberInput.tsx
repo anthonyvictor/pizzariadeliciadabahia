@@ -45,6 +45,14 @@ export const NumberInput = ({
   const [upDisabled, setUpDisabled] = useState(false);
   const [downDisabled, setDownDisabled] = useState(false);
 
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (!isFocused) {
+      setStrValue(f(numValue));
+    }
+  }, [numValue, decimalPlaces, isFocused]);
+
   useEffect(() => {
     (() => {
       const novoNum = numValue + 1;
@@ -93,6 +101,7 @@ export const NumberInput = ({
             : "hidden",
         }}
         disabled={disabled || !editable}
+        onFocus={() => setIsFocused(true)}
         onKeyDown={(e) => {
           const allowedKeys = [
             "Backspace",
@@ -137,12 +146,17 @@ export const NumberInput = ({
           }
         }}
         onBlur={(e) => {
+          setIsFocused(false);
           if (!allowVoid) {
             if (numValue === 0 && strValue.trim() === "") {
               setStrValue("0");
             }
           }
         }}
+
+        //  onBlur={() => {
+        //   setStrValue(f(numValue)); // força ajuste final
+        // }}
       />
 
       <button

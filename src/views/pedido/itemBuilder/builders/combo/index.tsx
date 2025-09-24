@@ -63,10 +63,6 @@ export const ComboBuilder = ({
                           : builder.lanches,
                       };
 
-                console.log(
-                  prod.tipo,
-                  (prod.max ?? 1) > 1 || (prod.min ?? 1) > 1
-                );
                 return (prod.max ?? 1) > 1 || (prod.min ?? 1) > 1 ? (
                   <OutrosBuilder
                     isCombo={true}

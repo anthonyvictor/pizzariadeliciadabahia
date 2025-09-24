@@ -160,7 +160,8 @@ export const OutroBuilder = ({
           builder.tipo === "bebida" ? `Bebida 🍹` : `Lanche 🍔`
         }`}
         description={"Selecione um item"}
-        required={true}
+        min={1}
+        max={1}
         items={prods
           .sort((a, b) => b.vendidos - a.vendidos)
           .sort((a, b) => a.valor - b.valor)
@@ -197,9 +198,8 @@ export const OutroBuilder = ({
             //   : x.valor,
             isSum: isCombo,
           }))}
-        search={prods.length > 10}
-        value={outro?.id}
-        setValue={(value) => {
+        value={[outro?.id].filter(Boolean)}
+        setValue={([value]) => {
           setOutro(prods.find((x) => x.id === value));
         }}
         onDone={() => {

@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { PizzaBuilderStyle } from "./styles";
 import { Checklist } from "@components/Checklist";
 import { rolarEl } from "@util/dom";
-import { MultiChecklist } from "@components/MultiChecklist";
 import { useItemBuilder } from "src/views/pedido/itemBuilder/context";
 import { ItemBuilderObservacoes } from "../../observacoes";
 
@@ -252,7 +251,7 @@ export const PizzaBuilder = ({
         />
       )} */}
 
-      <MultiChecklist
+      <Checklist
         name={`sabores-${builder.id}`}
         label={`Sabores ${pizzaNumberStr}🌶️`}
         min={1}
@@ -311,7 +310,6 @@ export const PizzaBuilder = ({
             }),
           }));
         }}
-        search={true}
         onDone={() => {
           rolarEl(
             bordasDisp.length > 1 && !pizza.borda
@@ -331,7 +329,8 @@ export const PizzaBuilder = ({
         <Checklist
           name={`borda-${builder.id}`}
           label={`Borda ${pizzaNumberStr}🍕`}
-          required={true}
+          min={1}
+          max={1}
           items={builder.bordas
             .filter((x) => (isCombo ? !x.somenteEmCombos : true))
             .map((x) => ({
@@ -344,8 +343,8 @@ export const PizzaBuilder = ({
                 .valor,
               isSum: true,
             }))}
-          value={pizza.borda?.id}
-          setValue={(value) => {
+          value={[pizza.borda?.id].filter(Boolean)}
+          setValue={([value]) => {
             const borda = builder.bordas.find((x) => x.id === value)!;
             setPizza((prev) => ({
               ...prev,
@@ -376,7 +375,8 @@ export const PizzaBuilder = ({
           name={`espessura-${builder.id}`}
           label={`Espessura da massa ${pizzaNumberStr}🍕`}
           description="Como você prefere a massa?"
-          required={true}
+          min={1}
+          max={1}
           items={builder.espessuras
             .filter((x) => (isCombo ? !x.somenteEmCombos : true))
             .map((x) => ({
@@ -388,8 +388,8 @@ export const PizzaBuilder = ({
               price: x.valor,
               isSum: true,
             }))}
-          value={pizza.espessura?.id}
-          setValue={(value) => {
+          value={[pizza.espessura?.id].filter(Boolean)}
+          setValue={([value]) => {
             const espessura = builder.espessuras.find((x) => x.id === value)!;
             setPizza((prev) => ({
               ...prev,
@@ -417,7 +417,8 @@ export const PizzaBuilder = ({
           name={`ponto-${builder.id}`}
           label={`Ponto ${pizzaNumberStr}🍕`}
           description="Qual seu ponto da massa preferido?"
-          required={true}
+          min={1}
+          max={1}
           items={builder.pontos
             .filter((x) => (isCombo ? !x.somenteEmCombos : true))
             .map((x) => ({
@@ -429,8 +430,8 @@ export const PizzaBuilder = ({
               price: x.valor,
               isSum: true,
             }))}
-          value={pizza.ponto?.id}
-          setValue={(value) => {
+          value={[pizza.ponto?.id].filter(Boolean)}
+          setValue={([value]) => {
             const ponto = builder.pontos.find((x) => x.id === value)!;
             setPizza((prev) => ({
               ...prev,
@@ -451,13 +452,12 @@ export const PizzaBuilder = ({
       )}
 
       {(builder.extras?.filter?.((x) => x.disponivel)?.length ?? 0) > 0 && (
-        <MultiChecklist
+        <Checklist
           name={`extras-${builder.id}`}
           label={`Adicionais ${pizzaNumberStr}➕`}
           min={0}
           max={10}
           collapsed={true}
-          maxItemsCollapsed={2}
           description={`Quer adicionar algum ingrediente extra?`}
           items={builder.extras
             .filter((x) => (isCombo ? !x.somenteEmCombos : true))
@@ -483,7 +483,6 @@ export const PizzaBuilder = ({
               valor: calcularValor({ ...pizza, extras, acoes: builder.acoes }),
             }));
           }}
-          search={true}
           onDone={() => {
             rolarEl(`observacoes-${builder.id}`);
           }}
