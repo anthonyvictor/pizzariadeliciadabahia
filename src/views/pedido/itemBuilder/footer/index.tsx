@@ -142,7 +142,12 @@ export const ItemBuilderFooter = () => {
           );
         })()
       : // Math.max(itensFinais[0].valor, builder.tamanho.valorMin)
-        0;
+        itensFinais?.[0]?.valor ??
+        (builder.tipo === "bebida"
+          ? builder.bebida.valor
+          : builder.tipo === "lanche"
+          ? builder.lanche.valor
+          : 0);
   return (
     <ItemBuilderFooterStyle>
       <NumberInput

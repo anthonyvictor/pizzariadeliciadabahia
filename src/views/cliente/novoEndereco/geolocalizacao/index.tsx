@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { ButtonPrimary } from "@styles/components/buttons";
 import Loading from "@components/loading";
 import { useTimer } from "@util/hooks/timer";
+import { NoLogError } from "@models/error";
 
 export const GeolocalizacaoView = () => {
   const router = useRouter();
@@ -45,7 +46,7 @@ export const GeolocalizacaoView = () => {
           avancar();
         },
         (error) => {
-          console.error("Erro ao obter localização:", error);
+          console.error(new NoLogError("Erro ao obter localização:" + error));
           setStatus("prompt");
         }
       );
@@ -92,7 +93,7 @@ export const GeolocalizacaoView = () => {
         avancar();
       },
       (error) => {
-        console.error("Erro ao obter localização:", error);
+        console.error(new NoLogError("Erro ao obter localização:" + error));
         // avancar()
       }
     );
