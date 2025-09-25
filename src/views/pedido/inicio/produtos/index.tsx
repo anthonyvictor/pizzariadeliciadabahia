@@ -37,12 +37,9 @@ export const Produtos = ({
         </List>
       ) : "maxSabores" in iZero ? (
         <List>
-          {itens
-            .map((prod: IPizzaTamanho) => prod)
-            .sort((a, b) => b.valorMin - a.valorMin)
-            .map((prod: IPizzaTamanho) => (
-              <Tamanho key={prod.id ?? prod.nome} prod={prod} />
-            ))}
+          {itens.map((prod: IPizzaTamanho) => (
+            <Tamanho key={prod.id ?? prod.nome} prod={prod} />
+          ))}
         </List>
       ) : iZero.tipo === "bebida" ? (
         <List>

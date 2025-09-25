@@ -34,15 +34,18 @@ export const obterHome = async (pedidoId: string | undefined) => {
   const bebidas = sortDisp(await obterBebidas({ _pedido }));
   const lanches = sortDisp(await obterLanches({ _pedido }));
   const sabores = sortDisp(await obterSabores({ _pedido }));
-  const tamanhos = sortDisp(await obterTamanhos({ _pedido, sabores }));
+  const tamanhos = sortDisp(await obterTamanhos({ _pedido, sabores })).sort(
+    (a, b) => b.valorMin - a.valorMin
+  );
   const combos = sortDisp(
     await obterCombos({
       sabores,
+      tamanhos,
       bebidas,
       lanches,
       _pedido,
     })
-  );
+  ).sort((a, b) => b.vendidos - a.vendidos);
 
   return {
     combos,

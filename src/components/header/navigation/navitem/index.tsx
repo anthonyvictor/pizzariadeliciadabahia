@@ -14,6 +14,13 @@ const NaviItem: FC<{ item: INavigationItem }> = ({ item }) => {
         onClick={() => {
           setMenuOpen(false);
         }}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          if (item.route.startsWith("/loc")) {
+            setMenuOpen(false);
+            router.push("/stories");
+          }
+        }}
       >
         {router.pathname === item.route ? (
           <b>{item.name}</b>

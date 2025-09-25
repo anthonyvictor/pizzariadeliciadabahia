@@ -1,4 +1,4 @@
-import { IBebida, ICombo, ILanche, IPizzaSabor } from "tpdb-lib";
+import { IBebida, ICombo, ILanche, IPizzaSabor, IPizzaTamanho } from "tpdb-lib";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ff, ffid } from "tpdb-lib";
 import { CombosModel } from "tpdb-lib";
@@ -77,10 +77,12 @@ export const obterCombos = async ({
   _pedido,
   ignorar,
   deveEstar = dvEst.visivel,
+  tamanhos,
   sabores,
   bebidas,
   lanches,
 }: ObterProdutos & {
+  tamanhos?: IPizzaTamanho[];
   sabores?: IPizzaSabor[];
   bebidas?: IBebida[];
   lanches?: ILanche[];
@@ -115,6 +117,74 @@ export const obterCombos = async ({
         ),
       deveEstar
     )
-  );
+  ).map((combo) => {
+    let estoque = combo.estoque;
+    const estoqueMin: {
+      tamanhos: { id: string; val: number }[];
+      bebidas: { id: string; val: number }[];
+      lanches: { id: string; val: number }[];
+    } = {
+      tamanhos: [],
+      bebidas: [],
+      lanches: [],
+    };
+    combo.produtos.forEach((prod) => {
+      if (prod.tipo === "pizza") {
+        const i = estoqueMin.tamanhos.findIndex(
+          (x) => x.id === prod.tamanho.id
+        );
+
+        if (i > -1) {
+          estoqueMin.tamanhos[i].val += 1;
+        } else {
+          estoqueMin.tamanhos.push({ id: prod.tamanho.id, val: 1 });
+        }
+      } else if (prod.tipo === "bebida") {
+        const disponiveis = bebidas
+          .filter((x) =>
+            prod.bebidas?.length
+              ? prod.bebidas.some((y) => y.id === x.id)
+              : true
+          )
+          .filter(
+            (x) => x.emCondicoes && x.visivel && x.disponivel && x.estoque !== 0
+          );
+        const estoqueDisponiveis = disponiveis.some((x) => x.estoque == null)
+          ? 999999
+          : disponiveis.reduce((acc, curr) => acc + curr.estoque, 0);
+
+        if ((prod.min ?? 1) > estoqueDisponiveis) {
+          estoque = 0;
+        }
+      } else {
+        const disponiveis = lanches
+          .filter((x) =>
+            prod.lanches?.length
+              ? prod.lanches.some((y) => y.id === x.id)
+              : true
+          )
+          .filter(
+            (x) => x.emCondicoes && x.visivel && x.disponivel && x.estoque !== 0
+          );
+        const estoqueDisponiveis = disponiveis.some((x) => x.estoque == null)
+          ? 999999
+          : disponiveis.reduce((acc, curr) => acc + curr.estoque, 0);
+
+        if ((prod.min ?? 1) > estoqueDisponiveis) {
+          estoque = 0;
+        }
+      }
+    });
+
+    estoqueMin.tamanhos.forEach((t) => {
+      const tam = tamanhos.find((x) => x.id === t.id);
+
+      if (tam.estoque != null && t.val > tam.estoque) {
+        estoque = 0;
+      }
+    });
+
+    return { ...combo, estoque };
+  });
   return data;
 };
