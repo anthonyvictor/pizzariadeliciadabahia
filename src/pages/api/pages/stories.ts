@@ -32,18 +32,18 @@ export const obterStories = async () => {
     await obterTamanhos({ _pedido: undefined, sabores })
   );
   const combos = sortDisp(
-    await obterCombos({
-      sabores,
-      tamanhos,
-      bebidas,
-      lanches,
-      _pedido: undefined,
-    })
-  )
-    .sort((a, b) => b.vendidos - a.vendidos)
-    .filter(
-      (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0
-    );
+    (
+      await obterCombos({
+        sabores,
+        tamanhos,
+        bebidas,
+        lanches,
+        _pedido: undefined,
+      })
+    ).sort((a, b) => b.vendidos - a.vendidos)
+  ).filter(
+    (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0
+  );
 
   return {
     combos,
