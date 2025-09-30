@@ -3,7 +3,7 @@
 <div align="center"><img src="https://i.ibb.co/93rsyR7/home.png" alt="home" border="0"></div>
 
 <div align="center">
-    <a href="https://preview-website-pdb.vercel.app/">
+    <a href="https://www.pizzariadeliciadabahia.com/">
         <img src="https://img.shields.io/badge/preview-vercel-a.svg?style=for-the-badge">
     </a>
     <a href="https://github.com/anthonyvictor/backend-site-pdb">
@@ -15,30 +15,30 @@
 </div>
 <div align="center">
      <a>
-        <img src="https://img.shields.io/github/package-json/license/anthonyvictor/frontend-site-pdb">
+        <img src="https://img.shields.io/github/package-json/license/anthonyvictor/pizzariadeliciadabahia">
     </a>
      <a>
-        <img src="https://img.shields.io/github/package-json/v/anthonyvictor/frontend-site-pdb">
+        <img src="https://img.shields.io/github/package-json/v/anthonyvictor/pizzariadeliciadabahia">
     </a>
     <a>
-        <img src="https://img.shields.io/badge/node-18.14.2-yellow.svg">
+        <img src="https://img.shields.io/badge/node-22-yellow.svg">
     </a>
     <a>
         <img src="https://img.shields.io/badge/next-12.1.6-yellow.svg">
     </a>
-    <a href="https://github.com/anthonyvictor/frontend-site-pdb">
+    <a href="https://github.com/anthonyvictor/pizzariadeliciadabahia">
         <img src="https://img.shields.io/badge/status-active-success.svg">
     </a>
-    <a href="https://github.com/anthonyvictor/frontend-site-pdb/issues">
-        <img src="https://img.shields.io/github/issues/anthonyvictor/frontend-site-pdb">
+    <a href="https://github.com/anthonyvictor/pizzariadeliciadabahia/issues">
+        <img src="https://img.shields.io/github/issues/anthonyvictor/pizzariadeliciadabahia">
     </a>
-    <a href="https://github.com/anthonyvictor/frontend-site-pdb/pulls">
-        <img src="https://img.shields.io/github/issues-pr/anthonyvictor/frontend-site-pdb">
+    <a href="https://github.com/anthonyvictor/pizzariadeliciadabahia/pulls">
+        <img src="https://img.shields.io/github/issues-pr/anthonyvictor/pizzariadeliciadabahia">
     </a>
 </div>
 
 ### Introduction
-Frontend of Pizzaria Delicia da Bahia's website developed with `Next.js`
+Pizzaria Delicia da Bahia's website developed with `Next.js`
 
 ### Getting Started
 1 - Clone the project, and install the dependencies.
@@ -55,6 +55,7 @@ NEXT_PUBLIC_API_URL="http:localhost:5000"
 
 # This variable set the whatsapp number 
 NEXT_PUBLIC_WHATSAPP="+5510987654321"
+
 ```
 3 - Run the following command
 ```bash
