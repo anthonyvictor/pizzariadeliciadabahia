@@ -1,7 +1,7 @@
 # <div align="center">Pizzaria Delicia da Bahia</div>
 
 <p align="center">
-  <img src="https://i.ibb.co/93rsyR7/home.png" alt="home" />
+  <img src="https://i.ibb.co/93rsyR7/home.png" alt="home" width="600" />
 </p>
 
 
