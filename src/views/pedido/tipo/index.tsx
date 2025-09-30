@@ -21,6 +21,7 @@ import { IConfigEntregaAvancada } from "tpdb-lib";
 import { highlightEl } from "@util/dom";
 import { sleep } from "@util/misc";
 import { sortByDate } from "@util/array";
+import { usePopState } from "@util/hooks/popState";
 
 export const TipoView = () => {
   const router = useRouter();
@@ -34,19 +35,14 @@ export const TipoView = () => {
       configs.find((x) => x.chave === "entrega_avancada")
         ?.valor as IConfigEntregaAvancada
     )?.taxaAdicional ?? 0;
-  useEffect(() => {
-    const handlePopState = () => {
+
+  usePopState(
+    router,
+    () => {
       showModal ? setTipo(null) : router.replace("/pedido");
-      return false; // impede a navegação normal
-    };
-
-    router.beforePopState(handlePopState);
-
-    return () => {
-      // importante: volta o comportamento ao padrão quando desmontar
-      router.beforePopState(() => true);
-    };
-  }, [router, showModal]);
+    },
+    [showModal]
+  );
 
   useEffect(() => {
     setShowModal(

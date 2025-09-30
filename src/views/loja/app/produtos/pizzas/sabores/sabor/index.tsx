@@ -21,6 +21,7 @@ import { api, axiosOk } from "@util/axios";
 import { mergeArraysByKey } from "@util/array";
 import { NoLogError } from "@models/error";
 import { MyInput } from "@components/pedido/myInput";
+import { usePopState } from "@util/hooks/popState";
 
 export const SaborView = () => {
   const { editando, sabores, setSabores, setEditando } = useSabores();
@@ -43,19 +44,9 @@ export const SaborView = () => {
   } as IPizzaSabor);
   const router = useRouter();
 
-  useEffect(() => {
-    const handlePopState = () => {
-      setEditando(undefined);
-      return false; // impede a navegação normal
-    };
-
-    router.beforePopState(handlePopState);
-
-    return () => {
-      // importante: volta o comportamento ao padrão quando desmontar
-      router.beforePopState(() => true);
-    };
-  }, [router]);
+  usePopState(router, () => {
+    setEditando(undefined);
+  });
 
   const schema = z.object({
     nome: z.string().min(4, "Nome deve ter no mínimo 4 caracteres"),

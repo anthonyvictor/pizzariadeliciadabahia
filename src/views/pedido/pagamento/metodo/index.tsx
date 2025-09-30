@@ -13,6 +13,7 @@ import { MetodoModal } from "../metodoModal";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { analisarRegras } from "@util/regras";
 import { obterValoresDoPedido } from "@util/pedidos";
+import { usePopState } from "@util/hooks/popState";
 
 export const Metodo = ({
   metodo: m,
@@ -111,19 +112,13 @@ export const Metodo = ({
     });
   };
 
-  useEffect(() => {
-    const handlePopState = () => {
+  usePopState(
+    router,
+    () => {
       metodo ? closeModal() : router.replace("/pedido");
-      return false; // impede a navegação normal
-    };
-
-    router.beforePopState(handlePopState);
-
-    return () => {
-      // importante: volta o comportamento ao padrão quando desmontar
-      router.beforePopState(() => true);
-    };
-  }, [router, metodo]);
+    },
+    [metodo]
+  );
 
   const pagComTroco = pagsMetodo
     ? pagsMetodo.find(

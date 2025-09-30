@@ -6,26 +6,14 @@ import { Produtos } from "./produtos";
 import { usePedidoPage } from "./context";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { useEffect } from "react";
+import { usePopState } from "@util/hooks/popState";
 
 export const PedidoView = () => {
   const router = useRouter();
+  usePopState(router);
 
   const { home, destaques, aberto } = usePedidoPage();
   const { pedido } = usePedidoStore();
-
-  useEffect(() => {
-    const handlePopState = () => {
-      router.replace("/pedido");
-      return false; // impede a navegação normal
-    };
-
-    router.beforePopState(handlePopState);
-
-    return () => {
-      // importante: volta o comportamento ao padrão quando desmontar
-      router.beforePopState(() => true);
-    };
-  }, [router]);
 
   return (
     <PedidoStyle

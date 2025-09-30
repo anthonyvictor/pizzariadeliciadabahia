@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { useEffect, useState } from "react";
 import { usePagamentoStore } from "src/infra/zustand/pagamentos";
+import { usePopState } from "@util/hooks/popState";
 
 export const FinalizadoView = () => {
   const router = useRouter();
@@ -25,19 +26,9 @@ export const FinalizadoView = () => {
     return () => clearTimeout(timeout);
   }, []);
 
-  useEffect(() => {
-    const handlePopState = () => {
-      router.replace("/pedido");
-      return false; // impede a navegação normal
-    };
-
-    router.beforePopState(handlePopState);
-
-    return () => {
-      // importante: volta o comportamento ao padrão quando desmontar
-      router.beforePopState(() => true);
-    };
-  }, [router]);
+  usePopState(router, () => {
+    router.replace("/pedido");
+  });
 
   const novoPedido = () => {
     axios
@@ -61,7 +52,7 @@ export const FinalizadoView = () => {
           description="Já já enviaremos uma mensagem para o whatsapp que você cadastrou!"
         />
       </main>
-      {continuarDisabled && (
+      {!continuarDisabled && (
         <BottomControls
           secondaryButton={{
             text: "Fazer novo pedido",

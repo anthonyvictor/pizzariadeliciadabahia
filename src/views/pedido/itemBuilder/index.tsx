@@ -8,6 +8,7 @@ import { BebidaBuilder } from "./builders/bebida";
 import { LancheBuilder } from "./builders/lanche";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { usePopState } from "@util/hooks/popState";
 
 export const ItemBuilderView = () => {
   const { builder } = useItemBuilder();
@@ -29,19 +30,10 @@ export const ItemBuilderView = () => {
   //         <ButtonSecondary onClick={() => router.back()}>Voltar</ButtonSecondary>
   //       </>
   //     );
-  useEffect(() => {
-    const handlePopState = () => {
-      router.replace("/pedido");
-      return false; // impede a navegação normal
-    };
 
-    router.beforePopState(handlePopState);
-
-    return () => {
-      // importante: volta o comportamento ao padrão quando desmontar
-      router.beforePopState(() => true);
-    };
-  }, [router]);
+  usePopState(router, () => {
+    router.replace("/pedido");
+  });
 
   return (
     <>

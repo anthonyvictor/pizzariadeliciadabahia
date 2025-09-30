@@ -1,9 +1,8 @@
 import TextContainer from "@components/textContainer";
 import { useRouter } from "next/router";
 import { FechadoViewStyle } from "./styles";
-import BottomControls from "@components/pedido/bottomControls";
 import { IConfig, IConfigHorarioFuncionamento } from "tpdb-lib";
-import { useEffect } from "react";
+import { usePopState } from "@util/hooks/popState";
 
 export const FechadoView = ({ configs }: { configs: IConfig[] }) => {
   const router = useRouter();
@@ -11,18 +10,7 @@ export const FechadoView = ({ configs }: { configs: IConfig[] }) => {
   const horario = configs.find((x) => x.chave === "horario_funcionamento")
     ?.valor as IConfigHorarioFuncionamento;
 
-  useEffect(() => {
-    const handlePopState = () => {
-      return false; // impede a navegação normal
-    };
-
-    router.beforePopState(handlePopState);
-
-    return () => {
-      // importante: volta o comportamento ao padrão quando desmontar
-      router.beforePopState(() => true);
-    };
-  }, [router]);
+  usePopState(router);
 
   return (
     <FechadoViewStyle>
