@@ -47,7 +47,7 @@ export const EstoqueInput = ({
     <NumberInput
       id={"estoque"}
       disabled={value == null}
-      value={value}
+      value={value ?? 0}
       setValue={(val) => {
         setValue(val);
       }}
@@ -65,7 +65,7 @@ export const EstoqueInput = ({
             type="checkbox"
             checked={value != null}
             onChange={(e) => {
-              setValue(e.target.checked ? 1 : undefined);
+              setValue(e.target.checked ? 1 : null);
               // setTamanho((prev) => ({
               //   ...prev,
               //   estoque: e.target.checked ? 1 : undefined,

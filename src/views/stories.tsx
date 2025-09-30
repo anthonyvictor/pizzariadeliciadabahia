@@ -19,7 +19,6 @@ export const Stories = () => {
     api
       .get("/pages/stories")
       .then((res) => {
-        console.log(res.data);
         setStories(res.data);
       })
       .catch((err) => {

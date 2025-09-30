@@ -12,6 +12,7 @@ import "react-phone-number-input/style.css";
 
 type IMyInput = {
   className?: HTMLProps<HTMLInputElement>["className"];
+  dataList?: string[];
   disabled?: boolean;
   name: string;
   description?: string;
@@ -67,6 +68,7 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
       tabIndex,
       value,
       checked,
+      dataList,
       min,
       max,
       minLength,
@@ -233,7 +235,19 @@ export const MyInput = forwardRef<HTMLDivElement, IMyInput>(
               }}
             />
           ) : !maxLength || maxLength < 31 ? (
-            <input {...inputProps} />
+            <>
+              <input {...inputProps} />
+              {dataList?.length && (
+                <datalist id={`datalist-${name}`}>
+                  {dataList.map((opt) => (
+                    <option
+                      key={opt.replace(/[^0-9A-Za-z]/gi, "")}
+                      value={opt}
+                    />
+                  ))}
+                </datalist>
+              )}
+            </>
           ) : (
             <textarea {...inputProps} rows={3} />
           )}

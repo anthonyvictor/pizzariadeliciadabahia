@@ -31,13 +31,13 @@ export const Produtos = ({
         </Grid>
       ) : "produtos" in iZero ? (
         <List>
-          {itens.map((prod: ICombo) => (
+          {itens.map((prod: ICombo & { tipo: "combo" }) => (
             <Combo key={prod.id ?? prod.nome} prod={prod} />
           ))}
         </List>
       ) : "maxSabores" in iZero ? (
         <List>
-          {itens.map((prod: IPizzaTamanho) => (
+          {itens.map((prod: IPizzaTamanho & { tipo: "pizza" }) => (
             <Tamanho key={prod.id ?? prod.nome} prod={prod} />
           ))}
         </List>

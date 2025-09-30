@@ -14,6 +14,8 @@ import {
 } from "@util/pizza";
 import { deve_estar, dvEst } from "@models/deveEstar";
 import { obterPedido } from "@routes/pedidos";
+import { toArray } from "@util/array";
+import { bulkUpsert } from "src/infra/mongodb/util";
 
 // Função handler da rota
 export default async function handler(
@@ -35,6 +37,14 @@ export default async function handler(
         deveEstar: deveEstar as any,
       });
     }
+    res.status(200).json(data);
+  } else if (req.method === "POST") {
+    let data;
+    const { tamanhos } = req.body;
+
+    if (!tamanhos) return res.status(400).end();
+
+    data = await upsertTamanhos(toArray(tamanhos));
     res.status(200).json(data);
   } else {
     res.status(405).end(); // Método não permitido
@@ -94,4 +104,9 @@ export const obterTamanhos = async ({
   );
 
   return data as IPizzaTamanho[];
+};
+
+export const upsertTamanhos = async (tamanhos: IPizzaTamanho[]) => {
+  const data = await bulkUpsert(tamanhos, PizzaTamanhosModel);
+  return data;
 };

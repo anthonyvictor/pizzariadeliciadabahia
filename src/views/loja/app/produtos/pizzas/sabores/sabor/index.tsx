@@ -1,11 +1,11 @@
 import TextContainer from "@components/textContainer";
-import { TamanhoViewStyle } from "./styles";
+import { SaborViewStyle } from "./styles";
 import { useEffect, useState } from "react";
-import { IPizzaTamanho } from "tpdb-lib";
+import { IPizzaSabor } from "tpdb-lib";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { Regras } from "src/views/loja/components/regras";
-import { useTamanhos } from "../context";
+import { useSabores } from "../context";
 import z from "zod";
 import Loading from "@components/loading";
 import { NumberInput } from "src/views/loja/components/numberInput";
@@ -20,11 +20,12 @@ import {
 import { api, axiosOk } from "@util/axios";
 import { mergeArraysByKey } from "@util/array";
 import { NoLogError } from "@models/error";
+import { MyInput } from "@components/pedido/myInput";
 
-export const TamanhoView = () => {
-  const { editando, tamanhos, setTamanhos, setEditando } = useTamanhos();
+export const SaborView = () => {
+  const { editando, sabores, setSabores, setEditando } = useSabores();
   const [carregando, setCarregando] = useState(false);
-  const [formData, setFormData] = useState<IPizzaTamanho>({
+  const [formData, setFormData] = useState<IPizzaSabor>({
     ...{
       nome: "",
       imagemUrl: "",
@@ -33,14 +34,13 @@ export const TamanhoView = () => {
       visivel: true,
       somenteEmCombos: false,
       estoque: undefined,
-      fatias: "",
-      maxSabores: "",
-      tamanhoAprox: "",
       condicoes: [],
       excecoes: [],
+      valores: [],
+      categoria: "",
     },
-    ...(tamanhos.find((x) => x.id === editando) ?? {}),
-  } as IPizzaTamanho);
+    ...(sabores.find((x) => x.id === editando) ?? {}),
+  } as IPizzaSabor);
   const router = useRouter();
 
   useEffect(() => {
@@ -79,13 +79,13 @@ export const TamanhoView = () => {
         return;
       }
 
-      const res = await api.post(`/pizzas/tamanhos`, {
-        tamanhos: [formData],
+      const res = await api.post(`/pizzas/sabores`, {
+        sabores: [formData],
       });
 
       if (!axiosOk(res.status) || !res.data)
         throw new NoLogError("Erro ao Salvar");
-      setTamanhos((prev) => mergeArraysByKey(prev, res.data, "id"));
+      setSabores((prev) => mergeArraysByKey(prev, res.data, "id"));
       setEditando(undefined);
     } catch (err) {
       toast.error("Oops, não foi possível salvar!");
@@ -96,8 +96,8 @@ export const TamanhoView = () => {
 
   if (carregando) return <Loading />;
   return (
-    <TamanhoViewStyle>
-      <TextContainer title="Tamanho" />
+    <SaborViewStyle>
+      <TextContainer title="Sabor" />
 
       <EditorForm
         handleClose={() => setEditando(undefined)}
@@ -137,8 +137,16 @@ export const TamanhoView = () => {
             setFormData((prev) => ({ ...prev, descricao: val }))
           }
         />
-
-        <div className="info">
+        <MyInput
+          name="Categoria"
+          type="text"
+          dataList={Array.from(new Set(sabores.map((x) => x.categoria)))}
+          value={formData.categoria}
+          setValue={(val) =>
+            setFormData((prev) => ({ ...prev, categoria: String(val) }))
+          }
+        />
+        {/* <div className="info">
           <NumberInput
             id={"fatias"}
             label={"Fatias"}
@@ -162,17 +170,17 @@ export const TamanhoView = () => {
             }}
           />
           <NumberInput
-            id={"tamanhoAprox"}
-            label={"Tamanho cm"}
-            value={formData.tamanhoAprox}
+            id={"saborAprox"}
+            label={"Sabor cm"}
+            value={formData.saborAprox}
             setValue={(val) => {
               setFormData((prev) => ({
                 ...prev,
-                tamanhoAprox: val,
+                saborAprox: val,
               }));
             }}
           />
-        </div>
+        </div> */}
 
         <Checkers
           disponivel={formData.disponivel}
@@ -188,6 +196,6 @@ export const TamanhoView = () => {
         />
         <Regras condicoes={formData.condicoes} excecoes={formData.excecoes} />
       </EditorForm>
-    </TamanhoViewStyle>
+    </SaborViewStyle>
   );
 };

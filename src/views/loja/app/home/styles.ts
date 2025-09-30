@@ -8,6 +8,8 @@ export const HomeViewStyle = styled(LojaLayout)`
   gap: 20px;
 
   > ul {
+    display: flex;
+    flex-direction: column;
     gap: 20px;
   }
 

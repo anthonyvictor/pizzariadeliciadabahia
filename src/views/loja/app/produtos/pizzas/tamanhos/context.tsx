@@ -27,12 +27,7 @@ export const TamanhosProvider = ({ children }: { children: ReactNode }) => {
     api
       .get("/pizzas/tamanhos", {
         params: {
-          deveEstar: {
-            disponivel: false,
-            visivel: false,
-            comEstoque: false,
-            emCondicoes: false,
-          },
+          deveEstar: {},
         },
       })
       .then((res) => {

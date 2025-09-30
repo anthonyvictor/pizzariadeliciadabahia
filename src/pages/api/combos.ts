@@ -5,7 +5,11 @@ import { CombosModel } from "tpdb-lib";
 import { RespType } from "@util/api";
 import { conectarDB } from "src/infra/mongodb/config";
 import { ObterProduto, ObterProdutos } from "src/infra/dtos";
-import { aplicarValorMinCombo, sortCombos } from "@util/combo";
+import {
+  aplicarValorMinCombo,
+  produtosDoComboDisponiveis,
+  sortCombos,
+} from "@util/combo";
 import { populates } from "tpdb-lib";
 import { analisarRegras } from "@util/regras";
 import { obterPedido } from "./pedidos";
@@ -94,20 +98,28 @@ export const obterCombos = async ({
   const trouxeProdutos = [sabores, bebidas, lanches]
     .filter(Boolean)
     .some((x) => x?.length);
+  const _data = (await ff({
+    m: CombosModel,
+    populates: populates.combos,
+  })) as unknown as ICombo[];
 
   const data = sortCombos(
     deve_estar(
-      (
-        (await ff({
-          m: CombosModel,
-          populates: populates.combos,
-        })) as unknown as ICombo[]
-      )
+      _data
         .map((x) => ({
           ...x,
           emCondicoes: (() => {
             const { v } = analisarRegras({ item: x, pedido, ignorar });
-            return v;
+            const prodsDisp = produtosDoComboDisponiveis(
+              x,
+              tamanhos,
+              sabores,
+              bebidas,
+              lanches
+            );
+
+            // produtoDispPelasRegras(x, cliente, produtosDevemEstar);
+            return v && prodsDisp;
           })(),
         }))
         .map((x) =>

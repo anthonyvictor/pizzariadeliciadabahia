@@ -1,4 +1,11 @@
-import { ICombo, IBebida, ILanche, IPizzaSabor } from "tpdb-lib";
+import {
+  ICombo,
+  IBebida,
+  ILanche,
+  IPizzaSabor,
+  IPizzaTamanho,
+  IProdutoComboPizza,
+} from "tpdb-lib";
 
 export const sortCombos = (combos: ICombo[] | undefined) => {
   if (!combos) return [];
@@ -109,4 +116,92 @@ export const aplicarValorMinCombo = (
   combo.valorMin = combo.produtos.reduce((acc, curr) => acc + curr.valorMin, 0);
 
   return { ...combo, tipo: "combo" };
+};
+
+export const produtosDoComboDisponiveis = (
+  combo: ICombo,
+  tamanhos?: IPizzaTamanho[],
+  sabores?: IPizzaSabor[],
+  bebidas?: IBebida[],
+  lanches?: ILanche[]
+) => {
+  const pizzasDoCombo = combo.produtos
+    .filter((x) => x.tipo === "pizza")
+    .map((x) => x as IProdutoComboPizza); //.tamanho
+
+  for (const prod of combo.produtos) {
+    if (prod.tipo === "pizza") {
+      const saboresDoProd = (
+        prod.sabores?.length
+          ? prod.sabores.map((pi) => sabores.find((x) => x.id === pi.id))
+          : sabores
+      )
+        .filter(Boolean)
+        .filter(
+          (x) => x.disponivel && x.visivel && x.emCondicoes && x.estoque !== 0
+        );
+
+      if (!saboresDoProd.length) return false;
+    } else if (prod.tipo === "bebida") {
+      const min = prod.min ?? 1;
+      const itensDoProduto = (
+        prod.bebidas?.length
+          ? prod.bebidas.map((pi) => bebidas.find((x) => x.id === pi.id))
+          : bebidas
+      )
+        .filter(Boolean)
+        .filter(
+          (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0
+        );
+
+      if (!itensDoProduto.length) return false;
+
+      const estoqueMax = itensDoProduto.reduce(
+        (acc, curr) => acc + (curr.estoque ?? 999999),
+        0
+      );
+
+      if (min > estoqueMax) return false;
+    } else if (prod.tipo === "lanche") {
+      const min = prod.min ?? 1;
+
+      const itensDoProduto = (
+        prod.lanches?.length
+          ? prod.lanches.map((pi) => lanches.find((x) => x.id === pi.id))
+          : lanches
+      )
+        .filter(Boolean)
+        .filter(
+          (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0
+        );
+
+      if (!itensDoProduto.length) return false;
+
+      const estoqueMax = itensDoProduto.reduce(
+        (acc, curr) => acc + (curr.estoque ?? 999999),
+        0
+      );
+      if (min > estoqueMax) return false;
+    }
+  }
+
+  if (pizzasDoCombo.length) {
+    for (const tam of tamanhos) {
+      const tamCombo = pizzasDoCombo
+        .map((x) => x.tamanho)
+        .filter((x) => x.id === tam.id);
+
+      if (
+        tamCombo.length &&
+        (!tam.disponivel ||
+          !tam.visivel ||
+          !tam.emCondicoes ||
+          tam.estoque === 0 ||
+          (tam.estoque ?? 999999999999) < tamCombo.length)
+      )
+        return false;
+    }
+  }
+
+  return true;
 };

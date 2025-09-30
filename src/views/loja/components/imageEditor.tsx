@@ -53,6 +53,7 @@ const ImageEditorStyle = styled.div`
     flex: 1;
     overflow: hidden;
     border-radius: 10px;
+    background-color: #fff;
   }
   .img-buttons {
     display: flex;

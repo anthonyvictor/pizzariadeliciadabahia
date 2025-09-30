@@ -9,6 +9,7 @@ import {
   IPizzaTamanho,
   LanchesModel,
   PizzaExtrasModel,
+  PizzaSaboresModel,
   PizzaTamanhosModel,
 } from "tpdb-lib";
 import { PedidosModel } from "tpdb-lib";
@@ -77,6 +78,7 @@ export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
   const _combosVendidos: { grupoId: string; comboId: string }[] = [];
   const _tamanhos: Vendidos[] = [];
   const _extras: Vendidos[] = [];
+  const _sabores: Vendidos[] = [];
   const _bebidas: Vendidos[] = [];
   const _lanches: Vendidos[] = [];
 
@@ -89,13 +91,21 @@ export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
     }
 
     if (item.tipo === "pizza") {
-      const { tamanho, extras } = item;
+      const { tamanho, extras, sabores } = item;
       (extras ?? []).forEach((e) => {
         const i = _extras.findIndex((x) => x.id === e);
         if (i > -1) {
           _extras[i].qtd += 1;
         } else {
           _extras.push({ id: e, qtd: 1 });
+        }
+      });
+      (sabores ?? []).forEach((e) => {
+        const i = _sabores.findIndex((x) => x.id === e);
+        if (i > -1) {
+          _sabores[i].qtd += 1;
+        } else {
+          _sabores.push({ id: e, qtd: 1 });
         }
       });
 
@@ -184,6 +194,7 @@ export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
       };
 
       await update(_tamanhos, PizzaTamanhosModel);
+      await update(_sabores, PizzaSaboresModel);
       await update(_extras, PizzaExtrasModel);
       await update(_bebidas, BebidasModel);
       await update(_lanches, LanchesModel);
