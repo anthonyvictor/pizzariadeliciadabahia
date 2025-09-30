@@ -3,9 +3,6 @@
 <p align="center">
   <img src="https://i.ibb.co/93rsyR7/home.png" alt="home" width="600" />
 </p>
-![home](https://i.ibb.co/93rsyR7/home.png)
-
-
 
 <div align="center">
     <a href="https://www.pizzariadeliciadabahia.com/">
