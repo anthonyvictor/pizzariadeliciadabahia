@@ -1,14 +1,13 @@
 import TextContainer from "@components/textContainer";
-import { SaborViewStyle } from "./styles";
-import { useEffect, useState } from "react";
-import { IPizzaSabor } from "tpdb-lib";
+import { LancheViewStyle } from "./styles";
+import { useState } from "react";
+import { ILanche } from "tpdb-lib";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { Regras } from "src/views/loja/components/regras";
-import { useSabores } from "../context";
+import { useLanches } from "../context";
 import z from "zod";
 import Loading from "@components/loading";
-import { NumberInput } from "src/views/loja/components/numberInput";
 import { ImageEditor } from "src/views/loja/components/imageEditor";
 import { EditorForm } from "src/views/loja/components/editorForm";
 import {
@@ -20,13 +19,14 @@ import {
 import { api, axiosOk } from "@util/axios";
 import { mergeArraysByKey } from "@util/array";
 import { NoLogError } from "@models/error";
-import { MyInput } from "@components/pedido/myInput";
 import { usePopState } from "@util/hooks/popState";
+import { NumberInput } from "src/views/loja/components/numberInput";
+import { salvar, validar } from "../../../util/func";
 
-export const SaborView = () => {
-  const { editando, sabores, setSabores, setEditando } = useSabores();
+export const LancheView = () => {
+  const { editando, lanches, setLanches, setEditando } = useLanches();
   const [carregando, setCarregando] = useState(false);
-  const [formData, setFormData] = useState<IPizzaSabor>({
+  const [formData, setFormData] = useState<ILanche>({
     ...{
       nome: "",
       imagemUrl: "",
@@ -37,11 +37,10 @@ export const SaborView = () => {
       estoque: undefined,
       condicoes: [],
       excecoes: [],
-      valores: [],
-      categoria: "",
+      valor: 0,
     },
-    ...(sabores.find((x) => x.id === editando) ?? {}),
-  } as IPizzaSabor);
+    ...(lanches.find((x) => x.id === editando) ?? {}),
+  } as ILanche);
   const router = useRouter();
 
   usePopState(router, () => {
@@ -57,38 +56,28 @@ export const SaborView = () => {
         (val) => val == null || !isNaN(Number(val)),
         "Estoque precisa ser um número se existir"
       ),
-    fatias: z.number(),
+    valor: z.number(),
   });
 
   const handleSubmit = async () => {
-    try {
-      setCarregando(true);
-      const resultado = schema.safeParse(formData);
+    setCarregando(true);
 
-      if (!resultado.success) {
-        toast.error(`${resultado.error.issues[0].message}`);
-        return;
-      }
+    if (!validar(schema, formData)) return;
 
-      const res = await api.post(`/pizzas/sabores`, {
-        sabores: [formData],
-      });
+    const data = await salvar("/lanches", "lanches", [formData]);
 
-      if (!axiosOk(res.status) || !res.data)
-        throw new NoLogError("Erro ao Salvar");
-      setSabores((prev) => mergeArraysByKey(prev, res.data, "id"));
+    if (data) {
+      setLanches((prev) => mergeArraysByKey(prev, data, "id"));
       setEditando(undefined);
-    } catch (err) {
-      toast.error("Oops, não foi possível salvar!");
-    } finally {
-      setCarregando(false);
     }
+
+    setCarregando(false);
   };
 
   if (carregando) return <Loading />;
   return (
-    <SaborViewStyle>
-      <TextContainer title="Sabor" />
+    <LancheViewStyle>
+      <TextContainer title="Lanche" />
 
       <EditorForm
         handleClose={() => setEditando(undefined)}
@@ -97,6 +86,7 @@ export const SaborView = () => {
         <div className="img-nome-descricao-section">
           <ImageEditor
             imagemUrl={formData.imagemUrl}
+            objectFit="cover"
             setImagemUrl={(url) =>
               setFormData((prev) => ({ ...prev, imagemUrl: url }))
             }
@@ -128,15 +118,15 @@ export const SaborView = () => {
             setFormData((prev) => ({ ...prev, descricao: val }))
           }
         />
-        <MyInput
+        {/* <MyInput
           name="Categoria"
           type="text"
-          dataList={Array.from(new Set(sabores.map((x) => x.categoria)))}
+          dataList={Array.from(new Set(lanches.map((x) => x.categoria)))}
           value={formData.categoria}
           setValue={(val) =>
             setFormData((prev) => ({ ...prev, categoria: String(val) }))
           }
-        />
+        /> */}
         {/* <div className="info">
           <NumberInput
             id={"fatias"}
@@ -150,24 +140,24 @@ export const SaborView = () => {
             }}
           />
           <NumberInput
-            id={"maxSabores"}
-            label={"Sabores"}
-            value={formData.maxSabores}
+            id={"maxLanches"}
+            label={"Lanches"}
+            value={formData.maxLanches}
             setValue={(val) => {
               setFormData((prev) => ({
                 ...prev,
-                maxSabores: val,
+                maxLanches: val,
               }));
             }}
           />
           <NumberInput
-            id={"saborAprox"}
-            label={"Sabor cm"}
-            value={formData.saborAprox}
+            id={"lancheAprox"}
+            label={"Lanche cm"}
+            value={formData.lancheAprox}
             setValue={(val) => {
               setFormData((prev) => ({
                 ...prev,
-                saborAprox: val,
+                lancheAprox: val,
               }));
             }}
           />
@@ -185,8 +175,14 @@ export const SaborView = () => {
             setFormData((prev) => ({ ...prev, somenteEmCombos: val }))
           }
         />
+        <NumberInput
+          id="valor"
+          label="Valor"
+          value={formData.valor}
+          setValue={(valor) => setFormData((prev) => ({ ...prev, valor }))}
+        />
         <Regras condicoes={formData.condicoes} excecoes={formData.excecoes} />
       </EditorForm>
-    </SaborViewStyle>
+    </LancheViewStyle>
   );
 };

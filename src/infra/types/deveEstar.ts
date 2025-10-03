@@ -8,12 +8,19 @@ export type IDeveEstar = {
 export const dvEst: {
   tudo: IDeveEstar;
   visivel: IDeveEstar;
+  nada: IDeveEstar;
 } = {
   tudo: {
     visivel: true,
     disponivel: true,
     emCondicoes: true,
     comEstoque: true,
+  },
+  nada: {
+    visivel: false,
+    disponivel: false,
+    emCondicoes: false,
+    comEstoque: false,
   },
   visivel: {
     visivel: true,
@@ -28,9 +35,7 @@ export const deve_estar = (arr: any[], deveEstar: IDeveEstar) => {
     deveEstar
       ? (deveEstar.visivel ? x.visivel : true) &&
         (deveEstar.disponivel ? x.disponivel : true) &&
-        (deveEstar.comEstoque
-          ? x.estoque === undefined || x.estoque > 0
-          : true) &&
+        (deveEstar.comEstoque ? x.estoque !== 0 : true) &&
         (deveEstar.emCondicoes ? x.emCondicoes : true)
       : true
   );

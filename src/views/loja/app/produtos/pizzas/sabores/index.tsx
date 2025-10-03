@@ -9,6 +9,9 @@ import { useState } from "react";
 import { Search } from "src/views/loja/components/listas/search";
 import { fuzzySearch } from "@util/array";
 import { formatCurrency } from "@util/format";
+import { SaborItem } from "./item";
+import { Lista } from "../../lista";
+import { Footer } from "src/views/loja/components/listas/footer";
 
 export const SaboresView = () => {
   const { sabores, setEditando } = useSabores();
@@ -111,52 +114,13 @@ export const SaboresView = () => {
           </li>
         ))}
       </ul>
-      <ul className="sabores no-scroll">
-        {filtrados.map((item) => {
-          const valores = item.valores.map((x) => x.valor);
-          const min = Math.min(...valores);
-          const max = Math.max(...valores);
-          return (
-            <li
-              key={item.id}
-              className="sabor"
-              onClick={() => setEditando(item.id)}
-            >
-              <aside className="esq">
-                <Imagem url={item.imagemUrl} />
-              </aside>
-              <aside className="dir">
-                <h5 className="nome">
-                  <span>{item.nome}</span>
-                  <span style={{ marginRight: "5px" }}>•</span>
-                  <span>{item.categoria ?? "s/Categ"}</span>
-                </h5>
+      <Lista name="sabores">
+        {filtrados.map((item) => (
+          <SaborItem key={item.id} item={item} />
+        ))}
+      </Lista>
+      <Footer itens={sabores} filtrados={filtrados} />
 
-                {item.descricao && (
-                  <small style={{ fontSize: ".7rem" }} className="descricao">
-                    {item.descricao}
-                  </small>
-                )}
-
-                <Checkers
-                  item={item}
-                  infoExtra={[
-                    `💲${formatCurrency(min).replace(
-                      ",00",
-                      ""
-                    )} - ${formatCurrency(max).replace(",00", "")}`,
-                  ]}
-                />
-              </aside>
-            </li>
-          );
-        })}
-      </ul>
-      <div className="bottom-info">
-        <h4 className="len">
-          {filtrados.length} / {sabores.length}
-        </h4>
-      </div>
       <FloatButton
         onClick={() => {
           setEditando("");

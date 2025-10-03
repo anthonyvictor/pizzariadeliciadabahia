@@ -51,10 +51,7 @@ export const HomeView = () => {
 
   return (
     <HomeViewStyle>
-      <TextContainer
-        title="Sistema Gestor PDB"
-        subtitle="Escolha uma das opções"
-      />
+      <TextContainer title="Sistema Gestor PDB" />
       <ul>
         {buttons.map((bt) => (
           <MyButton key={bt.url} {...bt} />

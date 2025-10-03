@@ -16,7 +16,12 @@ export const Checker = ({
   return (
     <CheckerStyle
       checked={checked}
-      onClick={() => {
+      style={{
+        cursor: !disabled ? "pointer" : undefined,
+      }}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (!disabled) check?.();
       }}
     >

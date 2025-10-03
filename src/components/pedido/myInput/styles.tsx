@@ -9,6 +9,7 @@ export const MyInputStyle = styled.div`
 
   .input-label {
     display: flex;
+    flex-direction: column;
     padding: 5px 0;
     gap: 5px;
     min-width: 0;

@@ -57,7 +57,7 @@ export const FooterStyle = styled.footer`
     height: 7px;
   }
   .second-line {
-    background-color: blue;
+    /* background-color: blue; */
     height: 7px;
   }
 

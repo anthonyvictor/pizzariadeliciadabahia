@@ -86,6 +86,38 @@ const Cardapio: NextPage = ({
 
 export default Cardapio;
 
+// export const getStaticProps: GetStaticProps = async () => {
+//   try {
+//     const sabores = await obterSabores({
+//       _pedido: null,
+//       deveEstar: dvEst.visivel,
+//     });
+
+//     const tamanhos = await obterTamanhos({
+//       _pedido: null,
+//       sabores,
+//       deveEstar: dvEst.visivel,
+//     });
+
+//     return {
+//       props: {
+//         sabores,
+//         tamanhos,
+//       },
+//       revalidate: 10,
+//     };
+//   } catch (e) {
+//     console.error(e);
+//     return {
+//       props: {
+//         sabores: [],
+//         tamanhos: [],
+//       },
+//       revalidate: 10,
+//     };
+//   }
+// };
+
 export const getStaticProps: GetStaticProps = async () => {
   try {
     const sabores = await obterSabores({
@@ -99,10 +131,14 @@ export const getStaticProps: GetStaticProps = async () => {
       deveEstar: dvEst.visivel,
     });
 
+    // 🔥 Torna tudo serializável (converte Date → string, BigInt → number, etc)
+    const saboresSerializaveis = JSON.parse(JSON.stringify(sabores));
+    const tamanhosSerializaveis = JSON.parse(JSON.stringify(tamanhos));
+
     return {
       props: {
-        sabores,
-        tamanhos,
+        sabores: saboresSerializaveis,
+        tamanhos: tamanhosSerializaveis,
       },
       revalidate: 10,
     };

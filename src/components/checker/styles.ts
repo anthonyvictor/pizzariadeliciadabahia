@@ -15,10 +15,12 @@ export const CheckerStyle = styled.div.attrs(
     border-radius: 50%;
     border: 2px solid ${colors.elements};
     display: flex;
-    padding: 2px;
+    /* padding: 2px; */
+
     span {
       border-radius: 50%;
       flex: 1;
+      transform: scale(75%);
     }
   }
 

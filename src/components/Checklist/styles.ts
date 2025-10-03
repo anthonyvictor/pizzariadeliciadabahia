@@ -143,6 +143,10 @@ export const ChecklistStyle = styled.section.attrs(
           transform: scale(101%);
         }
       }
+
+      .number-input {
+        flex: 0;
+      }
     }
   }
   .show-more {

@@ -9,7 +9,7 @@ import {
 } from "react";
 import { toast } from "react-toastify";
 import { IPizzaTamanho } from "tpdb-lib";
-import { TamanhoView } from "./tamanho";
+import { TamanhoView } from "./editor";
 
 type ITamanhosContext = {
   tamanhos: IPizzaTamanho[];
@@ -27,7 +27,7 @@ export const TamanhosProvider = ({ children }: { children: ReactNode }) => {
     api
       .get("/pizzas/tamanhos", {
         params: {
-          deveEstar: {},
+          deveEstar: 0,
         },
       })
       .then((res) => {

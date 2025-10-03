@@ -9,6 +9,8 @@ import { analisarRegras } from "@util/regras";
 import { ObterProduto, ObterProdutos } from "src/infra/dtos";
 import { obterPedido } from "../pedidos";
 import { deve_estar, dvEst } from "@models/deveEstar";
+import { bulkUpsert } from "src/infra/mongodb/util";
+import { sortDisp, toArray } from "@util/array";
 
 // Função handler da rota
 export default async function handler(
@@ -29,6 +31,14 @@ export default async function handler(
         deveEstar: req.query.deveEstar as any,
       });
     }
+    res.status(200).json(data);
+  } else if (req.method === "POST") {
+    let data;
+    const { sabores } = req.body;
+
+    if (!sabores) return res.status(400).end();
+
+    data = await upsertSabores(toArray(sabores));
     res.status(200).json(data);
   } else {
     res.status(405).end(); // Método não permitido
@@ -64,20 +74,27 @@ export const obterSabores = async ({
   const pedido = await obterPedido(_pedido);
 
   const data = sortSabores(
-    aplicarValorMedSabores(
-      deve_estar(
-        ((await ff({ m: PizzaSaboresModel })) as unknown as IPizzaSabor[]).map(
-          (x) => ({
+    sortDisp(
+      aplicarValorMedSabores(
+        deve_estar(
+          (
+            (await ff({ m: PizzaSaboresModel })) as unknown as IPizzaSabor[]
+          ).map((x) => ({
             ...x,
             emCondicoes: (() => {
               const { v } = analisarRegras({ item: x, pedido, ignorar });
               return v;
             })(),
-          })
-        ),
-        deveEstar
+          })),
+          deveEstar
+        )
       )
     )
   );
+  return data;
+};
+
+export const upsertSabores = async (sabores: IPizzaSabor[]) => {
+  const data = await bulkUpsert(sabores, PizzaSaboresModel);
   return data;
 };

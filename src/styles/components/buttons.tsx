@@ -26,7 +26,8 @@ export const Button = styled.button.attrs(
     cursor: pointer;
     ${hover} {
       &:hover {
-        transform: scale(110%);
+        /* transform: scale(110%); */
+        opacity: 0.7;
       }
     }
   }

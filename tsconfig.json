@@ -16,7 +16,8 @@
     "allowSyntheticDefaultImports": true,
     "types": [
       "node",
-      "@types/styled-components"
+      "@types/styled-components",
+      "jest"
     ],
     "module": "esnext",
     "resolveJsonModule": true,

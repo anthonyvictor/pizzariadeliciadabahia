@@ -22,7 +22,6 @@ export const NumberInput = ({
     <MyInputStyle className={id} style={{ border: "none" }}>
       <div className="input-label" style={{ flexDirection: "column" }}>
         {label && (typeof label === "string" ? <label>{label}</label> : label)}
-
         {/* <input
           id={id}
           name={id}

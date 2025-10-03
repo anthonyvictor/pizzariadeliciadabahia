@@ -14,7 +14,7 @@ import {
 } from "@util/pizza";
 import { deve_estar, dvEst } from "@models/deveEstar";
 import { obterPedido } from "@routes/pedidos";
-import { toArray } from "@util/array";
+import { sortDisp, toArray } from "@util/array";
 import { bulkUpsert } from "src/infra/mongodb/util";
 
 // Função handler da rota
@@ -86,20 +86,22 @@ export const obterTamanhos = async ({
   const pedido = await obterPedido(_pedido);
 
   const data = sortTamanhos(
-    aplicarValorMinTamanhos(
-      deve_estar(
-        (
-          (await ff({ m: PizzaTamanhosModel })) as unknown as IPizzaTamanho[]
-        ).map((x) => ({
-          ...x,
-          emCondicoes: (() => {
-            const { v } = analisarRegras({ item: x, pedido, ignorar });
-            return v;
-          })(),
-        })),
-        deveEstar
-      ),
-      sabores
+    sortDisp(
+      aplicarValorMinTamanhos(
+        deve_estar(
+          (
+            (await ff({ m: PizzaTamanhosModel })) as unknown as IPizzaTamanho[]
+          ).map((x) => ({
+            ...x,
+            emCondicoes: (() => {
+              const { v } = analisarRegras({ item: x, pedido, ignorar });
+              return v;
+            })(),
+          })),
+          deveEstar
+        ),
+        sabores
+      )
     )
   );
 

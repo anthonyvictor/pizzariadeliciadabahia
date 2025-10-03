@@ -45,7 +45,7 @@ export const ProdutosView = () => {
 
   return (
     <ProdutosViewStyle>
-      <TextContainer title="Produtos" subtitle="Escolha uma das opções" />
+      <TextContainer title="Produtos" />
       {buttons.map((bt) => (
         <MyButton key={bt.url} {...bt} />
       ))}

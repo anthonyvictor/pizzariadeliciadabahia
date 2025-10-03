@@ -59,7 +59,7 @@ export const Item = ({ item }: { item: IChecklistItem }) => {
             <h5>Indisp.</h5>
           ) : (
             <NumberInput
-              // style={{ backgroundColor: "#00000050", borderRadius: 5 }}
+              style={{ flex: 0 }}
               value={value.filter((x) => x === item.id)?.length ?? 0}
               setValue={(novoValor) => {
                 const prev = [...value].filter((x) => x !== item.id);

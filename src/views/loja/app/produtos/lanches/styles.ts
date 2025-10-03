@@ -1,4 +1,36 @@
+import { LayoutStyle } from "@components/layout/styles";
+import { colors } from "@styles/colors";
 import styled from "styled-components";
-import { LojaLayout } from "../../../layout";
+import { Produto } from "../styles";
+import { IProdutoBase } from "tpdb-lib";
 
-export const ProdutosViewStyle = styled(LojaLayout)``;
+export const LanchesViewStyle = styled(LayoutStyle)`
+  .categorias {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 5px;
+    li {
+      display: flex;
+      white-space: nowrap;
+      padding: 10px;
+      color: #fff;
+      gap: 10px;
+      border-radius: 5px;
+      background-color: ${colors.backgroundDark}80;
+      border: 2px solid ${colors.backgroundDark}80;
+
+      &.active {
+        color: #000;
+        background-color: ${colors.elements};
+        border: 2px solid ${colors.elements};
+      }
+      &.inactive {
+        background-color: #000;
+        border: 2px solid #000;
+        /* border: 2px solid #000; */
+      }
+    }
+  }
+`;
+export const LancheItemStyle = styled(Produto)``;

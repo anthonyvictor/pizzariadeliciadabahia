@@ -6,12 +6,15 @@ import {
   IPizzaSabor,
   IPizzaTamanho,
 } from "tpdb-lib";
+import { sortDisp } from "./array";
 
 export const sortTamanhos = (tamanhos: IPizzaTamanho[]) => {
-  const r = tamanhos.sort((a, b) =>
-    a.valorMin != b.valorMin
-      ? (b.valorMin ?? 0) - (a.valorMin ?? 0)
-      : b.tamanhoAprox - a.tamanhoAprox
+  const r = sortDisp(
+    tamanhos.sort((a, b) =>
+      a.valorMin != b.valorMin
+        ? (b.valorMin ?? 0) - (a.valorMin ?? 0)
+        : b.tamanhoAprox - a.tamanhoAprox
+    )
   );
 
   return r as IPizzaTamanho[];
@@ -122,10 +125,12 @@ export const sortExtras = (extras: IPizzaExtra[] | undefined) => {
   return r as IPizzaExtra[];
 };
 
-export const tamanhoDescricao = (t: IPizzaTamanho) => {
-  return `${t.fatias} fatia${t.fatias > 1 ? "s" : ""}, ${t.maxSabores} sabor${
-    t.maxSabores > 1 ? "es" : ""
-  }, ${t.tamanhoAprox}cm`;
+export const tamanhoDescricao = (t: IPizzaTamanho, abrev?: boolean) => {
+  return abrev
+    ? `${t.fatias}fat, ${t.maxSabores}sab, ${t.tamanhoAprox}cm`
+    : `${t.fatias} fatia${t.fatias > 1 ? "s" : ""}, ${t.maxSabores} sabor${
+        t.maxSabores > 1 ? "es" : ""
+      }, ${t.tamanhoAprox}cm`;
 };
 
 export const abrevTamanho = (prod: string) => {

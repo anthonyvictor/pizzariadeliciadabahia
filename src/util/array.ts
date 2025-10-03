@@ -32,7 +32,9 @@ export function sortDisp<T>(arr: T[]) {
   const disp = (x: T) =>
     x["disponivel"] && x["visivel"] && x["emCondicoes"] && x["estoque"] !== 0
       ? 1
-      : 0;
+      : x["visivel"]
+      ? 0
+      : -1;
 
   return [...arr].sort((a, b) => {
     return disp(b) - disp(a); // os "true" vão para o topo

@@ -10,6 +10,13 @@ export const ProdutosStyle = styled.div`
   & > header {
     color: #fff;
   }
+
+  .mostrar-indisponiveis {
+    background-color: transparent;
+    border: none;
+    color: ${colors.elements};
+    padding: 5px 0;
+  }
 `;
 
 export const ProdutoStyle = styled.li.attrs(
@@ -60,19 +67,19 @@ export const ProdutoStyle = styled.li.attrs(
     `}
 `;
 
-export const Grid = styled.div`
+export const Grid = styled.div.attrs((props: { cols: number }) => props)`
   display: grid;
   flex-wrap: wrap;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(${(props) => props.cols ?? 4}, 1fr);
   list-style: none;
   min-height: min-content;
   /* padding: 0 15px; */
-  gap: 2px;
+  gap: 5px;
 `;
 
 export const List = styled.div`
   display: flex;
   flex-direction: column;
   list-style: none;
-  gap: 1px;
+  gap: 5px;
 `;

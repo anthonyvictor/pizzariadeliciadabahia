@@ -37,7 +37,7 @@ export const Tamanho = ({
       </aside>
       <aside className="conteudo">
         <h5>Pizza {capitalize(prod.nome.toUpperCase())}</h5>
-        <p style={{ fontSize: "0.7rem" }}>{tamanhoDescricao(prod)}</p>
+        <p style={{ fontSize: "0.7rem" }}>{tamanhoDescricao(prod, true)}</p>
         <h6>À partir de {formatCurrency(prod.valorMin)}</h6>
       </aside>
       <Indisp prod={prod} />

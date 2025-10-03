@@ -1,8 +1,10 @@
 import { colors } from "@styles/colors";
+import { hover } from "@styles/mediaQueries";
 import { HTMLProps, useEffect, useState } from "react";
-import styled from "styled-components";
+import { toast } from "react-toastify";
+import styled, { css } from "styled-components";
 
-interface INumberInput {
+export interface INumberInput {
   value: number;
   setValue: (newValue: number) => void;
   max?: number;
@@ -10,26 +12,36 @@ interface INumberInput {
   decimalPlaces?: number;
   beforeUp?: (newValue: number) => boolean;
   beforeDown?: (newValue: number) => boolean;
+  onChange?: () => void;
   forceMin?: boolean;
   editable?: boolean;
   style?: HTMLProps<HTMLDivElement>["style"];
   disabled?: boolean;
   allowVoid?: boolean;
+  display?: "horizontal" | "vertical";
+  className?: string;
+  showZero?: boolean;
+  alwaysShowMinus?: boolean;
 }
 
 export const NumberInput = ({
   value: numValue,
   setValue: setNumValue,
+  className = "",
   disabled = false,
   decimalPlaces = 0,
+  showZero = false,
   editable = false,
   max = 10000000000000,
   min = 0,
   beforeUp = () => true,
   beforeDown = () => true,
+  onChange = () => {},
   forceMin = false,
   allowVoid = true,
   style,
+  display = "horizontal",
+  alwaysShowMinus = false,
 }: INumberInput) => {
   const [strValue, setStrValue] = useState(numValue.toString());
 
@@ -55,48 +67,52 @@ export const NumberInput = ({
 
   useEffect(() => {
     (() => {
-      const novoNum = numValue + 1;
+      const novoNum = (numValue ?? 0) + 1;
       setUpDisabled(!canUp(novoNum));
     })();
     (() => {
-      const novoNum = numValue - 1;
+      const novoNum = (numValue ?? 0) - 1;
       setDownDisabled(!canDown(novoNum));
     })();
   }, [numValue]);
 
   return (
-    <NumberInputStyle style={style}>
+    <NumberInputStyle style={style} display={display} className={className}>
       <button
         disabled={disabled || downDisabled}
+        tabIndex={editable ? -1 : undefined}
+        type={"button"}
         style={{
-          visibility: editable
-            ? "initial"
-            : numValue > 0
-            ? "initial"
-            : "hidden",
+          visibility:
+            editable || alwaysShowMinus
+              ? "initial"
+              : (numValue ?? 0) > min
+              ? "initial"
+              : "hidden",
         }}
         onClick={(e) => {
           e.stopPropagation();
 
           const novoNum =
-            numValue - 1 >= (forceMin ? min : 0)
-              ? numValue - 1
+            (numValue ?? 0) - 1 >= (forceMin ? min : 0)
+              ? (numValue ?? 0) - 1
               : forceMin
               ? min
               : 0;
           if (!canDown(novoNum)) return;
           setNumValue(novoNum);
           setStrValue(f(novoNum));
+          onChange();
         }}
       >
         -
       </button>
       <input
-        type={"text"}
+        type={"number"}
         style={{
           visibility: editable
             ? "initial"
-            : numValue > 0
+            : numValue > 0 || showZero
             ? "initial"
             : "hidden",
         }}
@@ -132,9 +148,16 @@ export const NumberInput = ({
         }}
         value={strValue}
         onChange={(e) => {
-          const novoNum = Number(
-            e.target.value.replace(".", "").replace(",", ".")
-          );
+          let str = e.target.value
+            // .replace(".", ",")
+            .replace(",", ".")
+            .replace(/[^0-9\.]/g, "");
+
+          if (str.split("").filter((x) => x === ".").length > 1) {
+            str = str.replace(/\./, "");
+          }
+
+          const novoNum = Number(str);
           if (
             (novoNum > numValue && !canUp(novoNum)) ||
             (novoNum < numValue && !canDown(novoNum))
@@ -143,6 +166,7 @@ export const NumberInput = ({
           } else {
             setStrValue(e.target.value);
             setNumValue(novoNum);
+            onChange();
           }
         }}
         onBlur={(e) => {
@@ -158,18 +182,20 @@ export const NumberInput = ({
         //   setStrValue(f(numValue)); // força ajuste final
         // }}
       />
-
       <button
-        style={{ color: colors.elements }}
+        type={"button"}
+        tabIndex={editable ? -1 : undefined}
         disabled={disabled || upDisabled}
         onClick={(e) => {
           e.stopPropagation();
 
-          const novoNum = numValue + 1 <= max ? numValue + 1 : numValue;
+          const novoNum =
+            (numValue ?? 0) + 1 <= max ? (numValue ?? 0) + 1 : numValue ?? 0;
 
           if (!canUp(novoNum)) return;
           setNumValue(novoNum);
           setStrValue(f(novoNum));
+          onChange();
         }}
       >
         +
@@ -178,12 +204,16 @@ export const NumberInput = ({
   );
 };
 
-const NumberInputStyle = styled.div`
+export const NumberInputStyle = styled.div.attrs(
+  (props: { display: "horizontal" | "vertical" }) => props
+)`
   display: grid;
   grid-template-columns: 30px 1fr 30px;
   align-items: center;
+  border-radius: 5px;
+  overflow: hidden;
   min-width: 90px;
-  flex: 0;
+
   input {
     font-size: 1rem;
     border: none;
@@ -214,5 +244,35 @@ const NumberInputStyle = styled.div`
     &:disabled {
       opacity: 0.5;
     }
+
+    &:nth-of-type(2) {
+      color: ${colors.elements};
+    }
   }
+
+  ${(props) =>
+    props.display === "vertical" &&
+    css`
+      display: flex;
+      flex-direction: column-reverse;
+      min-width: 40px;
+      background-color: ${colors.backgroundDark};
+      input {
+        width: 40px;
+        font-size: 0.8rem;
+        padding: 2px;
+      }
+
+      button {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 6px 0;
+        cursor: pointer;
+        background-color: #00000010;
+        ${hover} {
+          &:hover {
+          }
+        }
+      }
+    `}
 `;

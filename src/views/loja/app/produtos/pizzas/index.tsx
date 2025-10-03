@@ -63,7 +63,7 @@ export const PizzasView = () => {
 
   return (
     <PizzasViewStyle>
-      <TextContainer title="Pizzas" subtitle="Escolha uma das opções" />
+      <TextContainer title="Pizzas" />
       {buttons.map((bt) => (
         <MyButton key={bt.url} {...bt} />
       ))}

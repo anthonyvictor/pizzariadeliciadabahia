@@ -9,6 +9,9 @@ import { analisarRegras } from "@util/regras";
 import { ObterProduto, ObterProdutos } from "src/infra/dtos";
 import { obterPedido } from "./pedidos";
 import { deve_estar, dvEst } from "@models/deveEstar";
+import { bulkUpsert } from "src/infra/mongodb/util";
+import { sortDisp, toArray } from "@util/array";
+import qs from "qs";
 
 // Função handler da rota
 export default async function handler(
@@ -17,18 +20,27 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     let data;
-    if (req.query.id) {
+    const query = qs.parse(req.query);
+    if (query.id) {
       data = await obterLanche({
-        id: req.query.id as string,
-        _pedido: req.query.pedidoId as any,
-        deveEstar: req.query.deveEstar as any,
+        id: query.id as string,
+        _pedido: query.pedidoId as any,
+        deveEstar: query.deveEstar as any,
       });
     } else {
       data = await obterLanches({
-        _pedido: req.query.pedidoId as any,
-        deveEstar: req.query.deveEstar as any,
+        _pedido: query.pedidoId as any,
+        deveEstar: query.deveEstar as any,
       });
     }
+    res.status(200).json(data);
+  } else if (req.method === "POST") {
+    let data;
+    const { lanches } = req.body;
+
+    if (!lanches) return res.status(400).end();
+
+    data = await upsertLanches(toArray(lanches));
     res.status(200).json(data);
   } else {
     res.status(405).end(); // Método não permitido
@@ -61,16 +73,23 @@ export const obterLanches = async ({
   const pedido = await obterPedido(_pedido);
 
   const data = sortLanches(
-    deve_estar(
-      ((await ff({ m: LanchesModel })) as unknown as ILanche[]).map((x) => ({
-        ...x,
-        emCondicoes: (() => {
-          const { v } = analisarRegras({ item: x, pedido, ignorar });
-          return v;
-        })(),
-      })),
-      deveEstar
+    sortDisp(
+      deve_estar(
+        ((await ff({ m: LanchesModel })) as unknown as ILanche[]).map((x) => ({
+          ...x,
+          emCondicoes: (() => {
+            const { v } = analisarRegras({ item: x, pedido, ignorar });
+            return v;
+          })(),
+        })),
+        deveEstar
+      )
     )
   );
+  return data;
+};
+
+export const upsertLanches = async (lanches: ILanche[]) => {
+  const data = await bulkUpsert(lanches, LanchesModel);
   return data;
 };

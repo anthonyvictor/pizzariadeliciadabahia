@@ -151,6 +151,7 @@ export const ItemBuilderFooter = () => {
   return (
     <ItemBuilderFooterStyle>
       <NumberInput
+        style={{ flex: 0 }}
         value={qtd}
         setValue={setQtd}
         min={1}
@@ -164,6 +165,7 @@ export const ItemBuilderFooter = () => {
             : 1) ?? 5
         }
         forceMin={true}
+        alwaysShowMinus={true}
       />
       <button
         className="avancar"

@@ -18,7 +18,7 @@ export const EditorForm = ({
         handleSubmit();
       }}
     >
-      <main className="no-scroll">{children}</main>
+      <main className="frm no-scroll">{children}</main>
       <EditorBottom fechar={handleClose} />
     </Style>
   );
@@ -29,7 +29,7 @@ const Style = styled.form`
   display: flex;
   flex-direction: column;
   min-height: 0;
-  main {
+  .frm {
     padding: 10px 0;
     flex: 1;
     display: flex;
