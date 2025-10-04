@@ -128,6 +128,8 @@ export const NumberInput = ({
             "ArrowUp",
             "ArrowDown",
             "Enter",
+            ".",
+            ",",
           ];
 
           // se não for número e não estiver na lista de permitidos → bloqueia
