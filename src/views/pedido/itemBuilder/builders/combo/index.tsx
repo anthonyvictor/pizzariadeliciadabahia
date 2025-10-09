@@ -5,6 +5,7 @@ import { ComboBuilderStyle } from "./styles";
 import React from "react";
 import { OutroBuilder } from "../outro";
 import { OutrosBuilder } from "../outros";
+import { useItemBuilder } from "../../context";
 export const ComboBuilder = ({
   builder,
   nextEl,
@@ -12,11 +13,20 @@ export const ComboBuilder = ({
   builder: IITemBuilderCombo;
   nextEl: string;
 }) => {
+  const { itensFinais } = useItemBuilder();
   return (
     <ComboBuilderStyle className={`builder-${builder.id}`}>
       {builder.combo.produtos.map((prod: IProdutoCombo, i) => {
         const _nextBuilder = builder.combo.produtos[i + 1]?.id;
         const nextBuilder = _nextBuilder ? `builder-${_nextBuilder}` : nextEl;
+        const number =
+          builder.combo.produtos.filter((x) => x.tipo === "pizza").length > 1
+            ? builder.combo.produtos
+                .filter((x) => x.tipo === "pizza")
+                .findIndex((x) => {
+                  return x.id === prod.id;
+                }) + 1
+            : 0;
         return (
           <React.Fragment key={prod.id}>
             {prod.tipo === "pizza" ? (
@@ -37,16 +47,7 @@ export const ComboBuilder = ({
                   tipo: "pizza",
                 }}
                 nextEl={nextBuilder}
-                pizzaNumber={
-                  builder.combo.produtos.filter((x) => x.tipo === "pizza")
-                    .length > 1
-                    ? builder.combo.produtos
-                        .filter((x) => x.tipo === "pizza")
-                        .findIndex((x) => {
-                          return x.id === prod.id;
-                        }) + 1
-                    : 0
-                }
+                pizzaNumber={number}
               />
             ) : (
               (() => {

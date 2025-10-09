@@ -14,6 +14,12 @@ import { populates } from "tpdb-lib";
 import { analisarRegras } from "@util/regras";
 import { obterPedido } from "./pedidos";
 import { deve_estar, dvEst } from "@models/deveEstar";
+import { obterTamanhos } from "./pizzas/tamanhos";
+import { obterBebidas } from "./bebidas";
+import { obterLanches } from "./lanches";
+import { obterSabores } from "./pizzas/sabores";
+import { bulkUpsert } from "src/infra/mongodb/util";
+import { toArray } from "@util/array";
 
 // Função handler da rota
 export default async function handler(
@@ -34,6 +40,14 @@ export default async function handler(
         deveEstar: req.query.deveEstar as any,
       });
     }
+    res.status(200).json(data);
+  } else if (req.method === "POST") {
+    let data;
+    const { combos } = req.body;
+
+    if (!combos) return res.status(400).end();
+
+    data = await upsertCombos(toArray(combos));
     res.status(200).json(data);
   } else {
     res.status(405).end(); // Método não permitido
@@ -94,6 +108,11 @@ export const obterCombos = async ({
   await conectarDB();
 
   const pedido = await obterPedido(_pedido);
+
+  if (!tamanhos) tamanhos = await obterTamanhos({ _pedido: pedido });
+  if (!sabores) sabores = await obterSabores({ _pedido: pedido });
+  if (!bebidas) bebidas = await obterBebidas({ _pedido: pedido });
+  if (!lanches) lanches = await obterLanches({ _pedido: pedido });
 
   const trouxeProdutos = [sabores, bebidas, lanches]
     .filter(Boolean)
@@ -198,5 +217,10 @@ export const obterCombos = async ({
 
     return { ...combo, estoque };
   });
+  return data;
+};
+
+export const upsertCombos = async (combos: ICombo[]) => {
+  const data = await bulkUpsert(combos, CombosModel);
   return data;
 };

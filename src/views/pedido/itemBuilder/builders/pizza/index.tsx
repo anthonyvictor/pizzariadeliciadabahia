@@ -22,12 +22,14 @@ export const PizzaBuilder = ({
   isCombo = false,
   nextEl,
   pizzaNumber = 0,
+  collapsed = false,
 }: {
   currentItem?: IPizzaPedido;
   builder: IItemBuilderPizza;
   nextEl: string;
   pizzaNumber?: number;
   isCombo?: boolean;
+  collapsed?: boolean;
 }) => {
   const [pizza, setPizza] = useState<IPizzaPedido>({
     tamanho: currentItem?.tamanho ?? builder.tamanho,
@@ -71,6 +73,7 @@ export const PizzaBuilder = ({
     const valorPonto = ponto?.valor ?? 0;
     const valorExtras = extras.reduce((acc, curr) => acc + curr.valor, 0);
     // const subTotal = valorSabores + valorBorda + valorExtras;
+
     if (valorSabores > 0 || valorBorda > 0)
       (acoes ?? []).forEach((acao) => {
         switch (acao.tipo) {
@@ -256,6 +259,7 @@ export const PizzaBuilder = ({
         label={`Sabores ${pizzaNumberStr}🌶️`}
         min={1}
         max={pizza.tamanho.maxSabores}
+        // collapsed={collapsed}
         description={`Selecione até ${pizza.tamanho.maxSabores} sabores`}
         // collapsed={true}
         // maxItemsCollapsed={6}

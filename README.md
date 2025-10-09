@@ -1,17 +1,14 @@
-# <div align="center">Pizzaria Delicia da Bahia</div>
+### <div align="center">Pizzaria Delicia da Bahia</div>
 
 <p align="center">
-  <img src="https://i.ibb.co/93rsyR7/home.png" alt="home" width="600" />
+  <img src="public/homepage.png" alt="home" width="600" />
 </p>
 
 <div align="center">
-    <a href="https://www.pizzariadeliciadabahia.com/">
+    <a target="_blank" href="https://www.pizzariadeliciadabahia.com/">
         <img src="https://img.shields.io/badge/preview-vercel-a.svg?style=for-the-badge">
     </a>
-    <a href="https://github.com/anthonyvictor/backend-site-pdb">
-        <img src="https://img.shields.io/badge/backend-github-blue.svg?style=for-the-badge">
-    </a>
-    <a href="https://www.figma.com/file/NvP58fWAUspNTvx5mLnoPC/Site---Pizzaria-Delicia-da-Bahia?node-id=11%3A25&t=88RvIRhdUBlI4v9O-1">
+    <a target="_blank" href="https://www.figma.com/file/NvP58fWAUspNTvx5mLnoPC/Site---Pizzaria-Delicia-da-Bahia?node-id=11%3A25&t=88RvIRhdUBlI4v9O-1">
         <img src="https://img.shields.io/badge/prototype-figma-red.svg?style=for-the-badge">
     </a>
 </div>
@@ -39,37 +36,52 @@
     </a>
 </div>
 
-### Introduction
-Pizzaria Delicia da Bahia's website developed with `Next.js`
+---
 
-### Getting Started
-1 - Clone the project, and install the dependencies.
+#### 🍕 Introdução
+Webapp da **Pizzaria Delicia da Bahia**, pensado inicialmente para servir apenas como um cardápio estático, e para apresentar informações sobre o estabelecimento, posteriormente se tornou uma **plataforma robusta de pedidos.** Hoje o app conta com **cadastros de clientes**, produtos, endereços, combos e promoções, além de controle de estoque, **autocomplete de endereços** com apis externas, **pix online**, e fácil integração com outros apps.   
+
+---
+
+#### 🚀 Tecnologias Utilizadas
+`Next.js`, `Typescript`, `Styled-components`, `MongoDB`    
+
+---
+
+#### ⏳ Instalação e uso
+Siga os passos abaixo para rodar o projeto localmente:
+
 ```bash
-git clone https://github.com/anthonyvictor/frontend-website-pdb.git
-npm install || yarn 
-```
-2 - Rename the `.env.example` file to `.env`.
-3 - Add variables to `.env` file:
+# Clone este repositório
+git clone https://github.com/anthonyvictor/pizzariadeliciadabahia.git
 
-```
-# This variable set the backend url 
-NEXT_PUBLIC_API_URL="http:localhost:5000"
+# Adicione as variáveis de ambiente
+NEXT_PUBLIC_API_URL # url do backend
+NEXT_PUBLIC_WHATSAPP # whatsapp para contato
+CEPABERTO_TOKEN #token para autocomplete de endereços do cepaberto
+ORS_API_KEY # chave de api do openrouteservice para obter distâncias
+DATABASE_URL # url do banco mongodb
+EMAIL_LOJA # login para acessar configurações
+SENHA_LOJA # senha para acessar configurações
 
-# This variable set the whatsapp number 
-NEXT_PUBLIC_WHATSAPP="+5510987654321"
+# Acesse a pasta do projeto
+cd pizzariadeliciadabahia
 
+# Instale as dependências
+yarn
+
+# Inicie o servidor de desenvolvimento
+yarn dev
 ```
-3 - Run the following command
-```bash
-cd frontend
-npm run dev || yarn dev
-```
-### Routes
+
+---
+
+#### ⬆️ Rotas
 
 `Static`
 ```
 ├─/home
-|─/cardapio (With revalidation)
+|─/cardapio (Com revalidação)
 ├─/localizacao
 └─/sobre
 ```
@@ -88,5 +100,6 @@ npm run dev || yarn dev
 | └───/confirmacao
 └─────────────────
 ```
-### Tags
-`next.js` `styled-components` `react.js` `uuid`
+
+
+#next.js #styled-components #react.js

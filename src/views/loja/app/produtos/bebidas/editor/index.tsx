@@ -3,7 +3,6 @@ import { BebidaViewStyle } from "./styles";
 import { useState } from "react";
 import { IBebida } from "tpdb-lib";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import { Regras } from "src/views/loja/components/regras";
 import { useBebidas } from "../context";
 import z from "zod";
@@ -16,9 +15,7 @@ import {
   EstoqueInput,
   NomeInput,
 } from "src/views/loja/components/inputs";
-import { api, axiosOk } from "@util/axios";
 import { mergeArraysByKey } from "@util/array";
-import { NoLogError } from "@models/error";
 import { usePopState } from "@util/hooks/popState";
 import { NumberInput } from "src/views/loja/components/numberInput";
 import { salvar, validar } from "../../../util/func";
@@ -83,6 +80,7 @@ export const BebidaView = () => {
         handleClose={() => setEditando(undefined)}
         handleSubmit={handleSubmit}
       >
+        {!!formData.id && <h6 onClick={() => {}}>{formData.id}</h6>}
         <div className="img-nome-descricao-section">
           <ImageEditor
             imagemUrl={formData.imagemUrl}
