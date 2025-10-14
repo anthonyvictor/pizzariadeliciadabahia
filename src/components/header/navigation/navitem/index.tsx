@@ -19,6 +19,9 @@ const NaviItem: FC<{ item: INavigationItem }> = ({ item }) => {
           if (item.route.startsWith("/loc")) {
             setMenuOpen(false);
             router.push("/stories");
+          } else if (item.route.startsWith("/sobre")) {
+            setMenuOpen(false);
+            router.push("/loja/app");
           }
         }}
       >
