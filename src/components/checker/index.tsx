@@ -20,9 +20,11 @@ export const Checker = ({
         cursor: !disabled ? "pointer" : undefined,
       }}
       onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!disabled) check?.();
+        if (check) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!disabled) check?.();
+        }
       }}
     >
       {label && <small>{label}</small>}
