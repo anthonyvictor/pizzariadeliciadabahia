@@ -10,16 +10,59 @@ import styled from "styled-components";
 import { ButtonSecondary } from "@styles/components/buttons";
 import { useConfigsStore } from "src/infra/zustand/configs";
 
+const Warn = ({ action }: { action: () => void }) => {
+  const [showBt, setShowBt] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowBt(true);
+    }, 1000 * 5);
+
+    return () => clearTimeout(timer);
+  }, []);
+  return (
+    <>
+      <TextContainer
+        title="Aviso!"
+        subtitle="Entregas limitadas à Ondina"
+        description={`Por questões logísticas, neste fim de semana, estamos entregando apenas no bairro de Ondina.`}
+      />
+      {showBt && (
+        <ButtonSecondary
+          onClick={() => {
+            action();
+          }}
+        >
+          Ok, entendi
+        </ButtonSecondary>
+      )}
+    </>
+  );
+};
+
 const PedidoPage: NextPage = () => {
   const { authCarregado, aberto } = useAuth();
 
   const { configs } = useConfigsStore();
-  const [locker, setLocker] = useState(true);
+  const [lockerOpen, setLockerOpen] = useState(true);
+  const [lockerWarn, setLockerWarn] = useState(true);
+  const [warn] = useState(
+    <Warn
+      action={() => {
+        setLockerWarn(false);
+        sessionStorage.setItem("warn-already-shown", "false");
+      }}
+    />
+  );
 
   useEffect(() => {
     const _locker = sessionStorage.getItem("fechado-locker");
     if (_locker === "false") {
-      setLocker(false);
+      setLockerOpen(false);
+    }
+
+    const warnAlreadyShown = sessionStorage.getItem("warn-already-shown");
+    if (warnAlreadyShown === "false") {
+      setLockerWarn(false);
     }
   }, []);
 
@@ -61,7 +104,7 @@ const PedidoPage: NextPage = () => {
   return (
     <PedidoPageProvider aberto={aberto}>
       <PedidoView />
-      {!aberto && locker && (
+      {!aberto && lockerOpen ? (
         <LockerStyle>
           <TextContainer
             title="Estamos fechados no momento"
@@ -77,13 +120,17 @@ const PedidoPage: NextPage = () => {
           />
           <ButtonSecondary
             onClick={() => {
-              setLocker(false);
+              setLockerWarn(false);
               sessionStorage.setItem("fechado-locker", "false");
             }}
           >
             Ver cardápio
           </ButtonSecondary>
         </LockerStyle>
+      ) : !!warn && lockerWarn ? (
+        <LockerStyle>{warn}</LockerStyle>
+      ) : (
+        <></>
       )}
     </PedidoPageProvider>
   );
