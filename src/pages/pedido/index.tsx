@@ -23,8 +23,8 @@ const Warn = ({ action }: { action: () => void }) => {
     <>
       <TextContainer
         title="Aviso!"
-        subtitle="Entregas limitadas à Ondina"
-        description={`Por questões logísticas, neste fim de semana, estamos entregando apenas no bairro de Ondina.`}
+        subtitle="Hoje nao estamos realizando entregas"
+        description={`Por questões logísticas, so estamos aceitando pedidos para retirada`}
       />
       {showBt && (
         <ButtonSecondary
