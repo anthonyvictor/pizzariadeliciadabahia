@@ -17,11 +17,12 @@ import { usePedidoStore } from "src/infra/zustand/pedido";
 import { useEffect, useState } from "react";
 import { useClienteStore } from "src/infra/zustand/cliente";
 import { useConfigsStore } from "src/infra/zustand/configs";
-import { IConfigEntregaAvancada } from "tpdb-lib";
+import { IConfig, IConfigEntrega, IConfigEntregaAvancada } from "tpdb-lib";
 import { highlightEl } from "@util/dom";
 import { sleep } from "@util/misc";
 import { sortByDate } from "@util/array";
 import { usePopState } from "@util/hooks/popState";
+import { getAdicionaisTaxa } from "@util/configs";
 
 export const TipoView = () => {
   const router = useRouter();
@@ -30,11 +31,8 @@ export const TipoView = () => {
   const { cliente } = useClienteStore();
   const [showModal, setShowModal] = useState(false);
   const { configs } = useConfigsStore();
-  const taxaAdicional =
-    (
-      configs.find((x) => x.chave === "entrega_avancada")
-        ?.valor as IConfigEntregaAvancada
-    )?.taxaAdicional ?? 0;
+
+  const { adicionalDinamico, taxaAdicional } = getAdicionaisTaxa(configs);
 
   usePopState(
     router,
@@ -163,7 +161,11 @@ export const TipoView = () => {
               nome="Na rua principal"
               descricao="Vou encontrar o entregador na rua principal, em local acessível para moto/bicicleta."
               Icone={MdDeliveryDining}
-              taxa={tipo.endereco?.enderecoOriginal?.taxa ?? 0}
+              taxa={eval(
+                `${
+                  tipo.endereco?.enderecoOriginal?.taxa ?? 0
+                } ${adicionalDinamico}`
+              )}
               desconto={tipo.endereco.desconto ?? 0}
             />
             <Metodo
@@ -172,7 +174,9 @@ export const TipoView = () => {
               descricao="Quero que  entregador desembarque do veículo e se desloque à pé até o local da entrega"
               Icone={GiStairsGoal}
               taxa={eval(
-                `${tipo.endereco?.enderecoOriginal?.taxa ?? 0} ${taxaAdicional}`
+                `${
+                  tipo.endereco?.enderecoOriginal?.taxa ?? 0
+                } ${adicionalDinamico} ${taxaAdicional}`
               )}
               desconto={0}
             />

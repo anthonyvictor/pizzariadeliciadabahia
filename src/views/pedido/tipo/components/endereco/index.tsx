@@ -17,6 +17,7 @@ import { usePedidoStore } from "src/infra/zustand/pedido";
 import { obterValoresDoPedido } from "@util/pedidos";
 import { useConfigsStore } from "src/infra/zustand/configs";
 import { dateDiff } from "@util/date";
+import { getAdicionaisTaxa } from "@util/configs";
 
 export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   const { cupomEntrega: cupom, tipo, setTipo } = useTipoPage();
@@ -35,11 +36,7 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   );
   const { configs } = useConfigsStore();
 
-  const taxaAdicional =
-    (
-      configs.find((x) => x.chave === "entrega_avancada")
-        ?.valor as IConfigEntregaAvancada
-    )?.taxaAdicional ?? 0;
+  const { adicionalDinamico, taxaAdicional } = getAdicionaisTaxa(configs);
 
   function cupomAplicavel() {
     if (!cupom) return false;
@@ -147,7 +144,7 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
                   `${
                     tipo.endereco.enderecoOriginal.taxa -
                     (tipo.endereco.desconto ?? 0)
-                  } ${
+                  } ${adicionalDinamico} ${
                     tipo?.endereco?.metodo === "avancado" ? taxaAdicional : ""
                   }`
                 )
@@ -166,7 +163,9 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
                   }}
                 >
                   {taxaComDesconto
-                    ? formatCurrency(taxaComDesconto)
+                    ? formatCurrency(
+                        eval(`${taxaComDesconto} ${adicionalDinamico}`)
+                      )
                     : "GRÁTIS!"}
                 </span>
               }
@@ -176,7 +175,9 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
                   className="original-price"
                   style={{ textDecoration: "line-through" }}
                 >
-                  {formatCurrency(e.enderecoOriginal.taxa ?? 0)}
+                  {formatCurrency(
+                    eval(`${e.enderecoOriginal.taxa ?? 0} ${adicionalDinamico}`)
+                  )}
                 </span>
               )}
             </>
