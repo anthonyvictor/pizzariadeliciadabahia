@@ -45,14 +45,14 @@ const PedidoPage: NextPage = () => {
   const { configs } = useConfigsStore();
   const [lockerOpen, setLockerOpen] = useState(true);
   const [lockerWarn, setLockerWarn] = useState(true);
-  const [warn] = useState(
-    <Warn
-      action={() => {
-        setLockerWarn(false);
-        sessionStorage.setItem("warn-already-shown", "false");
-      }}
-    />
-  );
+  const [warn] = useState(null);
+  //   <Warn
+  //     action={() => {
+  //       setLockerWarn(false);
+  //       sessionStorage.setItem("warn-already-shown", "false");
+  //     }}
+  //   />
+  // );
 
   useEffect(() => {
     const _locker = sessionStorage.getItem("fechado-locker");
