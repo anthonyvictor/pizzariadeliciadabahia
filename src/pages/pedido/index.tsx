@@ -120,7 +120,7 @@ const PedidoPage: NextPage = () => {
           />
           <ButtonSecondary
             onClick={() => {
-              setLockerWarn(false);
+              setLockerOpen(false);
               sessionStorage.setItem("fechado-locker", "false");
             }}
           >
