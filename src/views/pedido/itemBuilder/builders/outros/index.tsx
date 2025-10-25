@@ -168,21 +168,22 @@ export const OutrosBuilder = ({
         max={builder.max}
         min={builder.min}
         items={prods
-          .sort((a, b) => b.vendidos - a.vendidos)
-          .sort((a, b) => a.valor - b.valor)
-          .sort((a, b) => {
-            const aE = elegivel(a);
-            const bE = elegivel(b);
-            return aE && !bE
-              ? 1
-              : !aE && bE
-              ? -1
-              : a.disponivel === b.disponivel
-              ? 0
-              : a.disponivel
-              ? -1
-              : 1;
-          })
+          // .sort((a, b) => b.vendidos - a.vendidos)
+          // .sort((a, b) => a.valor - b.valor)
+          // .sort((a, b) => {
+          //   const aE = elegivel(a);
+          //   const bE = elegivel(b);
+          //   return aE && !bE
+          //     ? 1
+          //     : !aE && bE
+          //     ? -1
+          //     : a.disponivel === b.disponivel
+          //     ? 0
+          //     : a.disponivel
+          //     ? -1
+          //     : 1;
+          // })
+
           .map((x) => ({
             id: x.id,
             imageUrl: x.imagemUrl,
@@ -193,7 +194,8 @@ export const OutrosBuilder = ({
                 ? abreviarBebida(x.nome)
                 : abreviarLanche(x.nome),
             description: x.descricao,
-            disabled: !x.disponivel,
+            disabled:
+              !x.disponivel || !x.visivel || x.estoque === 0 || !x.emCondicoes,
             oldPrice: Math.max(valorMax, x.valor),
             price: calcularValor(x),
             // valorMax > -1

@@ -14,6 +14,7 @@ export const ComboBuilder = ({
   nextEl: string;
 }) => {
   const { itensFinais } = useItemBuilder();
+  // console.log(builder.combo?.produtos);
   return (
     <ComboBuilderStyle className={`builder-${builder.id}`}>
       {builder.combo.produtos.map((prod: IProdutoCombo, i) => {

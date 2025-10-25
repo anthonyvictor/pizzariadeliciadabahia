@@ -152,6 +152,8 @@ export const OutroBuilder = ({
   const outroNumberStr = `${outroNumber ? `da ${outroNumber}ª outro ` : ""}`;
   const prods = builder.tipo === "bebida" ? builder.bebidas : builder.lanches;
 
+  console.log("prods =>", prods, "<= prods");
+
   return (
     <OutroBuilderStyle id={`builder-${builder.id}`}>
       <Checklist
@@ -163,21 +165,22 @@ export const OutroBuilder = ({
         min={1}
         max={1}
         items={prods
-          .sort((a, b) => b.vendidos - a.vendidos)
-          .sort((a, b) => a.valor - b.valor)
-          .sort((a, b) => {
-            const aE = elegivel(a);
-            const bE = elegivel(b);
-            return aE && !bE
-              ? 1
-              : !aE && bE
-              ? -1
-              : a.disponivel === b.disponivel
-              ? 0
-              : a.disponivel
-              ? -1
-              : 1;
-          })
+          // .sort((a, b) => b.vendidos - a.vendidos)
+          // .sort((a, b) => a.valor - b.valor)
+          // .sort((a, b) => {
+          //   const aE = elegivel(a);
+          //   const bE = elegivel(b);
+          //   return aE && !bE
+          //     ? 1
+          //     : !aE && bE
+          //     ? -1
+          //     : a.disponivel === b.disponivel
+          //     ? 0
+          //     : a.disponivel
+          //     ? -1
+          //     : 1;
+          // })
+
           .map((x) => ({
             id: x.id,
             imageUrl: x.imagemUrl,
@@ -188,7 +191,8 @@ export const OutroBuilder = ({
                 ? abreviarBebida(x.nome)
                 : abreviarLanche(x.nome),
             description: x.descricao,
-            disabled: !x.disponivel,
+            disabled:
+              !x.disponivel || !x.visivel || x.estoque === 0 || !x.emCondicoes,
             oldPrice: Math.max(valorMax, x.valor),
             price: calcularValor(x),
             // valorMax > -1

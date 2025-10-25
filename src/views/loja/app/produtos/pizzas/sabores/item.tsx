@@ -39,7 +39,7 @@ export const SaborItem = ({ item }: { item: IPizzaSabor }) => {
         </small>
         <h5 className="nome">{item.nome}</h5>
 
-        <Descricao item={item} full={true} />
+        <Descricao descricao={item.descricao} full={true} />
 
         <Checkers
           item={item}

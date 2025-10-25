@@ -5756,6 +5756,9 @@ react-dom@^18.1.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.2"
 
+react-easy-ui@../../../_ThonnyStudios/react-easy-ui:
+  version "1.0.0"
+
 react-icons@^4.7.1:
   version "4.12.0"
   resolved "https://registry.npmjs.org/react-icons/-/react-icons-4.12.0.tgz"
@@ -6600,9 +6603,9 @@ to-regex-range@^5.0.1:
     is-number "^7.0.0"
 
 tpdb-lib@^1.0.33:
-  version "1.0.36"
-  resolved "https://registry.yarnpkg.com/tpdb-lib/-/tpdb-lib-1.0.36.tgz#93f15a5b1cb5cfe1413d8ea79162f7818d5ee3a6"
-  integrity sha512-P7EKqL8EjqGDd7oxQGKA8bcrwcUPJxxGyIFJ78zEbogmL9TqmD2EgO+cWUsXw28kENS/+n2W7gImGXW8wsOLUg==
+  version "1.0.37"
+  resolved "https://registry.yarnpkg.com/tpdb-lib/-/tpdb-lib-1.0.37.tgz#c5c090362db47d91b1754ba88079f69749716589"
+  integrity sha512-l42cC76eDu3olXNHp2tHddeE1BfTZ3fj/u6eotkEew7COJM1q/x5yudDmqewxCc6vcsexEGq9lIovkuka28A5Q==
 
 tr46@^1.0.1:
   version "1.0.1"

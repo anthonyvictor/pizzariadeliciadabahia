@@ -85,8 +85,8 @@ export const obterTamanhos = async ({
   await conectarDB();
   const pedido = await obterPedido(_pedido);
 
-  const data = sortTamanhos(
-    sortDisp(
+  const data = sortDisp(
+    sortTamanhos(
       aplicarValorMinTamanhos(
         deve_estar(
           (

@@ -38,6 +38,7 @@
     "react": "^18.1.0",
     "react-currency-input-field": "^3.10.0",
     "react-dom": "^18.1.0",
+    "react-easy-ui": "../../../_ThonnyStudios/react-easy-ui",
     "react-icons": "^4.7.1",
     "react-is": "^18.1.0",
     "react-leaflet": "^4",

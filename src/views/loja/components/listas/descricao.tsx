@@ -1,22 +1,18 @@
-import { IProdutoBase } from "tpdb-lib";
-
 export const Descricao = ({
-  item,
+  descricao,
   full,
 }: {
-  item: IProdutoBase;
+  descricao: string | undefined;
   full?: boolean;
 }) => {
   return (
     <>
-      {item.descricao && (
+      {!!descricao && (
         <small
           style={{ fontSize: full ? ".6rem" : ".7rem" }}
           className="descricao"
         >
-          {full
-            ? item.descricao
-            : item.descricao.split(" ").slice(0, 5).join(" ")}
+          {full ? descricao : descricao.split(" ").slice(0, 5).join(" ")}
         </small>
       )}
     </>

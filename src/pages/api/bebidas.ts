@@ -65,8 +65,8 @@ export const obterBebidas = async ({
 
   const pedido = await obterPedido(_pedido);
 
-  const data = sortBebidas(
-    sortDisp(
+  const data = sortDisp(
+    sortBebidas(
       deve_estar(
         ((await ff({ m: BebidasModel })) as unknown as IBebida[]).map((x) => ({
           ...x,
@@ -79,6 +79,7 @@ export const obterBebidas = async ({
       )
     )
   );
+
   return data;
 };
 

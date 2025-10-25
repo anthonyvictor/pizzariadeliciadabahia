@@ -24,6 +24,7 @@ const ItemBuilderPage: NextPage = () => {
           `${env.apiURL}/pages/item-builder?id=${router.query.id}&pedidoId=${pedido.id}&tipo=${router.query.tipo}`
         )
         .then((res) => {
+          console.log(res.data);
           setBuilder(res.data);
         })
         .catch((err) => {

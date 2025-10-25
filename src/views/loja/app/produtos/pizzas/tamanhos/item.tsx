@@ -31,7 +31,7 @@ export const TamanhoItem = ({ item }: { item: IPizzaTamanho }) => {
       </aside>
       <aside className="dir">
         <h5>{item.nome}</h5>
-        <Descricao item={item} />
+        <Descricao descricao={item.descricao} />
 
         <footer>
           <small className="tamanhoAprox">Tam: {item.tamanhoAprox}cm</small>

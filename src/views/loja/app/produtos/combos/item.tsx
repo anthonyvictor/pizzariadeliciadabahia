@@ -35,7 +35,7 @@ export const ComboItem = ({ item }: { item: ICombo }) => {
           {/* <span>{item.categoria ?? "s/Categ"}</span> */}
         </h5>
 
-        <Descricao item={item} />
+        <Descricao descricao={item.descricao} />
 
         <Checkers
           item={item}

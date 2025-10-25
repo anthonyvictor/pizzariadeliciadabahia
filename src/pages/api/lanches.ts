@@ -72,8 +72,8 @@ export const obterLanches = async ({
 
   const pedido = await obterPedido(_pedido);
 
-  const data = sortLanches(
-    sortDisp(
+  const data = sortDisp(
+    sortLanches(
       deve_estar(
         ((await ff({ m: LanchesModel })) as unknown as ILanche[]).map((x) => ({
           ...x,

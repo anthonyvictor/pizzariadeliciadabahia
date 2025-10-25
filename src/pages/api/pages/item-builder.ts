@@ -59,6 +59,43 @@ export const obterItemBuilder = async (
     const tamanhos = await obterTamanhos({ _pedido, sabores });
     const combo = await obterCombo({ id, sabores, bebidas, lanches, _pedido });
 
+    combo.produtos = combo.produtos.map((p) => {
+      if (p.tipo === "bebida") {
+        p.bebidas = bebidas.filter((x) =>
+          p.bebidas.length ? p.bebidas.some((y) => y.id === x.id) : true
+        );
+      } else if (p.tipo === "lanche") {
+        p.lanches = lanches.filter((x) =>
+          p.lanches.length ? p.lanches.some((y) => y.id === x.id) : true
+        );
+      } else {
+        if (p.sabores) {
+          p.sabores = sabores.filter((x) =>
+            p.sabores.length ? p.sabores.some((y) => y.id === x.id) : true
+          );
+        }
+        if (p.bordas) {
+          p.bordas = bordas.filter((x) =>
+            p.bordas.length ? p.bordas.some((y) => y.id === x.id) : true
+          );
+        }
+        if (p.espessuras) {
+          p.espessuras = espessuras.filter((x) =>
+            p.espessuras.length ? p.espessuras.some((y) => y.id === x.id) : true
+          );
+        }
+        if (p.pontos) {
+          p.pontos = pontos.filter((x) =>
+            p.pontos.length ? p.pontos.some((y) => y.id === x.id) : true
+          );
+        }
+        if (p.tamanho) {
+          p.tamanho = tamanhos.find((x) => x.id === p.tamanho.id);
+        }
+      }
+      return p;
+    });
+
     return {
       id: randomUUID(),
       tipo: "combo" as IItemPedidoTipo,
