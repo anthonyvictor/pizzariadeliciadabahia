@@ -24,10 +24,13 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
   const { cliente, setCliente } = useClienteStore();
   const { pedido } = usePedidoStore();
   const { valorItensComDesconto } = obterValoresDoPedido(pedido);
+
+  const taxaPadrao = Math.max(e.taxa ?? 0, e?.enderecoOriginal?.taxa ?? 0);
+
   const [descontoReal] = useState<number>(
     cupomAplicavel()
       ? obterValorDescontoReal(
-          e.enderecoOriginal.taxa ?? 0,
+          taxaPadrao,
           cupom.valor,
           cupom.tipo,
           cupom.maxDesconto
@@ -96,9 +99,7 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
     (tipo?.type === "entrega" && tipo.endereco.metodo === "basico");
 
   const taxaComDesconto =
-    descontoReal && metodoBasico
-      ? (e.enderecoOriginal.taxa ?? 0) - descontoReal
-      : e.enderecoOriginal.taxa ?? 0;
+    descontoReal && metodoBasico ? taxaPadrao - descontoReal : taxaPadrao;
   return (
     <EnderecoStyle
       onClick={async () => {
@@ -142,15 +143,14 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
               {formatCurrency(
                 eval(
                   `${
-                    tipo.endereco.enderecoOriginal.taxa -
-                    (tipo.endereco.desconto ?? 0)
+                    taxaPadrao - (tipo.endereco.desconto ?? 0)
                   } ${adicionalDinamico} ${
                     tipo?.endereco?.metodo === "avancado" ? taxaAdicional : ""
                   }`
                 )
               )}
             </span>
-          ) : e.enderecoOriginal.taxa ? (
+          ) : taxaPadrao ? (
             <>
               {
                 <span
@@ -175,9 +175,7 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
                   className="original-price"
                   style={{ textDecoration: "line-through" }}
                 >
-                  {formatCurrency(
-                    eval(`${e.enderecoOriginal.taxa ?? 0} ${adicionalDinamico}`)
-                  )}
+                  {formatCurrency(eval(`${taxaPadrao} ${adicionalDinamico}`))}
                 </span>
               )}
             </>

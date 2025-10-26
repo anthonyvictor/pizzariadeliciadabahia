@@ -17,7 +17,13 @@ import { usePedidoStore } from "src/infra/zustand/pedido";
 import { useEffect, useState } from "react";
 import { useClienteStore } from "src/infra/zustand/cliente";
 import { useConfigsStore } from "src/infra/zustand/configs";
-import { IConfig, IConfigEntrega, IConfigEntregaAvancada } from "tpdb-lib";
+import {
+  IConfig,
+  IConfigEntrega,
+  IConfigEntregaAvancada,
+  IEnderecoCliente,
+  IEnderecoPedido,
+} from "tpdb-lib";
 import { highlightEl } from "@util/dom";
 import { sleep } from "@util/misc";
 import { sortByDate } from "@util/array";
@@ -31,6 +37,9 @@ export const TipoView = () => {
   const { cliente } = useClienteStore();
   const [showModal, setShowModal] = useState(false);
   const { configs } = useConfigsStore();
+
+  const taxaPadrao = (e: IEnderecoCliente | IEnderecoPedido | undefined) =>
+    Math.max(e?.taxa ?? 0, e?.enderecoOriginal?.taxa ?? 0);
 
   const { adicionalDinamico, taxaAdicional } = getAdicionaisTaxa(configs);
 
@@ -161,11 +170,7 @@ export const TipoView = () => {
               nome="Na rua principal"
               descricao="Vou encontrar o entregador na rua principal, em local acessível para moto/bicicleta."
               Icone={MdDeliveryDining}
-              taxa={eval(
-                `${
-                  tipo.endereco?.enderecoOriginal?.taxa ?? 0
-                } ${adicionalDinamico}`
-              )}
+              taxa={eval(`${taxaPadrao(tipo.endereco)} ${adicionalDinamico}`)}
               desconto={tipo.endereco.desconto ?? 0}
             />
             <Metodo
@@ -174,9 +179,9 @@ export const TipoView = () => {
               descricao="Quero que  entregador desembarque do veículo e se desloque à pé até o local da entrega"
               Icone={GiStairsGoal}
               taxa={eval(
-                `${
-                  tipo.endereco?.enderecoOriginal?.taxa ?? 0
-                } ${adicionalDinamico} ${taxaAdicional}`
+                `${taxaPadrao(
+                  tipo.endereco
+                )} ${adicionalDinamico} ${taxaAdicional}`
               )}
               desconto={0}
             />
