@@ -32,7 +32,7 @@ import { getAdicionaisTaxa } from "@util/configs";
 
 export const TipoView = () => {
   const router = useRouter();
-  const { tipo, setTipo } = useTipoPage();
+  const { tipo, setTipo, cupomEntrega: cupom } = useTipoPage();
   const { pedido } = usePedidoStore();
   const { cliente } = useClienteStore();
   const [showModal, setShowModal] = useState(false);
@@ -89,6 +89,31 @@ export const TipoView = () => {
             </p>
           </aside>
         </EnderecoStyle>
+
+        {!!cupom?.descricao && (
+          <div>
+            <h5
+              style={{
+                textAlign: "center",
+                color: "#fff",
+                fontSize: "1rem",
+                fontStyle: "italic",
+              }}
+            >
+              Hoje tem:
+            </h5>
+            <p
+              style={{
+                textAlign: "center",
+                color: "#fff",
+                fontSize: "1.2rem",
+                fontStyle: "italic",
+              }}
+            >
+              {cupom.descricao}. Cadastre seu endereço!
+            </p>
+          </div>
+        )}
 
         <ul className="tipos">
           {(cliente?.enderecos ?? [])
