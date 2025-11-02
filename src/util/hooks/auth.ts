@@ -99,7 +99,7 @@ export const useAuth = (
       return peloLiberadoAte;
     };
 
-    const _aberto = getAberto();
+    const _aberto = process.env.NODE_ENV === "production" ? getAberto() : true;
     setAberto(_aberto);
     if (!_aberto) {
       const subpage = router.pathname.replace(pages.pedido, "");

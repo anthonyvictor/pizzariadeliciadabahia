@@ -13,6 +13,21 @@ export const MyInputStyle = styled.div`
     padding: 5px 0;
     gap: 5px;
     min-width: 0;
+
+    .input-buttons {
+      display: flex;
+      gap: 2px;
+      input {
+        flex: 1;
+      }
+      button {
+        background-color: transparent;
+        font-size: 1.5rem;
+        border: none;
+        color: #fff;
+        padding: 5px 10px;
+      }
+    }
   }
 
   label {

@@ -7,7 +7,7 @@ export const EditorForm = ({
   handleSubmit,
   handleClose,
 }: {
-  children: ReactNode[];
+  children: ReactNode[] | ReactNode;
   handleSubmit: () => void;
   handleClose: () => void;
 }) => {
