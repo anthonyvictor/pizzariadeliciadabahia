@@ -74,25 +74,6 @@ export const ComboItem = ({ item }: { item: ICombo }) => {
               return newProd;
             });
 
-            //             onst itemToSave: {
-            //     produtos: IProdutoCombo[];
-            //     valorMin: number;
-            //     id: string;
-            //     nome: string;
-            //     descricao?: string;
-            //     disponivel: boolean;
-            //     imagemUrl?: string;
-            //     visivel: boolean;
-            //     vendidos: number;
-            //     condicoes?: IRegra[];
-            //     excecoes?: IRegra[];
-            //     uuid?: string;
-            //     estoque?: number;
-            //     criadoEm: Date;
-            //     dadosExtras?: IDado[];
-            //     emCondicoes: boolean;
-            // }
-
             salvar("/combos", "combos", [{ ...itemToSave, ...data }]);
             upsertArray(item, setCombos, data);
           }}
