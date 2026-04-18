@@ -43,7 +43,7 @@ export function entreDatas(d: Date, datas: IData[]): boolean {
   const target = toIData(d);
 
   return datas.some(
-    ({ y, m, d }) => y === target.y && m === target.m && d === target.d
+    ({ y, m, d }) => y === target.y && m === target.m && d === target.d,
   );
 }
 
@@ -130,5 +130,60 @@ export function dateDiff(_date1: Date, _date2: Date, unit: TimeUnit): number {
       return d2.getFullYear() - d1.getFullYear();
     default:
       throw new Error(`Unidade inválida: ${unit}`);
+  }
+}
+
+export function getDuracao(_dataInic: Date) {
+  let dataInic = new Date(_dataInic);
+  let dataATUAL = new Date();
+
+  let ms = dataATUAL.getTime() - dataInic.getTime();
+
+  let m = ms / 1000 / 60;
+
+  let h = m / 60;
+
+  m = (h % 1) * 60;
+
+  let d = h / 24;
+
+  let dur = d < 1 ? "" : Math.floor(d) + "d";
+
+  if (dur === "") {
+    dur = h < 1 ? "" : Math.floor(h) + "h";
+    if (dur === "") {
+      dur = Math.floor(m) + "m";
+    } else {
+      dur = dur + Math.floor(m);
+    }
+  }
+  return dur;
+}
+
+export function getDuracaoCor(_dataInic: Date, fundoEscuro?: boolean) {
+  let dataInic = new Date(_dataInic);
+
+  if (!dataInic) return "#000";
+  let dataAtual = new Date();
+  let diff = (dataAtual.getTime() - dataInic.getTime()) / 1000 / 60;
+
+  if (diff < 10) {
+    return "#02fa3c";
+  } else if (diff < 20) {
+    return "#a3d609";
+  } else if (diff < 30) {
+    return "#fff700";
+  } else if (diff < 40) {
+    return "#fcb01e";
+  } else if (diff < 50) {
+    return fundoEscuro ? "#fa7039" : "#fa5311";
+  } else if (diff < 60) {
+    return fundoEscuro ? "#db2c23" : "#bf0f06";
+  } else if (diff < 120) {
+    return fundoEscuro ? "#cc275b" : "#99032b";
+  } else if (diff <= 150) {
+    return fundoEscuro ? "#dfa9fc" : "#8108c2";
+  } else {
+    return fundoEscuro ? "#7b5094" : "#17091f";
   }
 }

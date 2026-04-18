@@ -29,7 +29,7 @@ export const Estoque = ({
     console.log(
       "estoqueeeee",
       isNaN(item.estoque) ? ("" as unknown as number) : item.estoque,
-      typeof (isNaN(item.estoque) ? ("" as unknown as number) : item.estoque)
+      typeof (isNaN(item.estoque) ? ("" as unknown as number) : item.estoque),
     );
   }
 
@@ -45,10 +45,10 @@ export const Estoque = ({
   const [isFocused, setIsFocused] = useState(false);
 
   const [numValue, setNumValue] = useState(
-    item.estoque == null ? -1 : item.estoque
+    item.estoque == null ? -1 : item.estoque,
   );
   const [strValue, setStrValue] = useState(
-    numValue === -1 ? "" : numValue.toString()
+    numValue === -1 ? "" : numValue.toString(),
   );
 
   useEffect(() => {
@@ -86,8 +86,8 @@ export const Estoque = ({
           visibility: editable
             ? "initial"
             : (numValue ?? 0) > min
-            ? "initial"
-            : "hidden",
+              ? "initial"
+              : "hidden",
         }}
         onClick={(e) => {
           e.stopPropagation();
@@ -108,8 +108,8 @@ export const Estoque = ({
           visibility: editable
             ? "initial"
             : numValue > min
-            ? "initial"
-            : "hidden",
+              ? "initial"
+              : "hidden",
         }}
         disabled={disabled || !editable}
         onFocus={() => setIsFocused(true)}
@@ -133,7 +133,7 @@ export const Estoque = ({
         value={strValue}
         onChange={(e) => {
           const novoNum = Number(
-            e.target.value.replace(".", "").replace(",", ".")
+            e.target.value.replace(".", "").replace(",", "."),
           );
           if (novoNum < numValue && !canDown(novoNum)) {
             e.preventDefault();
@@ -175,33 +175,33 @@ export const Estoque = ({
       </button>
     </NumberInputStyle>
   );
-  return (
-    <NumberInput
-      className="estoque"
-      disabled={!item.disponivel || !item.visivel}
-      showZero={true}
-      value={isNaN(item.estoque) ? ("" as unknown as number) : item.estoque}
-      allowVoid={true}
-      forceMin={true}
-      setValue={async (val) => {
-        const estoque = val >= 999 || val === -1 ? undefined : val;
+  // return (
+  //   <NumberInput
+  //     className="estoque"
+  //     disabled={!item.disponivel || !item.visivel}
+  //     showZero={true}
+  //     value={isNaN(item.estoque) ? ("" as unknown as number) : item.estoque}
+  //     allowVoid={true}
+  //     forceMin={true}
+  //     setValue={async (val) => {
+  //       const estoque = val >= 999 || val === -1 ? undefined : val;
 
-        await salvar(url, chave, [{ ...item, estoque }]);
+  //       await salvar(url, chave, [{ ...item, estoque }]);
 
-        setProds((_prev) => {
-          const prev = [..._prev];
-          const i = prev.findIndex((x) => x.id === item.id);
+  //       setProds((_prev) => {
+  //         const prev = [..._prev];
+  //         const i = prev.findIndex((x) => x.id === item.id);
 
-          if (i > -1) {
-            prev[i] = { ...item, estoque };
-          }
+  //         if (i > -1) {
+  //           prev[i] = { ...item, estoque };
+  //         }
 
-          return prev;
-        });
-      }}
-      max={999}
-      min={-1}
-      display={"vertical"}
-    />
-  );
+  //         return prev;
+  //       });
+  //     }}
+  //     max={999}
+  //     min={-1}
+  //     display={"vertical"}
+  //   />
+  // );
 };

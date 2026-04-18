@@ -81,7 +81,7 @@ const PedidoPage: NextPage = () => {
 
     const diffDays = Math.floor(
       (dateForCalc.setHours(0, 0, 0, 0) - now.setHours(0, 0, 0, 0)) /
-        (1000 * 60 * 60 * 24)
+        (1000 * 60 * 60 * 24),
     );
 
     if (diffDays === 0)
@@ -114,8 +114,8 @@ const PedidoPage: NextPage = () => {
               new Date(horario.fechadoAte).getTime() > new Date().getTime()
                 ? `Retornamos ${formatFriendly(horario.fechadoAte)}`
                 : horario?.descricao
-                ? horario.descricao
-                : "Fique de olho em nossas redes sociais para atualizações!"
+                  ? horario.descricao
+                  : "Fique de olho em nossas redes sociais para atualizações!"
             }
           />
           <ButtonSecondary

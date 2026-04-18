@@ -4,12 +4,12 @@ import BottomControls from "@components/pedido/bottomControls";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { env } from "@config/env";
-import { axiosOk } from "@util/axios";
 import { toast } from "react-toastify";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { useEffect, useState } from "react";
 import { usePagamentoStore } from "src/infra/zustand/pagamentos";
 import { usePopState } from "@util/hooks/popState";
+import { axiosOk } from "@util/axios";
 
 export const FinalizadoView = () => {
   const router = useRouter();
@@ -19,9 +19,12 @@ export const FinalizadoView = () => {
 
   useEffect(() => {
     clearPagamentos();
-    const timeout = setTimeout(() => {
-      setContinuarDisabled(false);
-    }, 1000 * 60 * 6);
+    const timeout = setTimeout(
+      () => {
+        setContinuarDisabled(false);
+      },
+      1000 * 60 * 6,
+    );
 
     return () => clearTimeout(timeout);
   }, []);

@@ -38,7 +38,7 @@ export const ItemBuilderFooter = () => {
 
       builderId: z.string(),
     },
-    { invalid_type_error: "Selecione uma bebida!" }
+    { invalid_type_error: "Selecione uma bebida!" },
   );
   const lancheSchema = z.object(
     {
@@ -47,7 +47,7 @@ export const ItemBuilderFooter = () => {
 
       builderId: z.string(),
     },
-    { invalid_type_error: "Selecione um lanche!" }
+    { invalid_type_error: "Selecione um lanche!" },
   );
   const itemSchema = z.discriminatedUnion("tipo", [
     pizzaSchema,
@@ -68,7 +68,7 @@ export const ItemBuilderFooter = () => {
 
     if (builder.tipo === "combo") {
       const faltando = builder.combo.produtos.find((bd) =>
-        itensFinais.every((x) => x.builderId !== bd.id)
+        itensFinais.every((x) => x.builderId !== bd.id),
       );
       if (faltando) {
         toast.error(`Insira o item pendente`);
@@ -122,8 +122,8 @@ export const ItemBuilderFooter = () => {
                 (itf?.tipo !== "pizza"
                   ? 0
                   : itf.sabores.length
-                  ? 0
-                  : curr.valorMin);
+                    ? 0
+                    : curr.valorMin);
 
               return r;
             })
@@ -132,22 +132,22 @@ export const ItemBuilderFooter = () => {
           return acc + Math.max(valorMin, valorFinal);
         }, 0)
       : builder.tipo === "pizza" && itensFinais[0]?.tipo === "pizza"
-      ? (() => {
-          const itf = itensFinais[0];
-          return Math.max(
-            itf.sabores.length
-              ? itf.valor
-              : itf.valor + builder.tamanho.valorMin,
-            builder.tamanho.valorMin
-          );
-        })()
-      : // Math.max(itensFinais[0].valor, builder.tamanho.valorMin)
-        itensFinais?.[0]?.valor ??
-        (builder.tipo === "bebida"
-          ? builder.bebida.valor
-          : builder.tipo === "lanche"
-          ? builder.lanche.valor
-          : 0);
+        ? (() => {
+            const itf = itensFinais[0];
+            return Math.max(
+              itf.sabores.length
+                ? itf.valor
+                : itf.valor + builder.tamanho.valorMin,
+              builder.tamanho.valorMin,
+            );
+          })()
+        : // Math.max(itensFinais[0].valor, builder.tamanho.valorMin)
+          (itensFinais?.[0]?.valor ??
+          (builder.tipo === "bebida"
+            ? builder.bebida.valor
+            : builder.tipo === "lanche"
+              ? builder.lanche.valor
+              : 0));
   return (
     <ItemBuilderFooterStyle>
       <NumberInput
@@ -159,10 +159,10 @@ export const ItemBuilderFooter = () => {
           (builder.tipo === "bebida"
             ? builder.bebida.estoque
             : builder.tipo === "lanche"
-            ? builder.lanche.estoque
-            : builder.tipo === "combo"
-            ? 1
-            : 1) ?? 5
+              ? builder.lanche.estoque
+              : builder.tipo === "combo"
+                ? 1
+                : 1) ?? 5
         }
         forceMin={true}
         alwaysShowMinus={true}
@@ -215,7 +215,7 @@ export const ItemBuilderFooter = () => {
         <h4>Continuar</h4>
         <h4>
           {formatCurrency(
-            totalComExtra
+            totalComExtra,
             // builder.tipo === "combo"
             //   ? Math.max(total, builder.combo.valorMin)
             //   : builder.tipo === "pizza"

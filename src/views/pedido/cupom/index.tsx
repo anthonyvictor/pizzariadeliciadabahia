@@ -8,9 +8,9 @@ import BottomControls from "@components/pedido/bottomControls";
 import { CupomStyle } from "./styles";
 import { env } from "@config/env";
 import axios from "axios";
-import { axiosOk } from "@util/axios";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { NoLogError } from "@models/error";
+import { axiosOk } from "@util/axios";
 
 export const CupomView = () => {
   const { pedido } = usePedidoStore();
@@ -46,7 +46,7 @@ export const CupomView = () => {
                   headers: {
                     "Content-Type": "application/json",
                   },
-                }
+                },
               );
 
               if (axiosOk(res.status)) {
@@ -64,7 +64,7 @@ export const CupomView = () => {
                     headers: {
                       "Content-Type": "application/json",
                     },
-                  }
+                  },
                 );
                 router.replace("/pedido");
               } else {
@@ -72,7 +72,7 @@ export const CupomView = () => {
               }
             } catch (err) {
               toast.error(
-                err.message ?? "Oops, não foi possível obter esse cupom"
+                err.message ?? "Oops, não foi possível obter esse cupom",
               );
             }
           },

@@ -1,0 +1,138 @@
+import TextContainer from "@components/textContainer";
+import { PedidoViewStyle } from "./styles";
+import { useState } from "react";
+import { IPedido } from "tpdb-lib";
+import { useRouter } from "next/router";
+import { Regras } from "src/views/loja/components/regras";
+import { usePedidos } from "../context";
+import z from "zod";
+import Loading from "@components/loading";
+import { ImageEditor } from "src/views/loja/components/imageEditor";
+import { EditorForm } from "src/views/loja/components/editorForm";
+import {
+  Checkers,
+  DescricaoInput,
+  EstoqueInput,
+  NomeInput,
+} from "src/views/loja/components/inputs";
+import { mergeArraysByKey } from "@util/array";
+import { usePopState } from "@util/hooks/popState";
+import { NumberInput } from "src/views/loja/components/numberInput";
+// import { salvar, validar } from "../../../util/func";
+
+export const PedidoView = () => {
+  const { editando, pedidos, setPedidos, setEditando } = usePedidos();
+  const [carregando, setCarregando] = useState(false);
+  const [formData, setFormData] = useState<IPedido>({
+    ...{
+      nome: "",
+      imagemUrl: "",
+      descricao: "",
+      disponivel: true,
+      visivel: true,
+      somenteEmCombos: false,
+      estoque: undefined,
+      condicoes: [],
+      excecoes: [],
+      valor: 0,
+    },
+    ...(pedidos.find((x) => x.id === editando) ?? {}),
+  } as IPedido);
+  const router = useRouter();
+
+  usePopState(router, () => {
+    setEditando(undefined);
+  });
+
+  const schema = z.object({
+    nome: z.string().min(4, "Nome deve ter no mínimo 4 caracteres"),
+    descricao: z.string().optional(),
+    estoque: z
+      .any()
+      .refine(
+        (val) => val == null || !isNaN(Number(val)),
+        "Estoque precisa ser um número se existir",
+      ),
+    valor: z.number(),
+  });
+
+  const handleSubmit = async () => {
+    // setCarregando(true);
+    // if (!validar(schema, formData)) return;
+    // const data = await salvar("/pedidos", "pedidos", [formData]);
+    // if (data) {
+    //   setPedidos((prev) => mergeArraysByKey(prev, data, "id"));
+    //   setEditando(undefined);
+    // }
+    // setCarregando(false);
+  };
+
+  if (carregando) return <Loading />;
+  return (
+    <PedidoViewStyle>
+      <TextContainer title="Pedido" />
+
+      <EditorForm
+        handleClose={() => setEditando(undefined)}
+        handleSubmit={handleSubmit}
+      >
+        a
+        {/* {!!formData.id && <h6 onClick={() => {}}>{formData.id}</h6>}
+        <div className="img-nome-descricao-section">
+          <ImageEditor
+            imagemUrl={formData.imagemUrl}
+            setImagemUrl={(url) =>
+              setFormData((prev) => ({ ...prev, imagemUrl: url }))
+            }
+          />
+
+          <div className="nome-descricao-section">
+            <NomeInput
+              value={formData.nome ?? ""}
+              setValue={(val) =>
+                setFormData((prev) => ({ ...prev, nome: val }))
+              }
+            />
+
+            <EstoqueInput
+              value={formData.estoque}
+              setValue={(val) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  estoque: val,
+                }))
+              }
+            />
+          </div>
+        </div>
+
+        <DescricaoInput
+          value={formData.descricao ?? ""}
+          setValue={(val) =>
+            setFormData((prev) => ({ ...prev, descricao: val }))
+          }
+        />
+
+        <Checkers
+          disponivel={formData.disponivel}
+          setDisp={(val) =>
+            setFormData((prev) => ({ ...prev, disponivel: val }))
+          }
+          visivel={formData.visivel}
+          setVis={(val) => setFormData((prev) => ({ ...prev, visivel: val }))}
+          somenteEmCombos={formData.somenteEmCombos}
+          setSoCombos={(val) =>
+            setFormData((prev) => ({ ...prev, somenteEmCombos: val }))
+          }
+        />
+        <NumberInput
+          id="valor"
+          label="Valor"
+          value={formData.valor}
+          setValue={(valor) => setFormData((prev) => ({ ...prev, valor }))}
+        />
+        <Regras condicoes={formData.condicoes} excecoes={formData.excecoes} /> */}
+      </EditorForm>
+    </PedidoViewStyle>
+  );
+};

@@ -16,7 +16,7 @@ import {
   EstoqueInput,
   NomeInput,
 } from "src/views/loja/components/inputs";
-import { api, axiosOk } from "@util/axios";
+import { api } from "@util/axios";
 import { mergeArraysByKey } from "@util/array";
 import { NoLogError } from "@models/error";
 import { usePopState } from "@util/hooks/popState";
@@ -25,6 +25,7 @@ import { salvar, validar } from "../../../util/func";
 import Image from "next/image";
 import { abreviarBebida } from "@util/bebidas";
 import { capitalize, formatCurrency } from "@util/format";
+
 export interface IComboProds {
   tamanhos: IPizzaTamanho[];
   sabores: IPizzaSabor[];
@@ -60,7 +61,7 @@ export const ComboView = () => {
       .any()
       .refine(
         (val) => val == null || !isNaN(Number(val)),
-        "Estoque precisa ser um número se existir"
+        "Estoque precisa ser um número se existir",
       ),
     valor: z.number(),
   });
@@ -251,11 +252,13 @@ export const ComboView = () => {
                                       i === 0
                                         ? x.slice(0, 3)
                                         : i === 1 &&
-                                          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].every(
-                                            (y) => y.toString() !== x[0]
-                                          )
-                                        ? x[0]
-                                        : x
+                                            [
+                                              0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                            ].every(
+                                              (y) => y.toString() !== x[0],
+                                            )
+                                          ? x[0]
+                                          : x,
                                     )
                                     .join(" ")}
                                 </h6>

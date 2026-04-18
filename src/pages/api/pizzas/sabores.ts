@@ -15,7 +15,7 @@ import { sortDisp, toArray } from "@util/array";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IPizzaSabor>>
+  res: NextApiResponse<RespType<IPizzaSabor>>,
 ) {
   if (req.method === "GET") {
     let data;
@@ -86,10 +86,10 @@ export const obterSabores = async ({
               return v;
             })(),
           })),
-          deveEstar
-        )
-      )
-    )
+          deveEstar,
+        ),
+      ),
+    ),
   );
   return data;
 };

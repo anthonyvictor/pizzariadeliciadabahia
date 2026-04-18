@@ -12,7 +12,7 @@ export const getAdicionaisTaxa = (configs: IConfig[]) => {
     cfgEntrega?.adicionalDinamico?.ate && cfgEntrega?.adicionalDinamico?.valor
       ? new Date(cfgEntrega.adicionalDinamico?.ate).getTime() >
         new Date().getTime()
-        ? cfgEntrega?.adicionalDinamico?.valor ?? ""
+        ? (cfgEntrega?.adicionalDinamico?.valor ?? "")
         : ""
       : "";
 

@@ -64,7 +64,7 @@ export const InputAndList = () => {
 
                     sessionStorage.setItem(
                       "endereco",
-                      JSON.stringify(endereco)
+                      JSON.stringify(endereco),
                     );
                     router.push("/cliente/novo-endereco/regras");
                   }}

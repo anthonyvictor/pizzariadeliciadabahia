@@ -65,7 +65,7 @@ export const CombosView = () => {
                     tipo,
                     valor: stt === "TODOS" ? true : false,
                   },
-            ].filter(Boolean)
+            ].filter(Boolean),
           );
         }}
       >
@@ -94,7 +94,7 @@ export const CombosView = () => {
 
         <Status label="Disponibilidade" tipo="disponivel" />
         <Status label="Visibilidade" tipo="visivel" />
-        <Status label="Somente em combos" tipo="somenteEmCombos" />
+        {/* <Status label="Somente em combos" tipo="somenteEmCombos" /> */}
 
         {/* {categorias.map((cat) => (
           <li

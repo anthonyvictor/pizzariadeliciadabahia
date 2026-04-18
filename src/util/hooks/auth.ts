@@ -26,7 +26,7 @@ const pages = {
 export const useAuth = (
   opcoes: { verificarPixAguardando?: boolean } = {
     verificarPixAguardando: true,
-  }
+  },
 ) => {
   const router = useRouter();
 
@@ -72,7 +72,7 @@ export const useAuth = (
     };
     const _configs = await obterConfigs();
     const configHorarioFunc = _configs.find(
-      (x) => x.chave === "horario_funcionamento"
+      (x) => x.chave === "horario_funcionamento",
     )?.valor as IConfigHorarioFuncionamento;
 
     const getAberto = () => {
@@ -121,7 +121,7 @@ export const useAuth = (
             peloCliente
               ? `clientesIds=${_cliente.id}&status=emAndamento`
               : `id=${pedidoId}`
-          }`
+          }`,
         );
         const ped = (
           Array.isArray(res.data) ? res.data[0] : res.data
@@ -179,7 +179,7 @@ export const useAuth = (
       const pags = _pedido.pagamentos ?? [];
 
       pix = pags.find(
-        (x) => x.tipo === "pix" && x.status === "aguardando" && x.qrcode
+        (x) => x.tipo === "pix" && x.status === "aguardando" && x.qrcode,
       );
 
       if (pix && router.pathname !== "/pedido/pagamento/pix")

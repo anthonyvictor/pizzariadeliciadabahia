@@ -30,7 +30,7 @@ interface IPedidoPageContext {
 }
 
 const PedidoPageContext = createContext<IPedidoPageContext>(
-  {} as IPedidoPageContext
+  {} as IPedidoPageContext,
 );
 
 export const PedidoPageProvider = ({
@@ -67,14 +67,14 @@ export const PedidoPageProvider = ({
   const maxDestaques = 8;
   function fmv<T>(arr: T[], max = 2) {
     return sortDisp(
-      [...arr].sort((a, b) => (b["vendidos"] ?? 0) - (a["vendidos"] ?? 0))
+      [...arr].sort((a, b) => (b["vendidos"] ?? 0) - (a["vendidos"] ?? 0)),
     );
   }
 
   function selecionarDestaques(
     produtos: IProdutoHome[],
     x: number,
-    minimos: Partial<Record<IProdutoHome["tipo"], number>>
+    minimos: Partial<Record<IProdutoHome["tipo"], number>>,
   ): IProdutoHome[] {
     // 1. pega top X
 
@@ -137,7 +137,7 @@ export const PedidoPageProvider = ({
           !!x.visivel &&
           x.estoque !== 0
         );
-      })
+      }),
     );
 
   const destaques = !home
@@ -155,7 +155,7 @@ export const PedidoPageProvider = ({
           bebida: 1,
           lanche: 1,
           combo: 4,
-        }
+        },
       );
 
   // const destaques = home

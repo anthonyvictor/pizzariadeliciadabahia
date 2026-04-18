@@ -21,7 +21,7 @@ export const sortBebidas = (bebidas: IBebida[] | undefined) => {
     bebidas
       .sort((a, b) => a.vendidos - b.vendidos)
       .map((x) => ({ ...x, tipo: "bebida" }))
-      .reverse()
+      .reverse(),
   );
 
   return r as IBebida[];
@@ -29,11 +29,11 @@ export const sortBebidas = (bebidas: IBebida[] | undefined) => {
 
 export const destrincharBebida = (nome: string) => {
   const tamanhoRegex = new RegExp(
-    /\b\d+(?:[.,]\d+)?\s*(?:ml|l(?:itros?|ts?)?)\b/gi
+    /\b\d+(?:[.,]\d+)?\s*(?:ml|l(?:itros?|ts?)?)\b/gi,
   );
   const tamanho = tamanhoRegex.test(nome) ? nome.match(tamanhoRegex)[0] : "";
   const completoRegex = new RegExp(
-    /água mineral|água com gás|suco natural|café/gi
+    /água mineral|água com gás|suco natural|café/gi,
   );
 
   if (completoRegex.test(nome))
@@ -43,7 +43,7 @@ export const destrincharBebida = (nome: string) => {
     };
 
   const tipoRegex = new RegExp(
-    /\b(água tônica|bebida mista|refrigerante|energético|cerveja|suco)\b/gi
+    /\b(água tônica|bebida mista|refrigerante|energético|cerveja|suco)\b/gi,
   );
 
   const tipo = tipoRegex.test(nome) ? nome.match(tipoRegex)[0] : "";

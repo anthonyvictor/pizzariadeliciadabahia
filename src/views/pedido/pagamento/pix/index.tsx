@@ -9,9 +9,9 @@ import { env } from "@config/env";
 import { PixViewStyle } from "./styles";
 import QRCode from "react-qr-code";
 import { CgClipboard } from "react-icons/cg";
-import { axiosOk } from "@util/axios";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 import { toast } from "react-toastify";
+import { axiosOk } from "@util/axios";
 
 export const PixView = ({ pix }: { pix: IPagamentoPedidoPix }) => {
   const { pedido } = usePedidoStore();
@@ -45,7 +45,7 @@ export const PixView = ({ pix }: { pix: IPagamentoPedidoPix }) => {
   const verificarPagamento = async () => {
     try {
       const res = await axios.get(
-        `${env.apiURL}/pedidos/pagamento/pix?pedido=${pedido.id}&pix=${pix.id}`
+        `${env.apiURL}/pedidos/pagamento/pix?pedido=${pedido.id}&pix=${pix.id}`,
       );
 
       if (!axiosOk(res.status)) return router.replace("/pedido/pagamento");

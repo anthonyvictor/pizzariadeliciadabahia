@@ -33,9 +33,9 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
           taxaPadrao,
           cupom.valor,
           cupom.tipo,
-          cupom.maxDesconto
+          cupom.maxDesconto,
         )
-      : 0
+      : 0,
   );
   const { configs } = useConfigsStore();
 
@@ -146,8 +146,8 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
                     taxaPadrao - (tipo.endereco.desconto ?? 0)
                   } ${adicionalDinamico} ${
                     tipo?.endereco?.metodo === "avancado" ? taxaAdicional : ""
-                  }`
-                )
+                  }`,
+                ),
               )}
             </span>
           ) : taxaPadrao ? (
@@ -164,7 +164,7 @@ export const Endereco = ({ e }: { e: IEnderecoCliente }) => {
                 >
                   {taxaComDesconto
                     ? formatCurrency(
-                        eval(`${taxaComDesconto} ${adicionalDinamico}`)
+                        eval(`${taxaComDesconto} ${adicionalDinamico}`),
                       )
                     : "GRÁTIS!"}
                 </span>

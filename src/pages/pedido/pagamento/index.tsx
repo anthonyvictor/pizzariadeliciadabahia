@@ -25,13 +25,13 @@ const PagamentoPage: NextPage = () => {
           if (!res.data || !Array.isArray(res.data) || !res.data.length) return;
 
           const b = res.data.filter(
-            (cupom) => cupom.alvo === "pagamento" || cupom.alvo === "itens"
+            (cupom) => cupom.alvo === "pagamento" || cupom.alvo === "itens",
           );
           const c = b.filter((cupom) =>
-            analisarCodigoCupom(cupom, pedido.codigoCupom)
+            analisarCodigoCupom(cupom, pedido.codigoCupom),
           );
           const d = c.sort((a, b) =>
-            (a?.condicoes ?? []).some((x) => x.tipo === "codigo") ? -1 : 1
+            (a?.condicoes ?? []).some((x) => x.tipo === "codigo") ? -1 : 1,
           );
 
           setCupom(d?.[0]);

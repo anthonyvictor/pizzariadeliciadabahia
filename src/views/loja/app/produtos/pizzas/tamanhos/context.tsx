@@ -31,9 +31,11 @@ export const TamanhosProvider = ({ children }: { children: ReactNode }) => {
         },
       })
       .then((res) => {
+        console.log("carregou tamanhos", res.data);
         if (res?.data?.length) setTamanhos(res.data);
       })
       .catch((err) => {
+        console.log("não carregou tamanhos ⚠️");
         toast.error(err.message);
         console.error(err);
       });

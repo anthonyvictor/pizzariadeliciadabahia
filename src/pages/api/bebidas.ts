@@ -15,7 +15,7 @@ import { bulkUpsert } from "src/infra/mongodb/util";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IBebida>>
+  res: NextApiResponse<RespType<IBebida>>,
 ) {
   if (req.method === "GET") {
     let data;
@@ -75,9 +75,9 @@ export const obterBebidas = async ({
             return v;
           })(),
         })),
-        deveEstar
-      )
-    )
+        deveEstar,
+      ),
+    ),
   );
 
   return data;

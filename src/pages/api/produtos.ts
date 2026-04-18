@@ -19,7 +19,7 @@ interface IProdutos {
 }
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IProdutos>>
+  res: NextApiResponse<RespType<IProdutos>>,
 ) {
   if (req.method === "GET") {
     const data = await obterProdutos();
@@ -37,8 +37,8 @@ export const obterProdutos = async () => {
   const sabores = sortDisp(await obterSabores({ _pedido: undefined }));
   const tamanhos = sortDisp(
     (await obterTamanhos({ _pedido: undefined, sabores })).sort(
-      (a, b) => b.valorMin - a.valorMin
-    )
+      (a, b) => b.valorMin - a.valorMin,
+    ),
   );
 
   return {

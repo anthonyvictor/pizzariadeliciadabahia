@@ -10,7 +10,7 @@ const memoryCache = new Map<string, any>();
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { placeId, cep } = req.query as { placeId: string; cep: string };
   if (!placeId && !cep)
@@ -48,21 +48,21 @@ export const obterDetalhesEndereco = async (placeId: string, cep: string) => {
       ?.long_name || "";
   const bairro =
     details.address_components.find(
-      (c) => c.types.includes("sublocality") || c.types.includes("political")
+      (c) => c.types.includes("sublocality") || c.types.includes("political"),
     )?.long_name || "";
   const cidade =
     details.address_components.find((c) =>
-      c.types.includes("administrative_area_level_2")
+      c.types.includes("administrative_area_level_2"),
     )?.long_name || "";
   const estado =
     details.address_components.find((c) =>
-      c.types.includes("administrative_area_level_1")
+      c.types.includes("administrative_area_level_1"),
     )?.short_name || "";
 
   // obter distancia e tempo pelo google matrix (com custo)
   const distancia = await googleDistanceMatrix(
     details.geometry.location.lat,
-    details.geometry.location.lng
+    details.geometry.location.lng,
   );
 
   // ou pelo openrouteservice (bike/moto)

@@ -6,7 +6,7 @@ export const sortCupons = (cupons: ICupom[] | undefined) => {
   if (!cupons) return [];
   const r = cupons
     .sort((a, b) =>
-      a.vendidos !== b.vendidos ? a.vendidos - b.vendidos : b.valor - a.valor
+      a.vendidos !== b.vendidos ? a.vendidos - b.vendidos : b.valor - a.valor,
     )
     .map((x) => ({ ...x }))
     .reverse();
@@ -17,7 +17,7 @@ export const sortCupons = (cupons: ICupom[] | undefined) => {
 export const analisarRegrasCupomPedido = (
   pedido: IPedido,
   cupom: ICupom,
-  ignorarRegrasPagamento?: boolean
+  ignorarRegrasPagamento?: boolean,
 ) => {
   if (!cupom) return false;
 
@@ -62,12 +62,12 @@ export function obterValorDescontoReal(
   valor: number,
   desconto: number,
   tipo: "percentual" | "fixo",
-  max?: number
+  max?: number,
 ): number {
   if (valor <= 0 || desconto <= 0) return 0;
 
   let descontoReal = Number(
-    (tipo === "percentual" ? (valor * desconto) / 100 : desconto).toFixed(2)
+    (tipo === "percentual" ? (valor * desconto) / 100 : desconto).toFixed(2),
   );
 
   // Limita ao valor do pedido
@@ -85,19 +85,19 @@ export function obterValorDescontoReal(
 
 export const analisarCodigoCupom = (
   cupom: ICupom,
-  codigo: string | undefined
+  codigo: string | undefined,
 ) =>
   !cupom
     ? false
     : !cupom.condicoes.some((y) => y.tipo === "codigo_cupom") ||
       cupom.condicoes.some(
-        (y) => y.tipo === "codigo_cupom" && y.valor === codigo
+        (y) => y.tipo === "codigo_cupom" && y.valor === codigo,
       );
 
 export const obterDescontos = (
   pedido: IPedido,
   _cupons: ICupom[],
-  ignorarRegrasPagamento?: boolean
+  ignorarRegrasPagamento?: boolean,
 ) => {
   const cupons = (_cupons ?? [])
     .filter((x) => analisarRegrasCupomPedido(pedido, x, ignorarRegrasPagamento))
@@ -115,22 +115,22 @@ export const obterDescontos = (
         obterValorDescontoReal(
           acc ? valor - acc : valor,
           curr.valor,
-          curr.tipo
+          curr.tipo,
         ),
-      0
+      0,
     );
   const descontoItens = obterDescontoCupons(
     filtrarPorAlvo("itens"),
-    valorItensBruto
+    valorItensBruto,
   );
   const descontoEntrega = obterDescontoCupons(
     filtrarPorAlvo("entrega"),
-    valorEntregaBruto
+    valorEntregaBruto,
   );
   const basePedidoDesconto = valorTotalBruto - descontoEntrega - descontoItens;
   const descontoPedido = obterDescontoCupons(
     filtrarPorAlvo("pagamento"),
-    basePedidoDesconto
+    basePedidoDesconto,
   );
 
   return { descontoItens, descontoEntrega, descontoPedido };

@@ -14,7 +14,7 @@ import { sleep } from "@util/misc";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IHome>>
+  res: NextApiResponse<RespType<IHome>>,
 ) {
   if (req.method === "GET") {
     if (!req.query.pedidoId) return res.status(400).end();
@@ -36,8 +36,8 @@ export const obterHome = async (pedidoId: string | undefined) => {
   const sabores = sortDisp(await obterSabores({ _pedido }));
   const tamanhos = sortDisp(
     (await obterTamanhos({ _pedido, sabores })).sort(
-      (a, b) => b.valorMin - a.valorMin
-    )
+      (a, b) => b.valorMin - a.valorMin,
+    ),
   );
   const combos = sortDisp(
     (
@@ -48,7 +48,7 @@ export const obterHome = async (pedidoId: string | undefined) => {
         lanches,
         _pedido,
       })
-    ).sort((a, b) => b.vendidos - a.vendidos)
+    ).sort((a, b) => b.vendidos - a.vendidos),
   );
 
   return {

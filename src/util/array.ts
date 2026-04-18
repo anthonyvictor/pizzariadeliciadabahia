@@ -33,8 +33,8 @@ export function sortDisp<T>(arr: T[]) {
     x["disponivel"] && x["visivel"] && x["emCondicoes"] && x["estoque"] !== 0
       ? 1
       : x["visivel"]
-      ? 0
-      : -1;
+        ? 0
+        : -1;
 
   return [...arr].sort((a, b) => {
     return disp(b) - disp(a); // os "true" vão para o topo
@@ -51,7 +51,7 @@ export const sortByDate = (a, b) => {
 export function mergeArraysByKey<T extends Record<string, any>>(
   original: T[],
   updates: T[],
-  key: keyof T
+  key: keyof T,
 ): T[] {
   const map = new Map(original.map((item, idx) => [item[key], { item, idx }]));
   const result = [...original]; // copia para manter imutabilidade
@@ -88,7 +88,7 @@ interface FieldConfig<T> {
 export function fuzzySearch<T extends Record<string, any>>(
   items: T[],
   query: string,
-  fields: FieldConfig<T>[]
+  fields: FieldConfig<T>[],
 ): T[] {
   if (!query.replace(/a-zA-Z0-9/gi, "")) return items;
   const keywords = normalize(query).split(/\s+/).filter(Boolean);
@@ -112,4 +112,52 @@ export function fuzzySearch<T extends Record<string, any>>(
     .filter((r) => r.score > 0) // remove sem relevância
     .sort((a, b) => b.score - a.score) // ordena por score desc
     .map((r) => r.item);
+}
+
+// export function getCount<T extends Record<string, any>, K extends keyof T>(
+//   array: T[],
+//   key: K,
+// ): (T & { count: number })[] {
+//   // 1. Usar um Record (ou Map) para armazenar os objetos agrupados e suas contagens.
+//   // A chave do objeto agrupador será o valor da 'key' (que pode ser string | number | symbol).
+//   // O valor será o objeto T & { count: number }.
+//   const unifiedMap = array.reduce((accumulator, currentItem) => {
+//     const keyValue = currentItem[key];
+
+//     // Se o valor da chave já existe no acumulador, incrementamos a contagem.
+//     if (accumulator.has(keyValue)) {
+//       const existingItem = accumulator.get(keyValue)!;
+//       existingItem.count += 1;
+//       accumulator.set(keyValue, existingItem);
+//     } else {
+//       // Se o valor da chave é novo, adicionamos o item ao acumulador com count = 1.
+//       // Criamos uma cópia do objeto original e adicionamos a propriedade 'count'.
+//       const newItem = { ...currentItem, count: 1 };
+//       accumulator.set(keyValue, newItem);
+//     }
+
+//     return accumulator;
+//   }, new Map<T[K], T & { count: number }>());
+
+//   // 2. Retornar os valores do Map como um array.
+//   return Array.from(unifiedMap.values());
+// }
+
+export function getCount<T>(
+  array: T[],
+  getKey: (item: T) => any,
+): (T & { count: number })[] {
+  const map = new Map<any, T & { count: number }>();
+
+  for (const item of array) {
+    const keyValue = getKey(item);
+
+    if (map.has(keyValue)) {
+      map.get(keyValue)!.count++;
+    } else {
+      map.set(keyValue, { ...item, count: 1 });
+    }
+  }
+
+  return Array.from(map.values());
 }

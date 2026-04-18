@@ -20,7 +20,7 @@ import { bulkUpsert } from "src/infra/mongodb/util";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IPizzaTamanho>>
+  res: NextApiResponse<RespType<IPizzaTamanho>>,
 ) {
   if (req.method === "GET") {
     let data;
@@ -83,6 +83,7 @@ export const obterTamanhos = async ({
   sabores,
 }: ObterProdutos & { sabores?: IPizzaSabor[] | undefined }) => {
   await conectarDB();
+  console.log("Entrou tamanhos api");
   const pedido = await obterPedido(_pedido);
 
   const data = sortDisp(
@@ -98,13 +99,14 @@ export const obterTamanhos = async ({
               return v;
             })(),
           })),
-          deveEstar
+          deveEstar,
         ),
-        sabores
-      )
-    )
+        sabores,
+      ),
+    ),
   );
 
+  console.log("saiu tamanhos api", data);
   return data as IPizzaTamanho[];
 };
 

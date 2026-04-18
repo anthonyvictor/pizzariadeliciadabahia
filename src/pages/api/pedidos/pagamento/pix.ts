@@ -12,7 +12,7 @@ import { HTTPError } from "@models/error";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<boolean>>
+  res: NextApiResponse<RespType<boolean>>,
 ) {
   try {
     if (req.method === "GET") {
@@ -40,13 +40,15 @@ export const verificarPixAguardando = async ({
 }) => {
   await conectarDB();
 
+  console.log("verificarPixAguardando", pix, pedido);
+
   let pixRecebidos = sortPixRecebidos(
     (await ff({
       m: PixRecebidoModel,
       s: { criadoEm: -1 },
       q: { pagamentoId: null },
       l: 5,
-    })) as unknown as IPixRecebido[]
+    })) as unknown as IPixRecebido[],
   );
 
   const _pedido = await ffid({
@@ -60,7 +62,7 @@ export const verificarPixAguardando = async ({
   if (!pixAguardando || !pixAguardando.qrcode || !pixAguardando.txid) {
     throw new HTTPError(
       "Oops, Não encontramos o pix do seu pedido no sistema!",
-      404
+      404,
     );
   } else if (pixAguardando.status !== "aguardando") {
     // atualiza o pix aguardando para pago/pendente no bd e retorna o status
@@ -92,7 +94,7 @@ export const verificarPixAguardando = async ({
             "pagamentos.$.status": "pago",
             "pagamentos.$.pagoEm": new Date(),
           },
-        }
+        },
       );
 
       if (

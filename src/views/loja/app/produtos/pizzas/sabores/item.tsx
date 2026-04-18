@@ -45,7 +45,7 @@ export const SaborItem = ({ item }: { item: IPizzaSabor }) => {
           item={item}
           infoExtra={[
             `💲${formatCurrency(min).replace(",00", "")} - ${formatCurrency(
-              max
+              max,
             ).replace(",00", "")}`,
           ]}
           setStat={(s) => {

@@ -12,7 +12,7 @@ import { encontrarTaxa } from "@util/distancias";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método não permitido" });
@@ -34,7 +34,7 @@ export default async function handler(
 }
 
 export async function obterEnderecoCompleto(
-  endereco: IEndereco
+  endereco: IEndereco,
 ): Promise<IEndereco> {
   await conectarDB();
 

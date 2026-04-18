@@ -1,5 +1,4 @@
 import { IEndereco } from "tpdb-lib";
-import { axiosOk } from "../axios";
 import { normalizarOrdinal, removeAccents } from "../format";
 import axios from "axios";
 import { enderecoPizzaria } from "@util/dados";
@@ -7,6 +6,7 @@ import { query_cepaberto, query_nominatim, query_photon } from "./query";
 import { cep_cepAberto } from "./cep";
 import { HTTPError, NoLogError } from "@models/error";
 import { enderecosParecidos } from "./comparar";
+import { axiosOk } from "@util/axios";
 // const viaCep = async (cep: string, rua?: string, _bairro?: string) => {
 //   let data: any;
 //   try {
@@ -52,7 +52,7 @@ export const viaCep = async (
   cep: string,
   rua?: string,
   _bairro?: string,
-  tentativa = 1
+  tentativa = 1,
 ): Promise<
   | {
       cep: string;
@@ -68,11 +68,11 @@ export const viaCep = async (
   // Definir URL baseado na tentativa
   if (rua && tentativa === 1) {
     url = `https://viacep.com.br/ws/BA/Salvador/${encodeURIComponent(
-      normalizarOrdinal(rua)
+      normalizarOrdinal(rua),
     )}/json/`;
   } else if (rua && tentativa === 2) {
     url = `https://viacep.com.br/ws/BA/Salvador/${encodeURIComponent(
-      rua
+      rua,
     )}/json/`;
   } else {
     url = `https://viacep.com.br/ws/${cep}/json/`;
@@ -94,7 +94,7 @@ export const viaCep = async (
         !_bairro
           ? true
           : removeAccents(String(x.bairro).toLowerCase()) ===
-            removeAccents(String(_bairro).toLowerCase())
+            removeAccents(String(_bairro).toLowerCase()),
       ) as any[];
     const peloBairro = filtrarMesmoBairro(data);
 
@@ -228,7 +228,7 @@ type ModoORS =
 export async function obterDistancia(
   lat: number | string,
   lon: number | string,
-  modo: ModoORS = "foot-walking"
+  modo: ModoORS = "foot-walking",
 ) {
   const ORS_API_KEY = process.env.ORS_API_KEY!;
   const rotaResp = await axios.post(
@@ -244,7 +244,7 @@ export async function obterDistancia(
         Authorization: ORS_API_KEY,
         "Content-Type": "application/json",
       },
-    }
+    },
   );
   const rota = rotaResp.data.routes?.[0];
   if (!rota)
@@ -259,14 +259,14 @@ export async function obterDistancia(
 }
 
 export async function obterEnderecoExtra(
-  enderecoOriginal: IEndereco
+  enderecoOriginal: IEndereco,
 ): Promise<IEndereco> {
   // 1. Buscar endereço no BrasilAPI
 
   const compararSemelhanca = (
     endOrig: IEndereco,
     endFin: IEndereco,
-    metodo: string
+    metodo: string,
   ) => {
     if (!endFin) return null;
     const ehIgual = enderecosParecidos(endOrig.rua, endFin.rua);
@@ -275,7 +275,7 @@ export async function obterEnderecoExtra(
         `[ metodo: ${metodo} ] Ruas diferentes:`,
 
         `\n- ${endOrig.rua}`,
-        `\n- ${endFin.rua}`
+        `\n- ${endFin.rua}`,
       );
       return null;
     } else {
@@ -296,7 +296,7 @@ export async function obterEnderecoExtra(
     throw new HTTPError(
       "Endereço não especificado para obter dados extras! Faltando cep ou nome da rua",
       400,
-      enderecoOriginal
+      enderecoOriginal,
     );
   }
 
@@ -306,13 +306,13 @@ export async function obterEnderecoExtra(
     if (!enderecoExtra) {
       enderecoExtra = await query_cepaberto(
         enderecoOriginal.rua,
-        enderecoOriginal.bairro
+        enderecoOriginal.bairro,
       )?.[0];
 
       enderecoExtra = compararSemelhanca(
         enderecoExtra,
         enderecoOriginal,
-        "query_cepAberto"
+        "query_cepAberto",
       );
     }
 
@@ -321,7 +321,7 @@ export async function obterEnderecoExtra(
       enderecoExtra = compararSemelhanca(
         enderecoExtra,
         enderecoOriginal,
-        "cep_cepAberto"
+        "cep_cepAberto",
       );
     }
 
@@ -330,7 +330,7 @@ export async function obterEnderecoExtra(
       enderecoExtra = compararSemelhanca(
         enderecoExtra,
         enderecoOriginal,
-        `query_nominatim`
+        `query_nominatim`,
       );
     };
     const qpho = async (str: string) => {
@@ -338,7 +338,7 @@ export async function obterEnderecoExtra(
       enderecoExtra = compararSemelhanca(
         enderecoExtra,
         enderecoOriginal,
-        `query_photon`
+        `query_photon`,
       );
     };
 
@@ -361,7 +361,7 @@ export async function obterEnderecoExtra(
       throw new HTTPError(
         "Coordenadas não encontradas para o endereço.",
         404,
-        enderecoOriginal
+        enderecoOriginal,
       );
   };
 
@@ -369,12 +369,12 @@ export async function obterEnderecoExtra(
 
   const { distancia_metros, duracao_segundos } = await obterDistancia(
     enderecoExtra.lat,
-    enderecoExtra.lon
+    enderecoExtra.lon,
   );
 
   const cep = (enderecoExtra?.cep ?? enderecoOriginal.cep)?.replace?.(
     /\D/g,
-    ""
+    "",
   );
 
   const enderecoFinal = {

@@ -13,7 +13,7 @@ import { deve_estar, dvEst } from "@models/deveEstar";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IPizzaPonto>>
+  res: NextApiResponse<RespType<IPizzaPonto>>,
 ) {
   if (req.method === "GET") {
     let data;
@@ -72,10 +72,10 @@ export const obterPontos = async ({
             const { v } = analisarRegras({ item: x, pedido, ignorar });
             return v;
           })(),
-        })
+        }),
       ),
-      deveEstar
-    )
+      deveEstar,
+    ),
   );
   return data;
 };

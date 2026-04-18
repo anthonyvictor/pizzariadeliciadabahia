@@ -25,7 +25,7 @@ interface IItemBuilderContext {
   aberto: boolean;
 }
 const ItemBuilderContext = createContext<IItemBuilderContext>(
-  {} as IItemBuilderContext
+  {} as IItemBuilderContext,
 );
 
 export const ItemBuilderProvider = ({
@@ -65,7 +65,7 @@ export const ItemBuilderProvider = ({
           localStorage.getItem("preferencias_sabores") ?? ""
         ).split(",");
         saboresPref = Array.from(
-          new Set([...(pizza.sabores ?? []), ...saboresPref])
+          new Set([...(pizza.sabores ?? []), ...saboresPref]),
         ).slice(0, 4); // guarda só os 3 últimos sabores
         localStorage.setItem("preferencias_sabores", saboresPref.join(","));
       }

@@ -11,7 +11,7 @@ export const BairroView = ({ bairros }: { bairros: IBairro[] }) => {
   const router = useRouter();
   const bairrosFiltrados = inputValue
     ? bairros.filter((x) =>
-        x.nome.toLowerCase().includes(inputValue.toLowerCase())
+        x.nome.toLowerCase().includes(inputValue.toLowerCase()),
       )
     : bairros;
   return (

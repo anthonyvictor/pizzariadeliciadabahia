@@ -11,7 +11,7 @@ import { encontrarTaxa } from "@util/distancias";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método não permitido" });
@@ -41,12 +41,12 @@ export async function obterTaxa(endereco: IEndereco) {
     ? endereco
     : await query_cepaberto(
         normalizarOrdinal(endereco.rua),
-        endereco.bairro
+        endereco.bairro,
       )?.[0];
 
   if (!temCoords(endereco))
     endereco = await query_nominatim(
-      `${normalizarOrdinal(endereco.rua)} ${endereco.bairro}`
+      `${normalizarOrdinal(endereco.rua)} ${endereco.bairro}`,
     )?.[0];
 
   if (!temCoords(endereco)) endereco = await cep_cepAberto(endereco.cep)?.[0];
@@ -58,7 +58,7 @@ export async function obterTaxa(endereco: IEndereco) {
       {
         message: "Coordenadas do endereço não encontradas",
         endereco,
-      }
+      },
     );
 
   const { distancia_metros } = await obterDistancia(endereco.lat, endereco.lon);

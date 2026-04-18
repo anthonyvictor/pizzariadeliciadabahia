@@ -8,7 +8,7 @@ import { DistanciasModel } from "tpdb-lib";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IDistancia>>
+  res: NextApiResponse<RespType<IDistancia>>,
 ) {
   if (req.method === "GET") {
     const data = await obterDistancias();
@@ -32,7 +32,7 @@ export const obterDistancias = async () => {
 export const createDistancia = async (
   de: number,
   ate: number,
-  taxa: number
+  taxa: number,
 ) => {
   const data = await DistanciasModel.create({ de, ate, taxa });
   return data;

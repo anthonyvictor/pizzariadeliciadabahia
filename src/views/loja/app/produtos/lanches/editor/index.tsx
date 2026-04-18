@@ -16,7 +16,7 @@ import {
   EstoqueInput,
   NomeInput,
 } from "src/views/loja/components/inputs";
-import { api, axiosOk } from "@util/axios";
+import { api } from "@util/axios";
 import { mergeArraysByKey } from "@util/array";
 import { NoLogError } from "@models/error";
 import { usePopState } from "@util/hooks/popState";
@@ -54,7 +54,7 @@ export const LancheView = () => {
       .any()
       .refine(
         (val) => val == null || !isNaN(Number(val)),
-        "Estoque precisa ser um número se existir"
+        "Estoque precisa ser um número se existir",
       ),
     valor: z.number(),
   });

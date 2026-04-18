@@ -3,7 +3,7 @@ import { IEndereco, IRegraEndereco } from "tpdb-lib";
 
 export const entreEnderecos = (
   { bairro, rua, cep }: IEndereco,
-  regra: IRegraEndereco
+  regra: IRegraEndereco,
 ) => {
   if (regra.tipo === "bairros") {
     const f = (v) => v?.toLowerCase?.();

@@ -24,8 +24,8 @@ export const FechadoView = ({ configs }: { configs: IConfig[] }) => {
                   timeStyle: "full",
                 })}`
               : horario?.descricao
-              ? horario.descricao
-              : "Fique de olho em nossas redes sociais para atualizações!"
+                ? horario.descricao
+                : "Fique de olho em nossas redes sociais para atualizações!"
           }
         />
       </main>

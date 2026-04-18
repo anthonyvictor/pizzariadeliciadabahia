@@ -9,9 +9,9 @@ import { ICliente } from "tpdb-lib";
 import { env } from "@config/env";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { axiosOk } from "@util/axios";
 import Loading from "@components/loading";
 import { useClienteStore } from "src/infra/zustand/cliente";
+import { axiosOk } from "@util/axios";
 
 export const ConfirmacaoComplementoView = () => {
   const router = useRouter();
@@ -21,7 +21,7 @@ export const ConfirmacaoComplementoView = () => {
 
   useEffect(() => {
     const _endereco = JSON.parse(
-      sessionStorage.getItem("endereco") ?? "{}"
+      sessionStorage.getItem("endereco") ?? "{}",
     ) as IEnderecoCliente;
     if (!_endereco?.enderecoOriginal?.cep) {
       router.back();
@@ -48,7 +48,7 @@ export const ConfirmacaoComplementoView = () => {
                 endereco.enderecoOriginal.lat && endereco.enderecoOriginal.lon
                   ? `${endereco.enderecoOriginal.lat},${endereco.enderecoOriginal.lon}`
                   : `${encodeURI(
-                      `${endereco.enderecoOriginal.rua} ${endereco.numero}, ${endereco.enderecoOriginal.bairro}`
+                      `${endereco.enderecoOriginal.rua} ${endereco.numero}, ${endereco.enderecoOriginal.bairro}`,
                     )}`
               }&z=15&output=embed&ie=UTF8&iwloc=A`}
               frameBorder="0"
@@ -104,7 +104,7 @@ export const ConfirmacaoComplementoView = () => {
                       headers: {
                         "Content-Type": "application/json",
                       },
-                    }
+                    },
                   );
 
                   if (axiosOk(res.status)) {
@@ -114,7 +114,7 @@ export const ConfirmacaoComplementoView = () => {
                   }
                 } catch (err) {
                   toast.error(
-                    "Oops, não foi possível fazer seu cadastro no momento!"
+                    "Oops, não foi possível fazer seu cadastro no momento!",
                   );
                 }
                 router.push("/pedido/tipo");

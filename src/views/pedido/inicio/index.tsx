@@ -34,7 +34,7 @@ export const PedidoView = () => {
               itens={destaques}
             />
           )}
-          {!!home.combos.length && (
+          {!!home.combos.filter((x) => x.visivel && x.disponivel).length && (
             <Produtos
               id={"combos"}
               label={"Promoções 🏷️"}
@@ -48,14 +48,14 @@ export const PedidoView = () => {
               itens={home.tamanhos.filter((x) => !x.somenteEmCombos)}
             />
           )}
-          {!!home.bebidas.length && (
+          {!!home.bebidas.filter((x) => x.visivel && x.disponivel).length && (
             <Produtos
               id={"bebidas"}
               label={"Bebidas 🍹"}
               itens={home.bebidas.filter((x) => !x.somenteEmCombos)}
             />
           )}
-          {!!home.lanches.length && (
+          {!!home.lanches.filter((x) => x.visivel && x.disponivel).length && (
             <Produtos
               id={"lanches"}
               label={"Lanches e Outros 🍦"}

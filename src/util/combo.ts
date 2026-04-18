@@ -13,7 +13,7 @@ export const sortCombos = (combos: ICombo[] | undefined) => {
     .sort((a, b) =>
       a.vendidos !== b.vendidos
         ? a.vendidos - b.vendidos
-        : b.valorMin - a.valorMin
+        : b.valorMin - a.valorMin,
     )
     .map((x) => ({ ...x, tipo: "combo" }));
 
@@ -24,7 +24,7 @@ export const aplicarValorMinCombo = (
   combo: ICombo,
   sabores: IPizzaSabor[],
   bebidas: IBebida[],
-  lanches: ILanche[]
+  lanches: ILanche[],
 ) => {
   combo.produtos.forEach((produto) => {
     if (produto.tipo === "pizza") {
@@ -34,7 +34,7 @@ export const aplicarValorMinCombo = (
             .map((x) => x.valores)
             .flat()
             .filter((x) => x.tamanhoId === produto.tamanho.id)
-            .map((x) => x.valor)
+            .map((x) => x.valor),
         );
         return valorMin;
       };
@@ -43,8 +43,8 @@ export const aplicarValorMinCombo = (
         produto.sabores && produto.sabores?.length
           ? obterValorMin(
               sabores.filter((sab) =>
-                (produto?.sabores ?? []).some((x) => x.id === sab.id)
-              )
+                (produto?.sabores ?? []).some((x) => x.id === sab.id),
+              ),
             )
           : obterValorMin(sabores);
     } else if (produto.tipo === "bebida") {
@@ -55,11 +55,11 @@ export const aplicarValorMinCombo = (
               .filter((x) =>
                 produto.bebidas?.length
                   ? (produto.bebidas ?? []).some((y) => y.id === x.id)
-                  : true
+                  : true,
               )
-              .map((x) => x.valor)
+              .map((x) => x.valor),
           ) * (produto.min ?? 1)
-        ).toFixed(2)
+        ).toFixed(2),
       );
     } else if (produto.tipo === "lanche") {
       produto.valorMin = Number(
@@ -69,11 +69,11 @@ export const aplicarValorMinCombo = (
               .filter((x) =>
                 produto.lanches?.length
                   ? (produto.lanches ?? []).some((y) => y.id === x.id)
-                  : true
+                  : true,
               )
-              .map((x) => x.valor)
+              .map((x) => x.valor),
           ) * (produto.min ?? 1)
-        ).toFixed(2)
+        ).toFixed(2),
       );
     }
 
@@ -82,8 +82,8 @@ export const aplicarValorMinCombo = (
         case "valor_fixo":
           produto.valorMin = Number(
             (
-              acao.valor * (produto.tipo === "pizza" ? 1 : produto.min ?? 1)
-            ).toFixed(2)
+              acao.valor * (produto.tipo === "pizza" ? 1 : (produto.min ?? 1))
+            ).toFixed(2),
           );
           break;
         case "desconto_fixo":
@@ -91,8 +91,8 @@ export const aplicarValorMinCombo = (
             (
               (produto.valorMin - acao.valor >= 0
                 ? produto.valorMin - acao.valor
-                : 0) * (produto.tipo === "pizza" ? 1 : produto.min ?? 1)
-            ).toFixed(2)
+                : 0) * (produto.tipo === "pizza" ? 1 : (produto.min ?? 1))
+            ).toFixed(2),
           );
           break;
         case "desconto_percentual":
@@ -105,8 +105,8 @@ export const aplicarValorMinCombo = (
                     ? acao.maxDesconto
                     : valorRealDesconto
                   : valorRealDesconto)) *
-              (produto.tipo === "pizza" ? 1 : produto.min ?? 1)
-            ).toFixed(2)
+              (produto.tipo === "pizza" ? 1 : (produto.min ?? 1))
+            ).toFixed(2),
           );
 
           break;
@@ -123,7 +123,7 @@ export const produtosDoComboDisponiveis = (
   tamanhos?: IPizzaTamanho[],
   sabores?: IPizzaSabor[],
   bebidas?: IBebida[],
-  lanches?: ILanche[]
+  lanches?: ILanche[],
 ) => {
   const pizzasDoCombo = combo.produtos
     .filter((x) => x.tipo === "pizza")
@@ -138,7 +138,7 @@ export const produtosDoComboDisponiveis = (
       )
         .filter(Boolean)
         .filter(
-          (x) => x.disponivel && x.visivel && x.emCondicoes && x.estoque !== 0
+          (x) => x.disponivel && x.visivel && x.emCondicoes && x.estoque !== 0,
         );
 
       if (!saboresDoProd.length) return false;
@@ -151,14 +151,14 @@ export const produtosDoComboDisponiveis = (
       )
         .filter(Boolean)
         .filter(
-          (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0
+          (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0,
         );
 
       if (!itensDoProduto.length) return false;
 
       const estoqueMax = itensDoProduto.reduce(
         (acc, curr) => acc + (curr.estoque ?? 999999),
-        0
+        0,
       );
 
       if (min > estoqueMax) return false;
@@ -172,14 +172,14 @@ export const produtosDoComboDisponiveis = (
       )
         .filter(Boolean)
         .filter(
-          (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0
+          (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0,
         );
 
       if (!itensDoProduto.length) return false;
 
       const estoqueMax = itensDoProduto.reduce(
         (acc, curr) => acc + (curr.estoque ?? 999999),
-        0
+        0,
       );
       if (min > estoqueMax) return false;
     }

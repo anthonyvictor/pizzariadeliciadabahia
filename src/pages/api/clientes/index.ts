@@ -12,7 +12,7 @@ import { encontrarTaxa } from "@util/distancias";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<ICliente>>
+  res: NextApiResponse<RespType<ICliente>>,
 ) {
   try {
     if (req.method === "GET") {
@@ -58,7 +58,7 @@ export const obterCliente = async (id: string | ICliente | undefined) => {
     enderecos: (cliente?.enderecos ?? []).map((endereco) => {
       const taxa = encontrarTaxa(
         endereco.enderecoOriginal.distancia_metros,
-        distancias
+        distancias,
       );
 
       return {
@@ -93,7 +93,7 @@ export const obterClientes = async ({ ids }: { ids?: string[] }) => {
       enderecos: (cliente?.enderecos ?? []).map((endereco) => {
         const taxa = encontrarTaxa(
           endereco.enderecoOriginal.distancia_metros,
-          distancias
+          distancias,
         );
         return {
           ...endereco,

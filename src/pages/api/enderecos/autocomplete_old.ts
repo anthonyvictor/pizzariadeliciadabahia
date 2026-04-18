@@ -8,7 +8,7 @@ const memoryCache = new Map<string, any>(); // TTL pode ser implementado
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     const { query } = req.query;
@@ -63,15 +63,15 @@ const autoCompleteEnderecos = async (query: string) => {
         ?.long_name || "";
     const bairro =
       details.address_components.find(
-        (c) => c.types.includes("sublocality") || c.types.includes("political")
+        (c) => c.types.includes("sublocality") || c.types.includes("political"),
       )?.long_name || "";
     const cidade =
       details.address_components.find((c) =>
-        c.types.includes("administrative_area_level_2")
+        c.types.includes("administrative_area_level_2"),
       )?.long_name || "";
     const estado =
       details.address_components.find((c) =>
-        c.types.includes("administrative_area_level_1")
+        c.types.includes("administrative_area_level_1"),
       )?.short_name || "";
 
     results.push({

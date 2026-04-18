@@ -6,7 +6,7 @@ import TextContainer from "@components/textContainer";
 import BottomControls from "@components/pedido/bottomControls";
 import z from "zod";
 import { InformacoesIniciaisStyle } from "./styles";
-import { api, axiosOk } from "@util/axios";
+import { api } from "@util/axios";
 import { useClienteStore } from "src/infra/zustand/cliente";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { normalizePhone } from "@util/enderecos/format";
@@ -14,6 +14,7 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 import Loading from "@components/loading";
 import { useModoStore } from "src/infra/zustand/modo";
 import { NoLogError } from "@models/error";
+import { axiosOk } from "@util/axios";
 
 type FormData = {
   nome: string;
@@ -74,7 +75,7 @@ export const InformacoesIniciaisView = () => {
       },
       {
         message: "Número de telefone inválido ou muito curto",
-      }
+      },
     )
     .refine(
       (val) => {
@@ -85,7 +86,7 @@ export const InformacoesIniciaisView = () => {
       {
         message:
           "Número de telefone inválido! Esqueceu de inserir o 9 na frente?",
-      }
+      },
     )
     .refine(
       (val) => {
@@ -94,7 +95,7 @@ export const InformacoesIniciaisView = () => {
       },
       {
         message: "Número de telefone inválido",
-      }
+      },
     );
 
   const confirmacaoTelefoneSchema = z
@@ -247,7 +248,7 @@ export const InformacoesIniciaisView = () => {
                     textoLimpo,
                     input.selectionStart ?? 0,
                     input.selectionEnd ?? 0,
-                    "end"
+                    "end",
                   );
                 }
               }}
@@ -264,7 +265,7 @@ export const InformacoesIniciaisView = () => {
                     textoLimpo,
                     input.selectionStart ?? 0,
                     input.selectionEnd ?? 0,
-                    "end"
+                    "end",
                   );
                 }
               }}
@@ -288,7 +289,7 @@ export const InformacoesIniciaisView = () => {
                   if (!form) return;
 
                   const index = Array.from(form.elements).indexOf(
-                    e.currentTarget
+                    e.currentTarget,
                   );
                   const next = form.elements[index + 1] as HTMLElement;
                   next?.focus();
@@ -319,7 +320,7 @@ export const InformacoesIniciaisView = () => {
                     textoLimpo,
                     input.selectionStart ?? 0,
                     input.selectionEnd ?? 0,
-                    "end"
+                    "end",
                   );
                 }
               }}
@@ -336,7 +337,7 @@ export const InformacoesIniciaisView = () => {
                     textoLimpo,
                     input.selectionStart ?? 0,
                     input.selectionEnd ?? 0,
-                    "end"
+                    "end",
                   );
                 }
               }}
@@ -362,7 +363,7 @@ export const InformacoesIniciaisView = () => {
 
                     const elements = Array.from(form.elements) as HTMLElement[];
                     let index = elements.indexOf(
-                      e.currentTarget as HTMLElement
+                      e.currentTarget as HTMLElement,
                     );
 
                     // anda para frente até achar alguém com tabindex válido
@@ -454,7 +455,7 @@ export const InformacoesIniciaisView = () => {
                   setFormData((prev) => ({
                     ...prev,
                     confirmacaoWhatsapp: normalizePhone(
-                      prev.confirmacaoWhatsapp
+                      prev.confirmacaoWhatsapp,
                     ),
                   }));
                 }

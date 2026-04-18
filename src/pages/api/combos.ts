@@ -24,7 +24,7 @@ import { toArray } from "@util/array";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<ICombo>>
+  res: NextApiResponse<RespType<ICombo>>,
 ) {
   if (req.method === "GET") {
     let data;
@@ -134,7 +134,7 @@ export const obterCombos = async ({
               tamanhos,
               sabores,
               bebidas,
-              lanches
+              lanches,
             );
 
             // produtoDispPelasRegras(x, cliente, produtosDevemEstar);
@@ -144,10 +144,10 @@ export const obterCombos = async ({
         .map((x) =>
           trouxeProdutos
             ? aplicarValorMinCombo(x, sabores, bebidas, lanches)
-            : x
+            : x,
         ),
-      deveEstar
-    )
+      deveEstar,
+    ),
   ).map((combo) => {
     let estoque = combo.estoque;
     const estoqueMin: {
@@ -162,7 +162,7 @@ export const obterCombos = async ({
     combo.produtos.forEach((prod) => {
       if (prod.tipo === "pizza") {
         const i = estoqueMin.tamanhos.findIndex(
-          (x) => x.id === prod.tamanho.id
+          (x) => x.id === prod.tamanho.id,
         );
 
         if (i > -1) {
@@ -175,10 +175,11 @@ export const obterCombos = async ({
           .filter((x) =>
             prod.bebidas?.length
               ? prod.bebidas.some((y) => y.id === x.id)
-              : true
+              : true,
           )
           .filter(
-            (x) => x.emCondicoes && x.visivel && x.disponivel && x.estoque !== 0
+            (x) =>
+              x.emCondicoes && x.visivel && x.disponivel && x.estoque !== 0,
           );
         const estoqueDisponiveis = disponiveis.some((x) => x.estoque == null)
           ? 999999
@@ -192,10 +193,11 @@ export const obterCombos = async ({
           .filter((x) =>
             prod.lanches?.length
               ? prod.lanches.some((y) => y.id === x.id)
-              : true
+              : true,
           )
           .filter(
-            (x) => x.emCondicoes && x.visivel && x.disponivel && x.estoque !== 0
+            (x) =>
+              x.emCondicoes && x.visivel && x.disponivel && x.estoque !== 0,
           );
         const estoqueDisponiveis = disponiveis.some((x) => x.estoque == null)
           ? 999999

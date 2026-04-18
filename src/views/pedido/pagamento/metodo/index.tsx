@@ -86,9 +86,9 @@ export const Metodo = ({
           cupom.alvo === "itens" ? valorItens : totalMetodo,
           cupom.valor,
           cupom.tipo,
-          cupom.maxDesconto
+          cupom.maxDesconto,
         )
-      : 0
+      : 0,
   );
 
   const totalMetodoComDesconto = descontoReal
@@ -101,7 +101,7 @@ export const Metodo = ({
     router.push(
       { pathname: router.pathname, query: { ...router.query, metodo } },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
   };
 
@@ -112,17 +112,13 @@ export const Metodo = ({
     });
   };
 
-  usePopState(
-    router,
-    () => {
-      metodo ? closeModal() : router.replace("/pedido");
-    },
-    [metodo]
-  );
+  usePopState(router, () => {
+    metodo ? closeModal() : router.replace("/pedido");
+  }, [metodo]);
 
   const pagComTroco = pagsMetodo
     ? pagsMetodo.find(
-        (x) => x.tipo === "especie" && (x.trocoPara ?? 0) > x.valor
+        (x) => x.tipo === "especie" && (x.trocoPara ?? 0) > x.valor,
       )
     : undefined;
   return (
@@ -173,8 +169,8 @@ export const Metodo = ({
                 {m.cupom.alvo === "pagamento"
                   ? `pagando ${m.legenda}`
                   : m.cupom.alvo === "itens"
-                  ? "nos itens"
-                  : ""}
+                    ? "nos itens"
+                    : ""}
                 {!!m.cupom.maxDesconto &&
                   ` (até ${formatCurrency(m.cupom.maxDesconto)})`}
               </span>
@@ -234,7 +230,7 @@ export const Metodo = ({
                       cupom.alvo === "itens" ? valorItens : pag.valor,
                       cupom.valor,
                       cupom.tipo,
-                      cupom.maxDesconto
+                      cupom.maxDesconto,
                     )
                   : 0,
             });

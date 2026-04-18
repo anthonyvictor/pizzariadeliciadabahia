@@ -8,7 +8,7 @@ import { conectarDB } from "src/infra/mongodb/config";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IEndereco>>
+  res: NextApiResponse<RespType<IEndereco>>,
 ) {
   await conectarDB();
 

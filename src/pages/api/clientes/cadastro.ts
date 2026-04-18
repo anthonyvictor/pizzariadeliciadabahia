@@ -9,7 +9,7 @@ import { obterCliente } from ".";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<ICliente>>
+  res: NextApiResponse<RespType<ICliente>>,
 ) {
   try {
     if (req.method !== "POST") return res.status(405).end();

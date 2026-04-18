@@ -150,7 +150,7 @@ export const VerticalCarousel: React.FC<Props> = ({
         setCurrentIndex(idx);
       }
     },
-    [combos.length]
+    [combos.length],
   );
 
   const next = useCallback(() => {
@@ -342,7 +342,9 @@ const Item = styled.div<{ active?: boolean; neighbor?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1), opacity 360ms ease;
+  transition:
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 360ms ease;
   transform-origin: center;
   /* escala e opacidade diferentes: ativo > vizinho > oculto */
   transform: ${({ active, neighbor }) =>

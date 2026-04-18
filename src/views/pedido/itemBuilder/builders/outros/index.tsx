@@ -39,7 +39,7 @@ export const OutrosBuilder = ({
    * o valor do sabor será: valorFixo + (valorSabor - valorFixo)
    */
   const obterValorMax = (
-    acoes: (IAcaoProdutoBebida | IAcaoProdutoLanche)[] | undefined
+    acoes: (IAcaoProdutoBebida | IAcaoProdutoLanche)[] | undefined,
   ) => {
     let valorMax = -1;
     (acoes ?? []).forEach((acao) => {
@@ -162,8 +162,8 @@ export const OutrosBuilder = ({
           builder.max === builder.min
             ? ``
             : (builder.max ?? 1) > 1 && (builder.max ?? 100) < 100
-            ? `, de ${builder.min ?? 1} até ${builder.max}`
-            : `, pelo menos ${builder.min ?? 1} `
+              ? `, de ${builder.min ?? 1} até ${builder.max}`
+              : `, pelo menos ${builder.min ?? 1} `
         }`}
         max={builder.max}
         min={builder.min}
@@ -210,7 +210,7 @@ export const OutrosBuilder = ({
           const atuais =
             builder.tipo === "bebida" ? builder.bebidas : builder.lanches;
           const _outros = novosOutros.map(
-            (x) => atuais.find((y) => y.id === x)!
+            (x) => atuais.find((y) => y.id === x)!,
           );
 
           setOutros(_outros.map((x) => ({ ...x, valor: calcularValor(x) })));

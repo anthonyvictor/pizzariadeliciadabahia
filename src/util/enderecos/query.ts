@@ -17,8 +17,8 @@ export const query_viaCep = async (value: string) => {
     if (v.replace(/\D/g, "").length === 8) return [];
     const res = await axios.get(
       `https://viacep.com.br/ws/BA/Salvador/${encodeURIComponent(
-        normalizarOrdinal(v)
-      )}/json/`
+        normalizarOrdinal(v),
+      )}/json/`,
     );
 
     if (!axiosOk(res.status) || res?.data?.erro)
@@ -45,6 +45,10 @@ export const query_nominatim = async (value: string, limit = 5) => {
         viewbox: bboxSalvador,
         addressdetails: 1,
         bounded: 1,
+      },
+      headers: {
+        "User-Agent": "SitePdb/1.0 (pizzadeliciadabahia@gmail.com)", // Identifique-se aqui
+        Referer: "https://pizzariadeliciadabahia.com", // Opcional, mas ajuda
       },
     });
 
@@ -90,7 +94,7 @@ export const query_photon = async (value: string, limit = 5) => {
 export const query_cepaberto = async (
   value: string,
   bairro?: string,
-  limit = 5
+  limit = 5,
 ) => {
   try {
     const v = (value ?? "").trim();

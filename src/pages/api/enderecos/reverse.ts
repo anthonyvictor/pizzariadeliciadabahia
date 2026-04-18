@@ -13,7 +13,7 @@ const memoryCache = new NodeCache({ stdTTL: 3600 }); // 1h
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     const { lat, lon } = req.query;

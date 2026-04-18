@@ -7,7 +7,7 @@ import { IItemPedido } from "tpdb-lib";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IItemPedido>>
+  res: NextApiResponse<RespType<IItemPedido>>,
 ) {
   if (req.method === "POST") {
     const { pedidoId } = req.body;

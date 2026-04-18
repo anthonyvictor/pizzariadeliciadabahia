@@ -35,7 +35,7 @@ export const ConfigsViewStyle = styled(LayoutStyle)`
 `;
 
 export const ConfigItemStyle = styled.li.attrs(
-  (props: { item: IConfig }) => props
+  (props: { item: IConfig }) => props,
 )`
   display: flex;
   align-items: center;

@@ -10,7 +10,7 @@ import { HTTPError } from "@models/error";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<string>>
+  res: NextApiResponse<RespType<string>>,
 ) {
   try {
     if (req.method !== "POST") return res.status(405).end();

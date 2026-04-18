@@ -21,7 +21,7 @@ const indsp = "Oops, esse item não está disponível no momento!";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IItemBuilder>>
+  res: NextApiResponse<RespType<IItemBuilder>>,
 ) {
   if (req.method === "GET") {
     const { id, tipo, pedidoId } = req.query;
@@ -30,7 +30,7 @@ export default async function handler(
     const data = await obterItemBuilder(
       id as any,
       tipo as any,
-      pedidoId as any
+      pedidoId as any,
     );
 
     res.status(200).json(data);
@@ -42,7 +42,7 @@ export default async function handler(
 export const obterItemBuilder = async (
   id: string,
   tipo: IItemPedidoTipo | "combo",
-  pedidoId: string | undefined
+  pedidoId: string | undefined,
 ): Promise<IItemBuilder> => {
   await conectarDB();
 
@@ -62,31 +62,33 @@ export const obterItemBuilder = async (
     combo.produtos = combo.produtos.map((p) => {
       if (p.tipo === "bebida") {
         p.bebidas = bebidas.filter((x) =>
-          p.bebidas.length ? p.bebidas.some((y) => y.id === x.id) : true
+          p.bebidas.length ? p.bebidas.some((y) => y.id === x.id) : true,
         );
       } else if (p.tipo === "lanche") {
         p.lanches = lanches.filter((x) =>
-          p.lanches.length ? p.lanches.some((y) => y.id === x.id) : true
+          p.lanches.length ? p.lanches.some((y) => y.id === x.id) : true,
         );
       } else {
         if (p.sabores) {
           p.sabores = sabores.filter((x) =>
-            p.sabores.length ? p.sabores.some((y) => y.id === x.id) : true
+            p.sabores.length ? p.sabores.some((y) => y.id === x.id) : true,
           );
         }
         if (p.bordas) {
           p.bordas = bordas.filter((x) =>
-            p.bordas.length ? p.bordas.some((y) => y.id === x.id) : true
+            p.bordas.length ? p.bordas.some((y) => y.id === x.id) : true,
           );
         }
         if (p.espessuras) {
           p.espessuras = espessuras.filter((x) =>
-            p.espessuras.length ? p.espessuras.some((y) => y.id === x.id) : true
+            p.espessuras.length
+              ? p.espessuras.some((y) => y.id === x.id)
+              : true,
           );
         }
         if (p.pontos) {
           p.pontos = pontos.filter((x) =>
-            p.pontos.length ? p.pontos.some((y) => y.id === x.id) : true
+            p.pontos.length ? p.pontos.some((y) => y.id === x.id) : true,
           );
         }
         if (p.tamanho) {

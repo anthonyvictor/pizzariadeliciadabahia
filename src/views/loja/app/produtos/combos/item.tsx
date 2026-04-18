@@ -42,7 +42,58 @@ export const ComboItem = ({ item }: { item: ICombo }) => {
           infoExtra={[`💲${formatCurrency(item.valorMin)}`]}
           setStat={(s) => {
             const data = { [s.t]: s.v, estoque: null };
-            salvar("/combos", "combos", [{ ...item, ...data }]);
+            const itemToSave = { ...item };
+            itemToSave.produtos = itemToSave.produtos.map((prod) => {
+              const newProd = { ...prod };
+              if (newProd.tipo === "pizza") {
+                newProd.tamanho = newProd.tamanho.id as any;
+                newProd.sabores = !newProd.sabores?.length
+                  ? undefined
+                  : newProd.sabores.map((sab) => sab.id as any);
+                newProd.bordas = !newProd.bordas?.length
+                  ? undefined
+                  : newProd.bordas.map((bord) => bord.id as any);
+                newProd.espessuras = !newProd.espessuras?.length
+                  ? undefined
+                  : newProd.espessuras.map((esp) => esp.id as any);
+                newProd.pontos = !newProd.pontos?.length
+                  ? undefined
+                  : newProd.pontos.map((pont) => pont.id as any);
+                newProd.extras = !newProd.extras?.length
+                  ? undefined
+                  : newProd.extras.map((extra) => extra.id as any);
+              } else if (newProd.tipo === "bebida") {
+                newProd.bebidas = !newProd.bebidas?.length
+                  ? undefined
+                  : newProd.bebidas.map((beb) => beb.id as any);
+              } else if (newProd.tipo === "lanche") {
+                newProd.lanches = !newProd.lanches?.length
+                  ? undefined
+                  : newProd.lanches.map((lan) => lan.id as any);
+              }
+              return newProd;
+            });
+
+            //             onst itemToSave: {
+            //     produtos: IProdutoCombo[];
+            //     valorMin: number;
+            //     id: string;
+            //     nome: string;
+            //     descricao?: string;
+            //     disponivel: boolean;
+            //     imagemUrl?: string;
+            //     visivel: boolean;
+            //     vendidos: number;
+            //     condicoes?: IRegra[];
+            //     excecoes?: IRegra[];
+            //     uuid?: string;
+            //     estoque?: number;
+            //     criadoEm: Date;
+            //     dadosExtras?: IDado[];
+            //     emCondicoes: boolean;
+            // }
+
+            salvar("/combos", "combos", [{ ...itemToSave, ...data }]);
             upsertArray(item, setCombos, data);
           }}
         />

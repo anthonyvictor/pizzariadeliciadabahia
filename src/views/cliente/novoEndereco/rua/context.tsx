@@ -56,7 +56,7 @@ export const RuaPageProvider = ({
   });
 
   const enderecos = _enderecos.filter(
-    (item, index, self) => index === self.findIndex((e) => e.rua === item.rua)
+    (item, index, self) => index === self.findIndex((e) => e.rua === item.rua),
   );
 
   //   if (loading) return <Loading />;

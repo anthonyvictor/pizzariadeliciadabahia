@@ -11,7 +11,7 @@ export const ProdutosViewStyle = styled(LojaLayout)`
 `;
 
 export const Produto = styled.li.attrs(
-  (props: { item: IProdutoBase }) => props
+  (props: { item: IProdutoBase }) => props,
 )`
   display: flex;
   align-items: center;

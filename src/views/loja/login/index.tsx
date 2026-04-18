@@ -2,12 +2,13 @@ import { MyInput } from "@components/pedido/myInput";
 import { LoginViewStyle } from "./styles";
 import { useState } from "react";
 import { ButtonSecondary } from "@styles/components/buttons";
-import { api, axiosOk } from "@util/axios";
+import { api } from "@util/axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import TextContainer from "@components/textContainer";
 import { AxiosError } from "axios";
 import { NoLogError } from "@models/error";
+import { axiosOk } from "@util/axios";
 
 export const LoginView = () => {
   const [login, setLogin] = useState<{ email: string; senha: string }>({

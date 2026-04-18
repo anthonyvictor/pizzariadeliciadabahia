@@ -72,8 +72,8 @@ export const PagamentoView = ({
             ? pedido.endereco.desconto
               ? `(Desconto na entrega aplicado!)`
               : (pedido?.endereco?.taxa ?? 0) > 0
-              ? ` (ITENS + ENTREGA)`
-              : undefined
+                ? ` (ITENS + ENTREGA)`
+                : undefined
             : undefined
         }
         descriptionColor={
@@ -126,7 +126,7 @@ export const PagamentoView = ({
                 .catch((err) => {
                   console.error(err);
                   toast.error(
-                    "Oops, houve um erro interno, informe à pizzaria"
+                    "Oops, houve um erro interno, informe à pizzaria",
                   );
                 });
             } else {

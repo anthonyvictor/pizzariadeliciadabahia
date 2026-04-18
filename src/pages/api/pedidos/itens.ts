@@ -22,7 +22,7 @@ import mongoose, { Model } from "mongoose";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IItemPedido>>
+  res: NextApiResponse<RespType<IItemPedido>>,
 ) {
   if (req.method === "GET") {
     let data;
@@ -58,7 +58,7 @@ export const removeItem = async (pedidoId: string, itemsIds: string[]) => {
         },
       },
     }, // Só adiciona se não existir
-    { new: true }
+    { new: true },
   );
 };
 export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
@@ -72,7 +72,7 @@ export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
         },
       },
     },
-    { new: true }
+    { new: true },
   );
   type Vendidos = { id: string; qtd: number };
   const _combosVendidos: { grupoId: string; comboId: string }[] = [];
@@ -188,7 +188,7 @@ export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
                   },
                 ],
               },
-            }))
+            })),
           );
         }
       };
@@ -205,7 +205,7 @@ export const addItem = async (pedidoId: string, itens: IItemPedidoIds[]) => {
         "\n--\n--",
         err.message,
         "\n--\n--",
-        err.stack
+        err.stack,
       );
     }
   })();

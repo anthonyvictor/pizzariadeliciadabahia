@@ -1,6 +1,6 @@
-import { axiosOk } from "@util/axios";
 import axios from "axios";
 import { format_brasilApi, format_cepAberto, format_viaCEP } from "./format";
+import { axiosOk } from "@util/axios";
 
 export const cep_cepAberto = async (value: string) => {
   try {

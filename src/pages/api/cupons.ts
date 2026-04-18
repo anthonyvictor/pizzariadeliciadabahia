@@ -13,7 +13,7 @@ import { analisarRegras } from "@util/regras";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<ICupom>>
+  res: NextApiResponse<RespType<ICupom>>,
 ) {
   if (req.method === "GET") {
     let data;
@@ -85,8 +85,8 @@ export const obterCupons = async ({
           return v;
         })(),
       })),
-      deveEstar
-    )
+      deveEstar,
+    ),
   );
 
   return data;

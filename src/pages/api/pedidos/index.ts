@@ -14,7 +14,7 @@ import { HTTPError } from "@models/error";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IPedido>>
+  res: NextApiResponse<RespType<IPedido>>,
 ) {
   try {
     if (req.method === "GET") {
@@ -91,7 +91,7 @@ export const obterPedidos = async ({
             enderecos: (pedido?.cliente?.enderecos ?? []).map((endereco) => {
               const taxa = encontrarTaxa(
                 endereco.enderecoOriginal.distancia_metros,
-                distancias
+                distancias,
               );
 
               return {
@@ -118,7 +118,7 @@ export const obterPedidos = async ({
                     ? pedido.endereco.enderecoOriginal.taxa
                     : encontrarTaxa(
                         pedido.endereco.enderecoOriginal.distancia_metros,
-                        distancias
+                        distancias,
                       ),
               },
             },
@@ -154,7 +154,7 @@ export const obterPedido = async (id: string | IPedido) => {
           enderecos: (pedido?.cliente?.enderecos ?? []).map((endereco) => {
             const taxa = encontrarTaxa(
               endereco.enderecoOriginal.distancia_metros,
-              distancias
+              distancias,
             );
 
             return {
@@ -181,7 +181,7 @@ export const obterPedido = async (id: string | IPedido) => {
                   ? pedido.endereco.enderecoOriginal.taxa
                   : encontrarTaxa(
                       pedido.endereco.enderecoOriginal.distancia_metros,
-                      distancias
+                      distancias,
                     ),
             },
           },
@@ -202,7 +202,7 @@ export const novoPedido = async (cliente: string) => {
 
 export const patchPedido = async (
   id: string,
-  dadosParaAlterar: Partial<IPedido>
+  dadosParaAlterar: Partial<IPedido>,
 ) => {
   if (!Types.ObjectId.isValid(id)) {
     throw new Error("ID inválido");
@@ -212,6 +212,6 @@ export const patchPedido = async (
   await PedidosModel.findByIdAndUpdate(
     id,
     { $set: dadosParaAlterar },
-    { new: true } // retorna o documento atualizado
+    { new: true }, // retorna o documento atualizado
   );
 };

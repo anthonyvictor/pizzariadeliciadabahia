@@ -158,16 +158,16 @@ export const PizzaBuilder = ({
     });
   }, [pizza]); //eslint-disable-line
   const bordasDisp = (builder?.bordas ?? []).filter(
-    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel
+    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel,
   );
   const pontosDisp = (builder.pontos ?? []).filter(
-    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel
+    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel,
   );
   const espDisp = (builder.espessuras ?? []).filter(
-    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel
+    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel,
   );
   const extrasDisp = (builder.espessuras ?? []).filter(
-    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel
+    (x) => x.disponivel && x.emCondicoes && x.estoque !== 0 && x.visivel,
   );
 
   useEffect(() => {
@@ -196,7 +196,7 @@ export const PizzaBuilder = ({
       acc[item.categoria].push(item);
       return acc;
     },
-    {}
+    {},
   );
 
   const gruposArray = Object.entries(grupos)
@@ -302,7 +302,7 @@ export const PizzaBuilder = ({
         value={pizza.sabores.map((x) => x.id)}
         setValue={(novosSabores) => {
           const sabores = novosSabores.map(
-            (x) => builder.sabores.find((y) => y.id === x)!
+            (x) => builder.sabores.find((y) => y.id === x)!,
           );
           setPizza((prev) => ({
             ...prev,
@@ -319,12 +319,12 @@ export const PizzaBuilder = ({
             bordasDisp.length > 1 && !pizza.borda
               ? `checklist-borda-${builder.id}`
               : espDisp.length > 1 && !pizza.espessura
-              ? `checklist-espessura-${builder.id}`
-              : pontosDisp.length > 1 && !pizza.ponto
-              ? `checklist-ponto-${builder.id}`
-              : !!extrasDisp.length
-              ? `checklist-extras-${builder.id}`
-              : nextEl
+                ? `checklist-espessura-${builder.id}`
+                : pontosDisp.length > 1 && !pizza.ponto
+                  ? `checklist-ponto-${builder.id}`
+                  : !!extrasDisp.length
+                    ? `checklist-extras-${builder.id}`
+                    : nextEl,
           );
         }}
       />
@@ -365,10 +365,10 @@ export const PizzaBuilder = ({
               espDisp.length > 1
                 ? `checklist-espessura-${builder.id}`
                 : pontosDisp.length > 1
-                ? `checklist-ponto-${builder.id}`
-                : !!extrasDisp.length
-                ? `checklist-extras-${builder.id}`
-                : nextEl
+                  ? `checklist-ponto-${builder.id}`
+                  : !!extrasDisp.length
+                    ? `checklist-extras-${builder.id}`
+                    : nextEl,
             );
           }}
         />
@@ -410,8 +410,8 @@ export const PizzaBuilder = ({
               pontosDisp.length > 1
                 ? `checklist-ponto-${builder.id}`
                 : !!extrasDisp.length
-                ? `checklist-extras-${builder.id}`
-                : nextEl
+                  ? `checklist-extras-${builder.id}`
+                  : nextEl,
             );
           }}
         />
@@ -449,7 +449,7 @@ export const PizzaBuilder = ({
           }}
           onDone={() => {
             rolarEl(
-              !!extrasDisp.length ? `checklist-extras-${builder.id}` : nextEl
+              !!extrasDisp.length ? `checklist-extras-${builder.id}` : nextEl,
             );
           }}
         />
@@ -479,7 +479,7 @@ export const PizzaBuilder = ({
           value={pizza.extras.map((x) => x.id)}
           setValue={(novosExtras) => {
             const extras = novosExtras.map(
-              (x) => builder.extras.find((y) => y.id === x)!
+              (x) => builder.extras.find((y) => y.id === x)!,
             );
             setPizza((prev) => ({
               ...prev,

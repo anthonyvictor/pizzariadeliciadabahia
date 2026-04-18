@@ -8,7 +8,7 @@ import { conectarDB } from "src/infra/mongodb/config";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IBairro>>
+  res: NextApiResponse<RespType<IBairro>>,
 ) {
   if (req.method === "GET") {
     const data = await obterBairros();
@@ -22,7 +22,7 @@ export default async function handler(
 export const obterBairros = async () => {
   await conectarDB();
   const data = (await ff({ m: BairrosModel })).sort((a, b) =>
-    a.nome > b.nome ? 1 : -1
+    a.nome > b.nome ? 1 : -1,
   ) as IBairro[];
 
   return data;

@@ -27,10 +27,10 @@ const TipoPage: NextPage = () => {
 
           const b = res.data.filter((cupom) => cupom.alvo === "entrega");
           const c = b.filter((cupom) =>
-            analisarCodigoCupom(cupom, pedido.codigoCupom)
+            analisarCodigoCupom(cupom, pedido.codigoCupom),
           );
           const d = c.sort((a, b) =>
-            (a?.condicoes ?? []).some((x) => x.tipo === "codigo") ? -1 : 1
+            (a?.condicoes ?? []).some((x) => x.tipo === "codigo") ? -1 : 1,
           );
 
           setCupom(d?.[0]);

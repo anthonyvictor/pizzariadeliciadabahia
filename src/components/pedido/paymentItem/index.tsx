@@ -10,8 +10,8 @@ export const PaymentItem: FC<{ payment: IPagamentoPedido }> = ({ payment }) => {
         payment.tipo === "especie"
           ? "EM ESPÉCIE"
           : payment.tipo === "cartao"
-          ? "NO CARTÃO"
-          : "NO PIX"
+            ? "NO CARTÃO"
+            : "NO PIX"
       }${
         payment.tipo === "especie" && payment.trocoPara > 0
           ? " TROCO P/" + payment.trocoPara

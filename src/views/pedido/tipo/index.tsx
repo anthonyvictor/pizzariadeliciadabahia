@@ -43,17 +43,13 @@ export const TipoView = () => {
 
   const { adicionalDinamico, taxaAdicional } = getAdicionaisTaxa(configs);
 
-  usePopState(
-    router,
-    () => {
-      showModal ? setTipo(null) : router.replace("/pedido");
-    },
-    [showModal]
-  );
+  usePopState(router, () => {
+    showModal ? setTipo(null) : router.replace("/pedido");
+  }, [showModal]);
 
   useEffect(() => {
     setShowModal(
-      tipo?.type === "entrega" && !!tipo.endereco && !tipo.endereco.metodo
+      tipo?.type === "entrega" && !!tipo.endereco && !tipo.endereco.metodo,
     );
   }, [tipo]);
 
@@ -167,7 +163,7 @@ export const TipoView = () => {
                 .catch((err) => {
                   console.error(err);
                   toast.error(
-                    "Oops, houve um erro interno, informe à pizzaria"
+                    "Oops, houve um erro interno, informe à pizzaria",
                   );
                 });
             } else {
@@ -205,8 +201,8 @@ export const TipoView = () => {
               Icone={GiStairsGoal}
               taxa={eval(
                 `${taxaPadrao(
-                  tipo.endereco
-                )} ${adicionalDinamico} ${taxaAdicional}`
+                  tipo.endereco,
+                )} ${adicionalDinamico} ${taxaAdicional}`,
               )}
               desconto={0}
             />

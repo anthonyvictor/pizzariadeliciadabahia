@@ -16,7 +16,7 @@ import qs from "qs";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<ILanche>>
+  res: NextApiResponse<RespType<ILanche>>,
 ) {
   if (req.method === "GET") {
     let data;
@@ -82,9 +82,9 @@ export const obterLanches = async ({
             return v;
           })(),
         })),
-        deveEstar
-      )
-    )
+        deveEstar,
+      ),
+    ),
   );
   return data;
 };

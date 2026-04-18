@@ -21,7 +21,7 @@ const ItemBuilderPage: NextPage = () => {
     if (authCarregado) {
       axios
         .get(
-          `${env.apiURL}/pages/item-builder?id=${router.query.id}&pedidoId=${pedido.id}&tipo=${router.query.tipo}`
+          `${env.apiURL}/pages/item-builder?id=${router.query.id}&pedidoId=${pedido.id}&tipo=${router.query.tipo}`,
         )
         .then((res) => {
           console.log(res.data);

@@ -31,7 +31,7 @@ export const OutroBuilder = ({
   isCombo?: boolean;
 }) => {
   const [outro, setOutro] = useState<IBebida | ILanche | undefined>(
-    currentItem
+    currentItem,
   );
   const [observacoes, setObservacoes] = useState("");
 
@@ -41,7 +41,7 @@ export const OutroBuilder = ({
    * o valor do sabor será: valorFixo + (valorSabor - valorFixo)
    */
   const obterValorMax = (
-    acoes: (IAcaoProdutoBebida | IAcaoProdutoLanche)[] | undefined
+    acoes: (IAcaoProdutoBebida | IAcaoProdutoLanche)[] | undefined,
   ) => {
     let valorMax = -1;
     (acoes ?? []).forEach((acao) => {

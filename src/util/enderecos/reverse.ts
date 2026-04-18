@@ -56,6 +56,10 @@ export const pos_nominatim = async (pos: [number, number], limit = 5) => {
         lat: pos[0],
         lon: pos[1],
       },
+      headers: {
+        "User-Agent": "SitePdb/1.0 (pizzadeliciadabahia@gmail.com)", // Identifique-se aqui
+        Referer: "https://pizzariadeliciadabahia.com", // Opcional, mas ajuda
+      },
     });
 
     if (!axiosOk(res.status))

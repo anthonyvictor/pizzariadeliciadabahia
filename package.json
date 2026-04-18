@@ -1,5 +1,5 @@
 {
-  "name": "site-pdb",
+  "name": "pdbwebsite",
   "version": "2.0.0",
   "description": "Frontend do site da Pizzaria Delicia da Bahia.",
   "private": true,
@@ -47,7 +47,7 @@
     "styled-components": "^5.3.5",
     "superjson": "^2.2.2",
     "tailwindcss": "^3.2.7",
-    "tpdb-lib": "^1.0.33",
+    "tpdb-lib": "^1.0.38",
     "uuid": "^9.0.0",
     "zod": "^3.22.4",
     "zustand": "^5.0.7"

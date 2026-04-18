@@ -12,7 +12,7 @@ import { sortDisp } from "@util/array";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IHome>>
+  res: NextApiResponse<RespType<IHome>>,
 ) {
   if (req.method === "GET") {
     const data = await obterStories();
@@ -29,7 +29,7 @@ export const obterStories = async () => {
   const lanches = sortDisp(await obterLanches({ _pedido: undefined }));
   const sabores = sortDisp(await obterSabores({ _pedido: undefined }));
   const tamanhos = sortDisp(
-    await obterTamanhos({ _pedido: undefined, sabores })
+    await obterTamanhos({ _pedido: undefined, sabores }),
   );
   const combos = sortDisp(
     (
@@ -40,9 +40,9 @@ export const obterStories = async () => {
         lanches,
         _pedido: undefined,
       })
-    ).sort((a, b) => b.vendidos - a.vendidos)
+    ).sort((a, b) => b.vendidos - a.vendidos),
   ).filter(
-    (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0
+    (x) => x.visivel && x.disponivel && x.emCondicoes && x.estoque !== 0,
   );
 
   return {

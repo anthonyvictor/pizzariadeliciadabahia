@@ -10,7 +10,7 @@ import { IPagamentoPedidoPix } from "tpdb-lib";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IPixRecebido>>
+  res: NextApiResponse<RespType<IPixRecebido>>,
 ) {
   if (req.method === "GET") {
     let data: IPixRecebido | IPixRecebido[] | null = null;
@@ -49,7 +49,7 @@ export const obterPixRecebidos = async ({ limite }: { limite?: number }) => {
         s: { criadoEm: -1 },
         l: limite ?? 30,
       })) as unknown as IPixRecebido[]
-    ).filter((x) => true)
+    ).filter((x) => true),
   );
 
   return pixRecebidos;

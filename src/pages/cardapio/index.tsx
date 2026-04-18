@@ -24,7 +24,7 @@ const Cardapio: NextPage = ({
         getValueString({
           value: v.valor - 0.01,
           name: tamanhos.find((x) => x.id === v.tamanhoId).nome.slice(0, 3),
-        })
+        }),
       )
       .join(" • ");
   };

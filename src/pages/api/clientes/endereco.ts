@@ -9,7 +9,7 @@ import { Types } from "mongoose";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     if (req.method === "POST") {
@@ -30,7 +30,7 @@ export default async function handler(
         throw new HTTPError("Precisa do id do cliente e do endereço", 404);
       await desativarEnderecoDoCliente(
         clienteId as string,
-        enderecoId as string
+        enderecoId as string,
       );
       return res.status(200).end();
     } else {
@@ -44,7 +44,7 @@ export default async function handler(
 
 export async function adicionarEnderecoAoCliente(
   clienteId: string,
-  novoEndereco: IEnderecoCliente
+  novoEndereco: IEnderecoCliente,
 ) {
   await conectarDB();
 
@@ -59,7 +59,7 @@ export async function adicionarEnderecoAoCliente(
 
   if (!enderecoOriginal) {
     const enderecoExtra = await obterEnderecoExtra(
-      novoEndereco.enderecoOriginal
+      novoEndereco.enderecoOriginal,
     );
 
     const res = await EnderecosModel.create({
@@ -73,7 +73,7 @@ export async function adicionarEnderecoAoCliente(
     });
 
     console.info(
-      `📦 Novo endereço salvo: ${enderecoOriginal.cep} - ${enderecoOriginal.rua} - ${enderecoOriginal.bairro}`
+      `📦 Novo endereço salvo: ${enderecoOriginal.cep} - ${enderecoOriginal.rua} - ${enderecoOriginal.bairro}`,
     );
   }
 
@@ -81,7 +81,7 @@ export async function adicionarEnderecoAoCliente(
     throw new HTTPError(
       "Dados extras do endereço não encontrados para salvar no cliente",
       404,
-      novoEndereco
+      novoEndereco,
     );
 
   const { numero, local, referencia } = novoEndereco;
@@ -100,7 +100,7 @@ export async function adicionarEnderecoAoCliente(
 
 export async function desativarEnderecoDoCliente(
   clienteId: string,
-  enderecoId: string
+  enderecoId: string,
 ) {
   await conectarDB();
 
@@ -121,6 +121,6 @@ export async function desativarEnderecoDoCliente(
       _id: new Types.ObjectId(clienteId),
       "enderecos._id": new Types.ObjectId(enderecoId),
     },
-    { $set: { "enderecos.$.visivel": false } }
+    { $set: { "enderecos.$.visivel": false } },
   );
 }

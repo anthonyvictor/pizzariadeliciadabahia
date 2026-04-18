@@ -13,8 +13,8 @@ export const sortTamanhos = (tamanhos: IPizzaTamanho[]) => {
     tamanhos.sort((a, b) =>
       a.valorMin != b.valorMin
         ? (b.valorMin ?? 0) - (a.valorMin ?? 0)
-        : b.tamanhoAprox - a.tamanhoAprox
-    )
+        : b.tamanhoAprox - a.tamanhoAprox,
+    ),
   );
 
   return r as IPizzaTamanho[];
@@ -23,7 +23,7 @@ export const sortSabores = (sabores: IPizzaSabor[]) => {
   const r = sabores.sort((a, b) =>
     a.valorMedio != b.valorMedio
       ? a.valorMedio - b.valorMedio
-      : a.nome.localeCompare(b.nome)
+      : a.nome.localeCompare(b.nome),
   );
 
   return r as IPizzaSabor[];
@@ -31,7 +31,7 @@ export const sortSabores = (sabores: IPizzaSabor[]) => {
 
 export const aplicarValorMinTamanho = (
   tamanho: IPizzaTamanho | undefined,
-  sabores: IPizzaSabor[] | undefined
+  sabores: IPizzaSabor[] | undefined,
 ) => {
   if (!tamanho) return undefined;
 
@@ -48,7 +48,7 @@ export const aplicarValorMinTamanho = (
 };
 export const aplicarValorMinTamanhos = (
   tamanhos: IPizzaTamanho[] | undefined,
-  sabores: IPizzaSabor[] | undefined
+  sabores: IPizzaSabor[] | undefined,
 ) => {
   if (!tamanhos) return [];
 
@@ -93,8 +93,8 @@ export const sortPontos = (pontos: IPizzaPonto[] | undefined) => {
       a.padrao === true
         ? -1
         : b.vendidos != a.vendidos
-        ? a.vendidos - b.vendidos
-        : a.valor - b.valor
+          ? a.vendidos - b.vendidos
+          : a.valor - b.valor,
     )
     .map((x) => ({ ...x, tipo: "extra" }));
 
@@ -107,8 +107,8 @@ export const sortEspessuras = (espessuras: IPizzaEspessura[] | undefined) => {
       a.padrao === true
         ? -1
         : b.vendidos != a.vendidos
-        ? a.vendidos - b.vendidos
-        : a.valor - b.valor
+          ? a.vendidos - b.vendidos
+          : a.valor - b.valor,
     )
     .map((x) => ({ ...x, tipo: "extra" }));
 
@@ -118,7 +118,7 @@ export const sortExtras = (extras: IPizzaExtra[] | undefined) => {
   if (!extras) return [];
   const r = extras
     .sort((a, b) =>
-      b.vendidos != a.vendidos ? b.vendidos - a.vendidos : a.valor - b.valor
+      b.vendidos != a.vendidos ? b.vendidos - a.vendidos : a.valor - b.valor,
     )
     .map((x) => ({ ...x, tipo: "extra" }));
 

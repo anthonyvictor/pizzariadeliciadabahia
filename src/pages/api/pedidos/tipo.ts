@@ -7,7 +7,7 @@ import { IPedido, IPedidoTipo } from "tpdb-lib";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IPedido>>
+  res: NextApiResponse<RespType<IPedido>>,
 ) {
   if (req.method != "POST") return res.status(405).end(); // Método não permitido
 
@@ -19,7 +19,7 @@ export default async function handler(
 export const mudarTipoEEndereco = async (
   pedidoId: string,
   novoTipo: IPedidoTipo,
-  novoEndereco: IEnderecoPedido
+  novoEndereco: IEnderecoPedido,
 ) => {
   await conectarDB();
   const endereco =
@@ -28,6 +28,6 @@ export const mudarTipoEEndereco = async (
       : undefined;
   await PedidosModel.findByIdAndUpdate(
     pedidoId,
-    { tipo: novoTipo, endereco } // Só adiciona se não existir
+    { tipo: novoTipo, endereco }, // Só adiciona se não existir
   );
 };

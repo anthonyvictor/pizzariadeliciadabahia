@@ -56,13 +56,13 @@ export const SaborView = () => {
       .any()
       .refine(
         (val) => val == null || !isNaN(Number(val)),
-        "Estoque precisa ser um número se existir"
+        "Estoque precisa ser um número se existir",
       ),
     valores: z.array(
       z.object({
         tamanhoId: z.string(),
         valor: z.number(),
-      })
+      }),
     ),
   });
 
@@ -206,7 +206,7 @@ export const SaborView = () => {
                     setFormData((prev) => {
                       const valores = [...(prev.valores ?? [])];
                       const i = valores.findIndex(
-                        (x) => x.tamanhoId === tam.id
+                        (x) => x.tamanhoId === tam.id,
                       );
                       if (i > -1) {
                         valores[i].valor = valor;

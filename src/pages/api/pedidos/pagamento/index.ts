@@ -9,7 +9,7 @@ import { createStaticPix, hasError, PixError, parsePix } from "pix-utils";
 // Função handler da rota
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RespType<IItemPedido>>
+  res: NextApiResponse<RespType<IItemPedido>>,
 ) {
   // if (req.method === "GET") {
   //   let data;
@@ -43,7 +43,7 @@ export default async function handler(
 // };
 export const mudarPagamentos = async (
   pedidoId: string,
-  pagamentos: IPagamentoPedido[]
+  pagamentos: IPagamentoPedido[],
 ) => {
   await conectarDB();
 

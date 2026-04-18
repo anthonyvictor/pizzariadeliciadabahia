@@ -45,7 +45,7 @@ export const Bebida = ({
       <aside className="conteudo">
         {(() => {
           const { tipo, tamanho, sabor, completo } = destrincharBebida(
-            prod.nome
+            prod.nome,
           );
 
           return (

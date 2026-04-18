@@ -19,7 +19,7 @@ const ComplementoPage: NextPage = () => {
 
   useEffect(() => {
     const _endereco = JSON.parse(
-      sessionStorage.getItem("endereco") ?? "{}"
+      sessionStorage.getItem("endereco") ?? "{}",
     ) as IEnderecoCliente;
 
     setEndereco(_endereco);

@@ -15,14 +15,14 @@ const memoryCache = new NodeCache({ stdTTL: 3600 }); // 1h
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     const { rua, bairro } = req.query;
 
     const results = await autoCompleteEnderecos(
       rua as string,
-      bairro as string
+      bairro as string,
     );
     res.json(results);
   } catch (err) {

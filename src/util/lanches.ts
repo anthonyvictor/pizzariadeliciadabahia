@@ -10,7 +10,7 @@ export const sortLanches = (lanches: ILanche[] | undefined) => {
     lanches
       .sort((a, b) => a.vendidos - b.vendidos)
       .map((x) => ({ ...x, tipo: "lanche" }))
-      .reverse()
+      .reverse(),
   );
   return r as ILanche[];
 };

@@ -26,7 +26,7 @@ export const ConfigView = () => {
       .any()
       .refine(
         (val) => val == null || !isNaN(Number(val)),
-        "Estoque precisa ser um número se existir"
+        "Estoque precisa ser um número se existir",
       ),
     valor: z.number(),
   });

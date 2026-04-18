@@ -43,7 +43,7 @@ export const analisarRegras = ({
     (x) =>
       x.ativa &&
       (x.validaAte ? hoje.getTime() < x.validaAte.getTime() : true) &&
-      !(ignorar ?? []).includes(x.tipo)
+      !(ignorar ?? []).includes(x.tipo),
   );
 
   const hoje = new Date();

@@ -26,7 +26,7 @@ export const MetodoModal = ({
   valorDefinido: number;
 }) => {
   const [valorStr, setValorStr] = useState(
-    (valorTotal - valorDefinido).toString()
+    (valorTotal - valorDefinido).toString(),
   );
   const [trocoStr, setTrocoStr] = useState("");
   const [naoPrecisaTroco, setNaoPrecisaTroco] = useState(false);

@@ -30,7 +30,7 @@ export function useEnderecoAutocomplete({
 
   const sortByBairros = (arr: IEndereco[]) => {
     return arr.sort((a, b) =>
-      a.bairro.toLowerCase().includes(bairro.toLowerCase()) ? -1 : 1
+      a.bairro.toLowerCase().includes(bairro.toLowerCase()) ? -1 : 1,
     );
   };
 
@@ -54,7 +54,7 @@ export function useEnderecoAutocomplete({
     setCarregEnderecos(true);
 
     const sugestoesSalvas = JSON.parse(
-      sessionStorage.getItem("sugestoes-posicao") ?? "{}"
+      sessionStorage.getItem("sugestoes-posicao") ?? "{}",
     ) as { key: string; sugestoes: IEndereco[] };
 
     if (sugestoesSalvas?.key === pos.toString()) {
@@ -73,7 +73,7 @@ export function useEnderecoAutocomplete({
 
     sessionStorage.setItem(
       "sugestoes-posicao",
-      JSON.stringify({ key: pos.toString(), sugestoes: enderecos })
+      JSON.stringify({ key: pos.toString(), sugestoes: enderecos }),
     );
     setCarregEnderecos(false);
 
@@ -85,7 +85,7 @@ export function useEnderecoAutocomplete({
       fetchEnderecosQuery(value).then((res) => {
         setEnderecos(res as IEndereco[]);
       });
-    }, 600)
+    }, 600),
   );
 
   const eventoArrastar = (lat: number, lon: number) => {

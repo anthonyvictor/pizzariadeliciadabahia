@@ -30,8 +30,8 @@ export const Item = ({
             item.tipo === "pizza"
               ? item.tamanho.imagemUrl
               : item.tipo === "bebida"
-              ? item.bebidaOriginal.imagemUrl
-              : item.lancheOriginal.imagemUrl
+                ? item.bebidaOriginal.imagemUrl
+                : item.lancheOriginal.imagemUrl
           }
           layout="fill"
           objectFit={item.tipo === "bebida" ? "scale-down" : "cover"}
@@ -56,7 +56,7 @@ export const Item = ({
                   })[] = [];
                   item.extras.forEach((extra) => {
                     const i = extrasAgrupados.findIndex(
-                      (x) => x.id === extra.id
+                      (x) => x.id === extra.id,
                     );
 
                     if (i > -1) {
@@ -103,7 +103,7 @@ export const Item = ({
             <span>
               {formatCurrency(
                 (item.valor ?? 0) - (item.desconto ?? 0) ||
-                  ("GRÁTIS!" as unknown as number)
+                  ("GRÁTIS!" as unknown as number),
               )}
             </span>
           </span>
@@ -124,7 +124,7 @@ export const Item = ({
           onClick={async () => {
             try {
               const resp = await window.confirm(
-                "Se esse produto fizer parte de um combo, o combo inteiro será excluído! Deseja realmente excluir?"
+                "Se esse produto fizer parte de um combo, o combo inteiro será excluído! Deseja realmente excluir?",
               );
               if (resp) {
                 let itemsIds = pedido.itens
@@ -141,7 +141,7 @@ export const Item = ({
               }
             } catch (err) {
               toast.error(
-                "Oops, não foi possível excluir este item. Informe o erro à pizzaria"
+                "Oops, não foi possível excluir este item. Informe o erro à pizzaria",
               );
             }
           }}

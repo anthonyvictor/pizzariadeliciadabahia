@@ -54,6 +54,31 @@ export const ComplementoView = ({
           name="Ponto de referência *"
           placeholder="Próx ao mercado tal.. atrás do posto de gasolina.."
           maxLength={90}
+          minLength={6}
+          onKeyDown={(e) => {
+            const key = e.key;
+
+            // Permite teclas de controle (navegação, edição, etc.)
+            const allowedKeys = [
+              "Backspace",
+              "Tab",
+              "Enter",
+              "ArrowLeft",
+              "ArrowRight",
+              "ArrowUp",
+              "ArrowDown",
+              "Delete",
+            ];
+
+            // Se for tecla de controle, deixa passar
+            if (allowedKeys.includes(key)) return;
+
+            // Bloqueia tudo que não for letra ou número
+            const isLetterOrNumber = /^[a-zA-Z0-9 ]$/.test(key);
+            if (!isLetterOrNumber) {
+              e.preventDefault();
+            }
+          }}
           type="text"
           value={endereco?.referencia ?? ""}
           setValue={(value) =>

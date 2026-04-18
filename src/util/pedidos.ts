@@ -8,10 +8,10 @@ export const obterValoresDoPedido = ({
   const itens = _itens?.length ? _itens : [];
   const pagamentos = _pagamentos?.length ? _pagamentos : [];
   const descontoItens = Number(
-    itens.reduce((acc, curr) => acc + (curr.desconto ?? 0), 0).toFixed(2)
+    itens.reduce((acc, curr) => acc + (curr.desconto ?? 0), 0).toFixed(2),
   );
   const valorItensBruto = Number(
-    itens.reduce((acc, curr) => acc + curr.valor, 0).toFixed(2)
+    itens.reduce((acc, curr) => acc + curr.valor, 0).toFixed(2),
   );
 
   const valorItensComDesconto = valorItensBruto - descontoItens;
@@ -21,10 +21,10 @@ export const obterValoresDoPedido = ({
   const valorEntregaComDesconto = valorEntregaBruto - descontoEntrega;
 
   const valorTotalComDescontos = Number(
-    (valorItensComDesconto + valorEntregaComDesconto).toFixed(2)
+    (valorItensComDesconto + valorEntregaComDesconto).toFixed(2),
   );
   const valorTotalBruto = Number(
-    (valorItensBruto + valorEntregaBruto).toFixed(2)
+    (valorItensBruto + valorEntregaBruto).toFixed(2),
   );
 
   const valoresPagos = pagamentos.filter((x) => x.pagoEm);
