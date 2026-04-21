@@ -27,7 +27,7 @@ export const PedidoView = () => {
         <Nav />
 
         <div className="uls no-scroll">
-          {!!destaques.length && (
+          {destaques.length > 2 && (
             <Produtos
               id={"destaques"}
               label={"Mais vendidos 🔥"}

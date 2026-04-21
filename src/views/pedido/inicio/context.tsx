@@ -123,8 +123,15 @@ export const PedidoPageProvider = ({
       }
     }
 
+    const destaquesOrdenados = destaques.sort(
+      (a, b) => b.vendidos - a.vendidos,
+    );
+
+    if (destaquesOrdenados.length % 2 !== 0) {
+      destaquesOrdenados.pop();
+    }
     // mantém a ordenação por "vendidos" no final
-    return destaques.sort((a, b) => b.vendidos - a.vendidos);
+    return destaquesOrdenados;
   }
 
   const mv = (arr: any[]) =>

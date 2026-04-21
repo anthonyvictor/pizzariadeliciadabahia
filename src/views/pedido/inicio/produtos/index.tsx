@@ -6,7 +6,7 @@ import { Tamanho } from "./tamanho";
 import { Combo } from "./combo";
 import { Grid, List, ProdutosStyle } from "./styles";
 import { IProdutoHome } from "../context";
-import { ReactElement, ReactNode, useState } from "react";
+import React, { ReactElement, ReactNode, useState } from "react";
 
 export const Produtos = ({
   id,
@@ -30,6 +30,16 @@ export const Produtos = ({
   const fDis = (arr: any[]) =>
     arr.filter((x) => x.disponivel && x.emCondicoes && x.estoque !== 0);
 
+  const ListOrGrid: React.FC<{
+    arr: any[];
+    children: ReactNode;
+  }> = ({ arr, children }) =>
+    arr.length % 2 === 0 ? (
+      <Grid cols={2}>{children}</Grid>
+    ) : (
+      <List>{children}</List>
+    );
+
   const Prod = ({
     disp,
     indsp,
@@ -45,6 +55,7 @@ export const Produtos = ({
       arr.map((prod: any & { tipo: any }) => (
         <Js key={prod.id ?? prod.nome} prod={prod} />
       ));
+
     return (
       <>
         {mp(disp)}
@@ -72,7 +83,17 @@ export const Produtos = ({
         <h4>{label}</h4>
       </header>
       {id.toLowerCase().includes("destaq") ? (
-        <Grid>
+        <Grid
+          cols={
+            itens.length === 8
+              ? 4
+              : itens.length === 6
+                ? 3
+                : itens.length === 4
+                  ? 4
+                  : 2
+          }
+        >
           {itens.map((prod) => (
             <Destaque key={prod.id ?? prod.nome} prod={prod} />
           ))}
@@ -90,7 +111,7 @@ export const Produtos = ({
           })()}
         </List>
       ) : "maxSabores" in iZero ? (
-        <Grid cols={2}>
+        <ListOrGrid arr={itens}>
           {(() => {
             const disp = fDis(itens);
             const indsp = fInd(itens);
@@ -105,7 +126,7 @@ export const Produtos = ({
               ));
             return <Prod disp={disp} indsp={indsp} nm={nm} Js={Tamanho} />;
           })()}
-        </Grid>
+        </ListOrGrid>
       ) : iZero.tipo === "bebida" ? (
         <List>
           {(() => {
