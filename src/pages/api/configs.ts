@@ -3,6 +3,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { ff } from "tpdb-lib";
 import { ConfigsModel } from "tpdb-lib";
 import { conectarDB } from "src/infra/mongodb/config";
+import { bulkUpsert } from "src/infra/mongodb/util";
+import { toArray } from "@util/array";
 
 // Função handler da rota
 export default async function handler(
@@ -23,8 +25,18 @@ export default async function handler(
 
       res.status(200).json(data);
     } else if (req.method === "POST") {
-      const data = await createConfigs();
+      let data;
+
+      const { config } = req.body;
+
+      console.log("configs:", config);
+      if (!config) return res.status(400).end();
+
+      data = await upsertConfigs(config);
       res.status(200).json(data);
+
+      // const data = await createConfigs();
+      // res.status(200).json(data);
     } else {
       res.status(405).end(); // Método não permitido
     }
@@ -44,6 +56,11 @@ export const obterConfigs = async (chaves?: string[]) => {
   }
   const data = (await ff({ m: ConfigsModel, q })) as unknown as IConfig[];
 
+  return data;
+};
+
+export const upsertConfigs = async (config: IConfig) => {
+  const data = await bulkUpsert([config], ConfigsModel);
   return data;
 };
 

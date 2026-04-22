@@ -7689,6 +7689,7 @@ __metadata:
     react: "npm:^18.1.0"
     react-currency-input-field: "npm:^3.10.0"
     react-dom: "npm:^18.1.0"
+    react-easy-ux: "npm:^1.0.0"
     react-icons: "npm:^4.7.1"
     react-is: "npm:^18.1.0"
     react-leaflet: "npm:^4"
@@ -7698,7 +7699,7 @@ __metadata:
     styled-components: "npm:^5.3.5"
     superjson: "npm:^2.2.2"
     tailwindcss: "npm:^3.2.7"
-    tpdb-lib: "npm:^1.0.38"
+    tpdb-lib: "npm:^1.0.39"
     ts-jest: "npm:^29.4.4"
     typescript: "npm:4.9"
     uuid: "npm:^9.0.0"
@@ -8071,6 +8072,16 @@ __metadata:
   peerDependencies:
     react: ^18.3.1
   checksum: 10c0/a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
+  languageName: node
+  linkType: hard
+
+"react-easy-ux@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "react-easy-ux@npm:1.0.0"
+  peerDependencies:
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  checksum: 10c0/8f83b1f2d4615794931c800d7ef8a42ce36802b188625e2ef0e860390ef78489b350d76b7032b69d758330999197fdefcc9b4c1f446687094f87299325c0c03e
   languageName: node
   linkType: hard
 
@@ -9262,12 +9273,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tpdb-lib@npm:^1.0.38":
-  version: 1.0.38
-  resolution: "tpdb-lib@npm:1.0.38"
+"tpdb-lib@npm:^1.0.39":
+  version: 1.0.39
+  resolution: "tpdb-lib@npm:1.0.39"
   peerDependencies:
     mongoose: ^8.17.0
-  checksum: 10c0/7f2ce8184137b702a5da4512d0183305141353f437923c3cc30440fa109d077c59d5de4f526e495e2ff5d88f067d7897b83fed99357f48f6a4b60a6ef15f90f5
+  checksum: 10c0/beae450e4b95cbdb9a5a364c9ac6e781db3bbc459c200327dc75109fbba8c6fce9c74242f47a66814a98b3698065b0732b795d4cf8a9fe8b4eb92b800a1abff8
   languageName: node
   linkType: hard
 

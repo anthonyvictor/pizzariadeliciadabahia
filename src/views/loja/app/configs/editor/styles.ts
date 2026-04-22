@@ -60,6 +60,7 @@ export const ConfigViewStyle = styled(LayoutStyle)`
       padding: 5px 10px;
       border-radius: 10px;
       background-color: ${colors.elements};
+      white-space: nowrap;
     }
   }
 `;

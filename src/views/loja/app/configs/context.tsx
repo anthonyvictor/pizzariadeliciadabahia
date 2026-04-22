@@ -33,9 +33,9 @@ export const ConfigsProvider = ({ children }: { children: ReactNode }) => {
   const handleSubmit = async (chave: IConfig["chave"], valor: any) => {
     try {
       setCarregando(true);
+      const id = configs.find((c) => c.chave === chave)?.id;
       const res = await api.post("/configs", {
-        chave,
-        valor,
+        config: { id, chave, valor },
       });
 
       if (!axiosOk(res.status) || !res.data)

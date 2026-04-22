@@ -187,3 +187,44 @@ export function getDuracaoCor(_dataInic: Date, fundoEscuro?: boolean) {
     return fundoEscuro ? "#7b5094" : "#17091f";
   }
 }
+
+export function formatDataFutura(_data: Date) {
+  const agora = new Date();
+  const data = new Date(_data);
+
+  // zera horas pra comparar só dia
+  const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+  const alvo = new Date(data.getFullYear(), data.getMonth(), data.getDate());
+
+  const diffMs = alvo.getTime() - hoje.getTime();
+  const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  const hora = data.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  if (diffDias === 0) {
+    return `hoje às ${hora}`;
+  }
+
+  if (diffDias === 1) {
+    return `amanhã às ${hora}`;
+  }
+
+  if (diffDias > 1 && diffDias < 7) {
+    const diaSemana = new Intl.DateTimeFormat("pt-BR", {
+      weekday: "long",
+    }).format(data);
+
+    return `${diaSemana} às ${hora}`;
+  }
+
+  // semana que vem ou mais
+  const dataFormatada = data.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+  });
+
+  return `${dataFormatada} às ${hora}`;
+}
