@@ -23,7 +23,9 @@ export const Horario = ({
   const configsHorarios = configs.find(
     (x) => x.chave === "horario_funcionamento",
   )?.valor;
-  const horarios = configsHorarios.condicoes.find(
+  const horarios = (
+    configsHorarios as IConfigHorarioFuncionamento
+  ).condicoes.find(
     (x) =>
       x.tipo === "periodos_horarios" &&
       x.ativa &&
