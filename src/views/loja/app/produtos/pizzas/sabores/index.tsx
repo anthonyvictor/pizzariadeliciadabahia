@@ -5,22 +5,31 @@ import { useSabores } from "./context";
 import { FloatButton } from "@styles/components/buttons";
 import { Checkers } from "src/views/loja/components/listas/checkers";
 import { Imagem } from "src/views/loja/components/listas/imagem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "src/views/loja/components/listas/search";
 import { fuzzySearch } from "@util/array";
-import { formatCurrency } from "@util/format";
+import { formatCurrency, removeAccents } from "@util/format";
 import { SaborItem } from "./item";
 import { Lista } from "../../lista";
 import { Footer } from "src/views/loja/components/listas/footer";
+import { FaPlus, FaTimes } from "react-icons/fa";
+import { useConfigsStore } from "src/infra/zustand/configs";
+import { IPizzaIngrediente, IPizzaSabor } from "tpdb-lib";
+import { Ingredientes } from "./ingredientes";
+import { api, axiosOk } from "@util/axios";
+import { toast } from "react-toastify";
 
 export const SaboresView = () => {
-  const { sabores, setEditando } = useSabores();
+  const { sabores, setEditando, ingredientes, setIngredientes } = useSabores();
   const [search, setSearch] = useState("");
   const categorias = Array.from(new Set(sabores.map((x) => x.categoria)));
   const [categoriasFiltro, setCategoriasFiltro] = useState<string[]>([]);
   const [statsFiltro, setStatsFiltro] = useState<
     { tipo: "visivel" | "disponivel" | "somenteEmCombos"; valor: boolean }[]
   >([]);
+
+  const [modal, setModal] = useState(<></>);
+
   const filtrados = sabores
     ? fuzzySearch(sabores, search, [
         { field: "nome", weight: 10 },
@@ -65,7 +74,7 @@ export const SaboresView = () => {
                     tipo,
                     valor: stt === "TODOS" ? true : false,
                   },
-            ].filter(Boolean)
+            ].filter(Boolean),
           );
         }}
       >
@@ -106,7 +115,7 @@ export const SaboresView = () => {
                 [
                   ...prev.filter((x) => x !== cat),
                   prev.includes(cat) ? undefined : cat,
-                ].filter(Boolean)
+                ].filter(Boolean),
               );
             }}
           >
@@ -114,6 +123,83 @@ export const SaboresView = () => {
           </li>
         ))}
       </ul>
+      <div className="ingredientes-indisponiveis">
+        <span className="ingrs-titulo">Ingredientes indisponíveis:</span>
+        <div className="centro">
+          <button
+            className="add-ingrediente"
+            onClick={() => {
+              setModal(<Ingredientes close={() => setModal(<></>)} />);
+            }}
+          >
+            <FaPlus />
+          </button>
+          <ul className="ingredientes">
+            {ingredientes
+              .filter((x) => !x.disponivel)
+              .map((ingr) => (
+                <li key={ingr.id} className="ingrediente">
+                  <div
+                    onClick={() => {
+                      setModal(
+                        <Ingredientes
+                          ingrediente={ingr}
+                          close={() => setModal(<></>)}
+                        />,
+                      );
+                    }}
+                  >
+                    <span>{ingr.nome}</span>
+                    {ingr.substituto && <span>({ingr.substituto})</span>}
+                  </div>
+                  <button
+                    className="ingr-deletar"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+
+                      const remover = async (item: IPizzaIngrediente) => {
+                        try {
+                          console.log("foiiiiiiii");
+                          const res = await api.post(`/pizzas/ingredientes`, {
+                            ingredientes: [{ ...item, disponivel: true }],
+                          });
+
+                          if (!axiosOk(res.status) || !res.data)
+                            throw new Error("Erro ao Salvar");
+                          setIngredientes((prev) => [
+                            ...prev.filter(
+                              (x) =>
+                                item.slug !==
+                                removeAccents(x.nome.toLowerCase()).replace(
+                                  " ",
+                                  "_",
+                                ),
+                            ),
+                            {
+                              ...item,
+                              disponivel: true,
+                            },
+                          ]);
+                        } catch (err) {
+                          toast.error("Oops, não foi possível salvar!");
+                        }
+
+                        // await api.post(`/ingredientes`, {
+                        //   ingrediente: { nome, disponivel, substituto },
+                        // });
+                      };
+
+                      remover(ingr);
+                    }}
+                  >
+                    <FaTimes />
+                  </button>
+                </li>
+              ))}
+          </ul>
+        </div>
+      </div>
       <Lista name="sabores">
         {filtrados.map((item) => (
           <SaborItem key={item.id} item={item} />
@@ -126,6 +212,7 @@ export const SaboresView = () => {
           setEditando("");
         }}
       />
+      {modal}
     </SaboresViewStyle>
   );
 };

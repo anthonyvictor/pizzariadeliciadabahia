@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { usePedidoStore } from "src/infra/zustand/pedido";
 
 export type ItemComBuilder = IItemPedidoIds & { builderId: string };
+export type ItemBottomInfo = { builderId: string; infos: string[] };
 
 interface IItemBuilderContext {
   itensFinais: ItemComBuilder[];
@@ -23,6 +24,8 @@ interface IItemBuilderContext {
   builder: IItemBuilder | null;
   continuar: (qtd: number) => Promise<void>;
   aberto: boolean;
+  bottomInfo: ItemBottomInfo[];
+  setBottomInfo: SetState<ItemBottomInfo[]>;
 }
 const ItemBuilderContext = createContext<IItemBuilderContext>(
   {} as IItemBuilderContext,
@@ -38,6 +41,7 @@ export const ItemBuilderProvider = ({
   aberto: boolean;
 }) => {
   const [itensFinais, setItensFinais] = useState<ItemComBuilder[]>([]);
+  const [bottomInfo, setBottomInfo] = useState<[]>([]);
   const router = useRouter();
   const { pedido } = usePedidoStore();
   const continuar = async (qtd: number) => {
@@ -89,6 +93,8 @@ export const ItemBuilderProvider = ({
         builder,
         continuar,
         aberto,
+        bottomInfo,
+        setBottomInfo,
       }}
     >
       {children}

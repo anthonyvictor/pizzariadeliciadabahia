@@ -26,7 +26,7 @@ export const PedidoStyle = styled.main`
     .uls {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 20px;
       overflow-y: auto;
     }
 

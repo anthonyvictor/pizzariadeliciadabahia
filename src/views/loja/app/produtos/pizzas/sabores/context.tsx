@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { toast } from "react-toastify";
-import { IPizzaSabor, IPizzaTamanho } from "tpdb-lib";
+import { IPizzaSabor, IPizzaTamanho, IPizzaIngrediente } from "tpdb-lib";
 import { SaborView } from "./editor";
 
 type ISaboresContext = {
@@ -17,11 +17,14 @@ type ISaboresContext = {
   editando: undefined | string;
   tamanhos: IPizzaTamanho[];
   setEditando: SetState<undefined | string>;
+  ingredientes: IPizzaIngrediente[];
+  setIngredientes: SetState<IPizzaIngrediente[]>;
 };
 const SaboresContext = createContext<ISaboresContext>({} as ISaboresContext);
 
 export const SaboresProvider = ({ children }: { children: ReactNode }) => {
   const [sabores, setSabores] = useState<IPizzaSabor[]>([]);
+  const [ingredientes, setIngredientes] = useState<IPizzaIngrediente[]>([]);
   const [editando, setEditando] = useState<undefined | string>();
   const [tamanhos, setTamanhos] = useState<IPizzaTamanho[]>([]);
   useEffect(() => {
@@ -52,11 +55,28 @@ export const SaboresProvider = ({ children }: { children: ReactNode }) => {
         toast.error(err.message);
         console.error(err);
       });
+    api
+      .get("/pizzas/ingredientes")
+      .then((res) => {
+        if (res?.data?.length) setIngredientes(res.data);
+      })
+      .catch((err) => {
+        toast.error(err.message);
+        console.error(err);
+      });
   }, []);
 
   return (
     <SaboresContext.Provider
-      value={{ sabores, setSabores, editando, setEditando, tamanhos }}
+      value={{
+        sabores,
+        setSabores,
+        editando,
+        setEditando,
+        tamanhos,
+        ingredientes,
+        setIngredientes,
+      }}
     >
       {editando === undefined ? children : <SaborView />}
     </SaboresContext.Provider>

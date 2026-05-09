@@ -7,6 +7,7 @@ import {
   FaHotdog,
   FaMap,
   FaPlus,
+  FaPuzzlePiece,
   FaRuler,
 } from "react-icons/fa";
 import { IMyButton } from "../../util/types";
@@ -58,6 +59,12 @@ export const PizzasView = () => {
       url: "/loja/app/produtos/pizzas/extras",
       Icone: FaPlus,
       cor: "#0cb235",
+    },
+    {
+      titulo: "Ingredientes indisp.",
+      url: "/loja/app/produtos/pizzas/ingredientes-indisponiveis",
+      Icone: FaPuzzlePiece,
+      cor: "#ff00e1",
     },
   ];
 

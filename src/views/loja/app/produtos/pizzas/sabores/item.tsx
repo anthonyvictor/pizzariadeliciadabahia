@@ -2,25 +2,36 @@ import { IPizzaSabor } from "tpdb-lib";
 import { useSabores } from "./context";
 import { Imagem } from "src/views/loja/components/listas/imagem";
 import { Checkers } from "src/views/loja/components/listas/checkers";
-import { formatCurrency } from "@util/format";
+import { formatCurrency, removeAccents } from "@util/format";
 import { Estoque } from "src/views/loja/components/listas/estoque";
 import { Descricao } from "src/views/loja/components/listas/descricao";
 import { salvar } from "../../../util/func";
 import { upsertArray } from "@util/state";
 import { SaborItemStyle } from "./styles";
+import { IoAlert, IoAlertCircleOutline } from "react-icons/io5";
 
 export const SaborItem = ({ item }: { item: IPizzaSabor }) => {
-  const { setEditando, setSabores } = useSabores();
+  const { setEditando, setSabores, ingredientes } = useSabores();
 
   const valores = item.valores.map((x) => x.valor);
   const min = Math.min(...valores);
   const max = Math.max(...valores);
+
+  const ingrsIndisp = ingredientes.filter((x) => !x.disponivel);
+  const meusIndisp = item.ingredientes.filter((x) =>
+    ingrsIndisp.some(
+      (y) =>
+        removeAccents(y.nome.toLowerCase()) ===
+        removeAccents(x.nome.toLowerCase()),
+    ),
+  );
 
   return (
     <SaborItemStyle
       key={item.id}
       item={item}
       className="sabor"
+      ingrEssencIndisp={meusIndisp.some((x) => x.essencial)}
       onClick={() => setEditando(item.id)}
     >
       <aside className="esq">
@@ -54,6 +65,8 @@ export const SaborItem = ({ item }: { item: IPizzaSabor }) => {
             upsertArray(item, setSabores, data);
           }}
         />
+
+        {!!meusIndisp.length && <div className="alerta">⚠️</div>}
       </aside>
     </SaborItemStyle>
   );

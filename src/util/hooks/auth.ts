@@ -137,7 +137,10 @@ export const useAuth = (
 
     const novoPedido = async () => {
       try {
-        const res = await axios.post(`${env.apiURL}/pedidos`, { clienteId });
+        const res = await axios.post(`${env.apiURL}/pedidos`, {
+          clienteId,
+          clienteNome: _cliente?.nome || "",
+        });
         const ped = res.data as IPedido;
         if (!ped?.id)
           throw new Error("Oops, não foi possível iniciar um novo pedido!");

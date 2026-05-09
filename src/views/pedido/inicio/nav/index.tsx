@@ -10,11 +10,19 @@ export const Nav = () => {
       l: "+ Vend 🔥",
       a: destaques,
     },
-    { i: "combos", l: "Promos 🏷️", a: home.combos },
+    home.combos.filter(
+      (x) => x.disponivel && x.visivel && x.emCondicoes && x.estoque !== 0,
+    ).length
+      ? { i: "combos", l: "Promos 🏷️", a: home.combos }
+      : undefined,
     { i: "pizzas", l: "Pizzas 🍕", a: home.tamanhos },
     { i: "bebidas", l: "Bebs. 🍹", a: home.bebidas },
-    { i: "lanches", l: "Outros 🍦", a: home.lanches },
-  ];
+    home.lanches.filter(
+      (x) => x.disponivel && x.visivel && x.emCondicoes && x.estoque !== 0,
+    ).length
+      ? { i: "lanches", l: "Outros 🍦", a: home.lanches }
+      : undefined,
+  ].filter(Boolean);
 
   return (
     <NavStyle>

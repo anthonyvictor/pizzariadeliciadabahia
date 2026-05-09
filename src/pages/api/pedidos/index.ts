@@ -31,8 +31,8 @@ export default async function handler(
       }
       res.status(200).json(data);
     } else if (req.method === "POST") {
-      const { clienteId } = req.body;
-      const data = await novoPedido(clienteId);
+      const { clienteId, clienteNome } = req.body;
+      const data = await novoPedido(clienteId, clienteNome);
       res.status(200).send(data);
     } else if (req.method === "PATCH") {
       const { pedidoId, pedido } = req.body;
@@ -190,10 +190,10 @@ export const obterPedido = async (id: string | IPedido) => {
   return r;
 };
 
-export const novoPedido = async (cliente: string) => {
+export const novoPedido = async (cliente: string, nome: string) => {
   await conectarDB();
 
-  const res = await PedidosModel.create({ cliente });
+  const res = await PedidosModel.create({ cliente, nome });
 
   const data = await obterPedido(res._id.toString());
 

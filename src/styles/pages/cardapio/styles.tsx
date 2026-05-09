@@ -40,6 +40,14 @@ export const CardapioStyle = styled.main`
     }
   }
 
+  .sabores {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    padding: 5px;
+    list-style: none;
+  }
+
   .value-detail {
     text-align: center;
     letter-spacing: 0.12rem;

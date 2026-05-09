@@ -19,3 +19,11 @@ export const ItemBuilderFooterStyle = styled.footer`
     color: #000;
   }
 `;
+
+export const BottomInfoStyle = styled.div`
+  color: ${colors.elements};
+  font-size: 0.75rem;
+  padding: 5px 20px;
+  font-weight: bold;
+  text-align: center;
+`;

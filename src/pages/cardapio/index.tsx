@@ -60,7 +60,7 @@ const Cardapio: NextPage = ({
           {groupsRight.map((g) => getGroups(g))}
         </aside>
       </div> */}
-      <ul>
+      <ul className="sabores">
         {sabores.map((sabor) => (
           <li key={sabor.id}>
             <h1>{sabor.nome}</h1>

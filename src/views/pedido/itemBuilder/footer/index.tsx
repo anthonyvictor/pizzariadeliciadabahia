@@ -1,6 +1,6 @@
 import { useItemBuilder } from "src/views/pedido/itemBuilder/context";
 import { useState } from "react";
-import { ItemBuilderFooterStyle } from "./styles";
+import { BottomInfoStyle, ItemBuilderFooterStyle } from "./styles";
 import { NumberInput } from "@components/NumberInput";
 import { formatCurrency } from "@util/format";
 import { z } from "zod";
@@ -10,7 +10,8 @@ import { IProdutoComboPizza } from "tpdb-lib";
 
 export const ItemBuilderFooter = () => {
   const [qtd, setQtd] = useState(1);
-  const { itensFinais, builder, continuar, aberto } = useItemBuilder();
+  const { itensFinais, builder, continuar, aberto, bottomInfo } =
+    useItemBuilder();
 
   const pizzaSchema = z.object({
     tipo: z.literal("pizza"),
@@ -149,81 +150,98 @@ export const ItemBuilderFooter = () => {
               ? builder.lanche.valor
               : 0));
   return (
-    <ItemBuilderFooterStyle>
-      <NumberInput
-        style={{ flex: 0 }}
-        value={qtd}
-        setValue={setQtd}
-        min={1}
-        max={
-          (builder.tipo === "bebida"
-            ? builder.bebida.estoque
-            : builder.tipo === "lanche"
-              ? builder.lanche.estoque
-              : builder.tipo === "combo"
-                ? 1
-                : 1) ?? 5
-        }
-        forceMin={true}
-        alwaysShowMinus={true}
-      />
-      <button
-        className="avancar"
-        disabled={avancarDisabled}
-        onClick={async () => {
-          try {
-            if (!aberto) return toast.error("Estamos fechados no momento!");
-            setAvancarDisabled(true);
-            const result = validarItens();
-            if (result === true) await continuar(qtd);
-
-            ///...................................................................
-            // if (!result.success) {
-            //   const error = result.error as ZodError; // 👈 força a tipagem
-            //   error.errors.forEach((error) => {
-            //     console.error(error);
-            //     if (error.code === "invalid_union") {
-            //       toast.error(`${error.path.join(".")} - ${error.message}`);
-            //       // error.unionErrors.forEach((innerErrors, unionIndex) => {
-            //       //   innerErrors.forEach((innerError) => {
-            //       //     toast.error(
-            //       //       `${innerError.path.join(".")} - ${innerError.message}`
-            //       //     );
-            //       //     console.error(
-            //       //       "---------",
-            //       //       innerError.message,
-            //       //       "---------"
-            //       //     );
-            //       //     console.error(innerError);
-            //       //     console.error("------------------");
-            //       //   });
-            //       // });
-            //     } else {
-            //       toast.error(error.message, { autoClose: 10000 });
-            //       // toast.error(`${issue.path.join(".")} - ${issue.message}`);
-            //     }
-            //   });
-            // }
-          } catch (err) {
-            console.error(err);
-            toast.error(`${err}`);
-          } finally {
-            setAvancarDisabled(false);
+    <>
+      {!!bottomInfo.length &&
+        (() => {
+          const all = Array.from(
+            new Set(bottomInfo.map((x) => x.infos).flat()),
+          );
+          return (
+            <BottomInfoStyle>
+              <p>
+                {all
+                  .map((x) => `${x[0].toUpperCase()}${x.slice(1)}`)
+                  .join("; ")}
+              </p>
+            </BottomInfoStyle>
+          );
+        })()}
+      <ItemBuilderFooterStyle>
+        <NumberInput
+          style={{ flex: 0 }}
+          value={qtd}
+          setValue={setQtd}
+          min={1}
+          max={
+            (builder.tipo === "bebida"
+              ? builder.bebida.estoque
+              : builder.tipo === "lanche"
+                ? builder.lanche.estoque
+                : builder.tipo === "combo"
+                  ? 1
+                  : 1) ?? 5
           }
-        }}
-      >
-        <h4>Continuar</h4>
-        <h4>
-          {formatCurrency(
-            totalComExtra,
-            // builder.tipo === "combo"
-            //   ? Math.max(total, builder.combo.valorMin)
-            //   : builder.tipo === "pizza"
-            //   ? Math.max(total, builder.tamanho.valorMin)
-            //   : total
-          )}
-        </h4>
-      </button>
-    </ItemBuilderFooterStyle>
+          forceMin={true}
+          alwaysShowMinus={true}
+        />
+        <button
+          className="avancar"
+          disabled={avancarDisabled}
+          onClick={async () => {
+            try {
+              if (!aberto) return toast.error("Estamos fechados no momento!");
+              setAvancarDisabled(true);
+              const result = validarItens();
+              if (result === true) await continuar(qtd);
+
+              ///...................................................................
+              // if (!result.success) {
+              //   const error = result.error as ZodError; // 👈 força a tipagem
+              //   error.errors.forEach((error) => {
+              //     console.error(error);
+              //     if (error.code === "invalid_union") {
+              //       toast.error(`${error.path.join(".")} - ${error.message}`);
+              //       // error.unionErrors.forEach((innerErrors, unionIndex) => {
+              //       //   innerErrors.forEach((innerError) => {
+              //       //     toast.error(
+              //       //       `${innerError.path.join(".")} - ${innerError.message}`
+              //       //     );
+              //       //     console.error(
+              //       //       "---------",
+              //       //       innerError.message,
+              //       //       "---------"
+              //       //     );
+              //       //     console.error(innerError);
+              //       //     console.error("------------------");
+              //       //   });
+              //       // });
+              //     } else {
+              //       toast.error(error.message, { autoClose: 10000 });
+              //       // toast.error(`${issue.path.join(".")} - ${issue.message}`);
+              //     }
+              //   });
+              // }
+            } catch (err) {
+              console.error(err);
+              toast.error(`${err}`);
+            } finally {
+              setAvancarDisabled(false);
+            }
+          }}
+        >
+          <h4>Continuar</h4>
+          <h4>
+            {formatCurrency(
+              totalComExtra,
+              // builder.tipo === "combo"
+              //   ? Math.max(total, builder.combo.valorMin)
+              //   : builder.tipo === "pizza"
+              //   ? Math.max(total, builder.tamanho.valorMin)
+              //   : total
+            )}
+          </h4>
+        </button>
+      </ItemBuilderFooterStyle>
+    </>
   );
 };

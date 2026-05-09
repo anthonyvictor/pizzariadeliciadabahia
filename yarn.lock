@@ -7695,11 +7695,12 @@ __metadata:
     react-leaflet: "npm:^4"
     react-phone-number-input: "npm:^3.3.9"
     react-qr-code: "npm:^2.0.18"
+    react-switch: "npm:^7.1.0"
     react-toastify: "npm:^9.1.1"
     styled-components: "npm:^5.3.5"
     superjson: "npm:^2.2.2"
     tailwindcss: "npm:^3.2.7"
-    tpdb-lib: "npm:^1.0.39"
+    tpdb-lib: "npm:^1.0.47"
     ts-jest: "npm:^29.4.4"
     typescript: "npm:4.9"
     uuid: "npm:^9.0.0"
@@ -7960,7 +7961,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.8.1":
+"prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -8146,6 +8147,18 @@ __metadata:
   peerDependencies:
     react: "*"
   checksum: 10c0/4e13b795cbb10f1dcf0e39d682bb59851e4c84010ba2be7225b2ad9d5c1ffea52d2d38f884ee26235b7002b8ca99e83b805f55e877663c39d67496764d975cf1
+  languageName: node
+  linkType: hard
+
+"react-switch@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "react-switch@npm:7.1.0"
+  dependencies:
+    prop-types: "npm:^15.7.2"
+  peerDependencies:
+    react: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/77219f82541c17bcd9507992411d24696bcd96f6086509b29c31504852340deb03688ce88ba190363bca6c883d724e522c791e78932f8703b994b39cb20f62a4
   languageName: node
   linkType: hard
 
@@ -9273,12 +9286,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tpdb-lib@npm:^1.0.39":
-  version: 1.0.39
-  resolution: "tpdb-lib@npm:1.0.39"
+"tpdb-lib@npm:^1.0.47":
+  version: 1.0.47
+  resolution: "tpdb-lib@npm:1.0.47"
   peerDependencies:
     mongoose: ^8.17.0
-  checksum: 10c0/beae450e4b95cbdb9a5a364c9ac6e781db3bbc459c200327dc75109fbba8c6fce9c74242f47a66814a98b3698065b0732b795d4cf8a9fe8b4eb92b800a1abff8
+  checksum: 10c0/823b8cf4ba9324fa2a8362acd1ffd20f40bfbfc1781c192a6ac0f4fcbc43a8fd828d39dfba3021294eb9841063d670d030e25f99e66ddecef16f9af7f90ba290
   languageName: node
   linkType: hard
 

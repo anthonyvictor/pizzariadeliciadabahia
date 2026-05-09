@@ -20,7 +20,7 @@ export const ProdutosStyle = styled.div`
 `;
 
 export const ProdutoStyle = styled.li.attrs(
-  (props: { disabled: boolean }) => props
+  (props: { disabled: boolean }) => props,
 )`
   /* background-color: #00000005; */
   color: #fff;

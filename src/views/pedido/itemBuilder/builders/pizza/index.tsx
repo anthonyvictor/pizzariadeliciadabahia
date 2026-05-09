@@ -1,4 +1,4 @@
-import { IPizzaPedido } from "tpdb-lib";
+import { IPizzaIngrediente, IPizzaPedido } from "tpdb-lib";
 import { IItemBuilderPizza } from "tpdb-lib";
 import {
   IPizzaBorda,
@@ -15,6 +15,9 @@ import { Checklist } from "@components/Checklist";
 import { rolarEl } from "@util/dom";
 import { useItemBuilder } from "src/views/pedido/itemBuilder/context";
 import { ItemBuilderObservacoes } from "../../observacoes";
+import { api } from "@util/axios";
+import { toast } from "react-toastify";
+import { removeAccents } from "@util/format";
 
 export const PizzaBuilder = ({
   currentItem,
@@ -39,6 +42,14 @@ export const PizzaBuilder = ({
     borda: currentItem?.borda,
     extras: currentItem?.extras ?? [],
   } as IPizzaPedido);
+
+  const [ingredientes, setIngredientes] = useState<IPizzaIngrediente[]>([]);
+  const ingrsIndisp =
+    ingredientes && ingredientes.length
+      ? ingredientes
+          .filter((x) => !x.disponivel)
+          .map((x) => ({ ...x, r: removeAccents(x.nome.toLowerCase()) }))
+      : [];
 
   const calcularValor = ({
     borda,
@@ -131,7 +142,7 @@ export const PizzaBuilder = ({
 
   type Pizza = "pizza";
 
-  const { setItensFinais } = useItemBuilder();
+  const { setItensFinais, setBottomInfo } = useItemBuilder();
   useEffect(() => {
     setItensFinais((_prev) => {
       const prev = [..._prev];
@@ -186,6 +197,18 @@ export const PizzaBuilder = ({
     }
   }, []); //eslint-disable-line
 
+  useEffect(() => {
+    api
+      .get("/pizzas/ingredientes")
+      .then((res) => {
+        if (res?.data?.length) setIngredientes(res.data);
+      })
+      .catch((err) => {
+        toast.error(err.message);
+        console.error(err);
+      });
+  }, []); //eslint-disable-line
+
   const pizzaNumberStr = `${pizzaNumber ? `da ${pizzaNumber}ª pizza ` : ""}`;
 
   const grupos = builder.sabores.reduce<Record<string, IPizzaSabor[]>>(
@@ -230,6 +253,54 @@ export const PizzaBuilder = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (!pizza.sabores.length) {
+      setBottomInfo((prev) => prev.filter((x) => x.builderId !== builder.id));
+    }
+
+    const todosIngrs = Array.from(
+      new Set(
+        pizza.sabores
+          .map((x) => x.ingredientes)
+          .flat()
+          .map((x) => ({ ...x, r: removeAccents(x.nome.toLowerCase()) })),
+      ),
+    );
+
+    const selecionadosIndisp = ingrsIndisp.filter((x) =>
+      todosIngrs.some((y) => y.r === x.r),
+    );
+
+    if (selecionadosIndisp.length) {
+      setBottomInfo((prev) => [
+        ...prev,
+        {
+          builderId: builder.id,
+          infos: selecionadosIndisp.map((x) =>
+            x.substituto
+              ? `${x.nome} está indisponível, será substituído por ${x.substituto}`
+              : `${x.nome} está indisponível`,
+          ),
+        },
+      ]);
+    }
+
+    if (
+      pizza.sabores.some((sabor) =>
+        sabor.ingredientes.some((x) =>
+          ingredientes
+            .filter((x) => !x.disponivel)
+            .some(
+              (y) =>
+                removeAccents(y.nome.toLowerCase()) ===
+                removeAccents(x.nome.toLowerCase()),
+            ),
+        ),
+      )
+    ) {
+    }
+  }, [pizza]);
+
   return (
     <PizzaBuilderStyle id={`builder-${builder.id}`}>
       {/* {!isCombo && (
@@ -253,7 +324,6 @@ export const PizzaBuilder = ({
           }}
         />
       )} */}
-
       <Checklist
         name={`sabores-${builder.id}`}
         label={`Sabores ${pizzaNumberStr}🌶️`}
@@ -267,38 +337,56 @@ export const PizzaBuilder = ({
         highlights={saboresPref}
         items={gruposArray
           .filter((x) => (isCombo ? !x.somenteEmCombos : true))
-          .map((sab) => ({
-            id: sab.id,
-            imageUrl: sab.imagemUrl,
-            group: sab.categoria,
-            title: sab.nome,
-            description: sab.descricao,
-            disabled: !sab.disponivel,
-            price:
-              pizza.sabores.length === builder.tamanho.maxSabores
-                ? ("" as unknown as number)
-                : sab.valores
-                    .filter((x) => x.tamanhoId === builder.tamanho.id)
-                    .map((v) => {
-                      let valorExtra = v.valor;
+          .map((sab) => {
+            const meusIngrs = sab.ingredientes.map((x) => ({
+              ...x,
+              r: removeAccents(x.nome.toLowerCase()),
+            }));
 
-                      const valorSaboresAntes = calcularValor({
-                        ...pizza,
-                        sabores: pizza.sabores,
-                        acoes: builder.acoes,
-                      });
-                      const valorSaboresDepois = calcularValor({
-                        ...pizza,
-                        sabores: [...pizza.sabores, sab],
-                        acoes: builder.acoes,
-                      });
+            const meusIndisp = ingrsIndisp
+              .filter((x) => meusIngrs.some((y) => y.r === x.r))
+              .map((x) => {
+                const found = meusIngrs.find((y) => y.r === x.r);
 
-                      valorExtra = valorSaboresDepois - valorSaboresAntes;
+                return { ...x, ...found };
+              });
 
-                      return valorExtra;
-                    })[0],
-            isSum: isCombo,
-          }))}
+            return {
+              id: sab.id,
+              imageUrl: sab.imagemUrl,
+              group: sab.categoria,
+              title: sab.nome,
+              description: sab.descricao,
+              disabled:
+                !sab.disponivel ||
+                meusIndisp.some((x) => x.essencial) ||
+                meusIndisp.length >= 2,
+              price:
+                pizza.sabores.length === builder.tamanho.maxSabores
+                  ? ("" as unknown as number)
+                  : sab.valores
+                      .filter((x) => x.tamanhoId === builder.tamanho.id)
+                      .map((v) => {
+                        let valorExtra = v.valor;
+
+                        const valorSaboresAntes = calcularValor({
+                          ...pizza,
+                          sabores: pizza.sabores,
+                          acoes: builder.acoes,
+                        });
+                        const valorSaboresDepois = calcularValor({
+                          ...pizza,
+                          sabores: [...pizza.sabores, sab],
+                          acoes: builder.acoes,
+                        });
+
+                        valorExtra = valorSaboresDepois - valorSaboresAntes;
+
+                        return valorExtra;
+                      })[0],
+              isSum: isCombo,
+            };
+          })}
         value={pizza.sabores.map((x) => x.id)}
         setValue={(novosSabores) => {
           const sabores = novosSabores.map(
@@ -328,7 +416,6 @@ export const PizzaBuilder = ({
           );
         }}
       />
-
       {bordasDisp.length > 1 && (
         <Checklist
           name={`borda-${builder.id}`}
@@ -373,7 +460,6 @@ export const PizzaBuilder = ({
           }}
         />
       )}
-
       {espDisp.length > 1 && (
         <Checklist
           name={`espessura-${builder.id}`}
@@ -454,7 +540,6 @@ export const PizzaBuilder = ({
           }}
         />
       )}
-
       {(builder.extras?.filter?.((x) => x.disponivel)?.length ?? 0) > 0 && (
         <Checklist
           name={`extras-${builder.id}`}
@@ -492,6 +577,7 @@ export const PizzaBuilder = ({
           }}
         />
       )}
+      {/* {!isCombo && ( */}
       <ItemBuilderObservacoes
         builderId={builder.id}
         de={pizzaNumberStr || "da pizza"}
@@ -501,6 +587,7 @@ export const PizzaBuilder = ({
           setPizza((prev) => ({ ...prev, observacoes }))
         }
       />
+      {/* )} */}
     </PizzaBuilderStyle>
   );
 };

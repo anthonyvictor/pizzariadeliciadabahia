@@ -17,15 +17,26 @@ export const ChecklistHeader = () => {
     max,
     isDone,
   } = useChecklist();
-  const statusBadge = isDone ? `Ok ☑️` : required ? "Obrig. ⚠️" : `Opcional`;
+  const statusBadge = isDone
+    ? `Ok ☑️`
+    : required && value.length < min
+      ? "Obrig. ⚠️"
+      : !required
+        ? `Opcional`
+        : `Ok ☑️`;
   const statusColor = isDone
     ? {
         backgroundColor: colors.checkedLight,
         color: `#000`,
       }
-    : required
-    ? { backgroundColor: "#000", color: `#fff` }
-    : { backgroundColor: `transparent`, color: `#fff` };
+    : required && value.length < min
+      ? { backgroundColor: "#000", color: `#fff` }
+      : !required
+        ? { backgroundColor: `transparent`, color: `#fff` }
+        : {
+            backgroundColor: colors.checkedLight,
+            color: `#696969`,
+          };
 
   const lenBadge = `${value.length}${min && min === max ? `` : ` selec.`}`;
   const minBadge = min < 1 || min === 1 ? "" : ` / min: ${min}`;

@@ -17,10 +17,11 @@ export const ModalOverlay = styled.div`
 `;
 export const ModalContainer = styled.div`
   background-color: ${colors.background};
-  padding: 20px;
+  /* padding: 20px; */
   display: flex;
   flex-direction: column;
   border-radius: 10px;
+
   /* max-width: 90vw; */
   position: relative;
 `;

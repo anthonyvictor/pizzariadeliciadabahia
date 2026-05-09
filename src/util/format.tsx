@@ -109,7 +109,7 @@ export const formatRua = (rua: string) => {
 export function formatPhoneNumber(
   valor: string,
   manterDDD = true,
-  manterDDI = true
+  manterDDI = true,
 ) {
   let novoValor = valor;
 
@@ -174,7 +174,7 @@ export const sanitizeData = (data: any): any => {
   if (Array.isArray(data)) return data.map(sanitizeData);
   if (data && typeof data === "object") {
     return Object.fromEntries(
-      Object.entries(data).map(([key, value]) => [key, sanitizeData(value)])
+      Object.entries(data).map(([key, value]) => [key, sanitizeData(value)]),
     );
   }
   return data;
@@ -233,7 +233,7 @@ export function normalizarOrdinal(logradouro: string): string {
     "\\b(" +
       Object.keys(ordinaisBasicos).join("|") +
       ")(\\s+(primeira|primeiro|segunda|segundo|terceira|terceiro|quarta|quarto|quinta|quinto|sexta|sexto|sétima|sétimo|oitava|oitavo|nona|nono))?\\b",
-    "i"
+    "i",
   );
 
   const match = result.match(regex);
@@ -256,3 +256,9 @@ export function normalizarOrdinal(logradouro: string): string {
 
   return result;
 }
+export const normalize = (str: string) =>
+  str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();

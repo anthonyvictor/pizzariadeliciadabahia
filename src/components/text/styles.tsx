@@ -10,9 +10,9 @@ export const Title = styled.h1.attrs((props: Props) => props)`
     props.color === "primary"
       ? colors.elements
       : props.color === "secondary"
-      ? "#fff"
-      : props.color || colors.elements};
-  font-size: clamp(1.5rem, 1.8rem, 6vw);
+        ? "#fff"
+        : props.color || colors.elements};
+  font-size: clamp(1rem, 1.2rem, 4vw);
 `;
 
 export const Subtitle = styled.h3.attrs((props: Props) => props)`
@@ -20,9 +20,9 @@ export const Subtitle = styled.h3.attrs((props: Props) => props)`
     props.color === "primary"
       ? colors.elements
       : props.color === "secondary"
-      ? "#fff"
-      : props.color || "#fff"};
-  font-size: clamp(0.8rem, 1rem, 5vw);
+        ? "#fff"
+        : props.color || "#fff"};
+  font-size: clamp(0.7rem, 0.9rem, 4vw);
 `;
 
 export const Description = styled.p.attrs((props: Props) => props)`
@@ -30,7 +30,7 @@ export const Description = styled.p.attrs((props: Props) => props)`
     props.color === "primary"
       ? colors.elements
       : props.color === "secondary"
-      ? "#fff"
-      : props.color || "#fff"};
-  font-size: clamp(0.6rem, 0.8rem, 4vw);
+        ? "#fff"
+        : props.color || "#fff"};
+  font-size: clamp(0.5rem, 0.7rem, 3vw);
 `;

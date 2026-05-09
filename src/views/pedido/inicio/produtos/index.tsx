@@ -59,7 +59,7 @@ export const Produtos = ({
     return (
       <>
         {mp(disp)}
-        {!!indsp.length && (
+        {/* {!!indsp.length && (
           <>
             {!mostrarIndisponiveis[nm] && (
               <button
@@ -73,7 +73,7 @@ export const Produtos = ({
             )}
             {mostrarIndisponiveis[nm] && mp(indsp)}
           </>
-        )}
+        )} */}
       </>
     );
   };
