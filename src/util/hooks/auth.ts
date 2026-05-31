@@ -116,6 +116,7 @@ export const useAuth = (
       try {
         if ((peloCliente && !_cliente.id) || (!peloCliente && !pedidoId))
           return null;
+        console.time("obterPedido");
         const res = await axios.get(
           `${env.apiURL}/pedidos?${
             peloCliente
@@ -123,9 +124,13 @@ export const useAuth = (
               : `id=${pedidoId}`
           }`,
         );
+        console.timeEnd("obterPedido");
+        console.time("ped");
+        console.log("ped", res);
         const ped = (
           Array.isArray(res.data) ? res.data[0] : res.data
         ) as IPedido;
+        console.timeEnd("ped");
         if (!ped?.id)
           throw new NoLogError("Oops, não foi possível obter o pedido atual!");
         localStorage.setItem("pedidoId", ped.id);

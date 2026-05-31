@@ -9,9 +9,9 @@ const Loading: FC = () => {
     const timer = setTimeout(() => {
       // Simulate loading completion after 15 seconds
       setErro(
-        "Parece que está demorando muito para carregar. Verifique sua conexão com a internet ou contate o suporte."
+        "Parece que está demorando muito para carregar. Verifique sua conexão com a internet ou contate o suporte.",
       );
-    }, 15 * 1000);
+    }, 30 * 1000);
 
     return () => clearTimeout(timer);
   }, []);
