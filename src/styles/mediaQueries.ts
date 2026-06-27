@@ -23,3 +23,4 @@ export const breakpointsMQ = {
 };
 
 export const hover = `@media (hover: hover) and (pointer: fine)`;
+export const touch = `@media (hover: none) and (pointer: coarse)`;

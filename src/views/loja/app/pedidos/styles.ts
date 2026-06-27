@@ -4,7 +4,15 @@ import { hover } from "@styles/mediaQueries";
 import styled, { css } from "styled-components";
 import { IPedido } from "tpdb-lib";
 
-export const PedidosViewStyle = styled(LayoutStyle)``;
+export const PedidosViewStyle = styled(LayoutStyle)`
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+`;
 
 export const PedidoItemStyle = styled.li.attrs(
   (props: { pedido: IPedido }) => props,

@@ -34,10 +34,11 @@ import {
 } from "react-icons/md";
 import ReactSwitch from "react-switch";
 import { BsInfoCircle } from "react-icons/bs";
-import { GiPizzaSlice } from "react-icons/gi";
+import { GiCoolSpices, GiPizzaSlice } from "react-icons/gi";
 import { api, axiosOk } from "@util/axios";
 import { toast } from "react-toastify";
 import { useSabores } from "./context";
+import { BiFoodMenu } from "react-icons/bi";
 
 export const Ingredientes = ({
   ingrediente,
@@ -185,10 +186,14 @@ export const Ingredientes = ({
         <IngredientesStyle>
           <header>
             <button
-              onClick={() => setTab("list")}
-              className={`back-button ${tab === "list" ? `hidden` : ""}`}
+              onClick={() => {
+                if (tab === "form") {
+                  setTab("list");
+                }
+              }}
+              className={`back-button`}
             >
-              <MdArrowBackIos />
+              {tab === "form" ? <MdArrowBackIos /> : <GiCoolSpices />}
             </button>
             <div className="header-info">
               <Text type="title">Ingredientes</Text>
@@ -208,7 +213,7 @@ export const Ingredientes = ({
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       tabIndex={0}
-                      autoFocus
+                      // autoFocus
                     />
                   </div>
                   <button onClick={() => setTab("form")}>
@@ -427,7 +432,7 @@ const Ingrediente = ({
         <h5>{item.nome[0].toUpperCase() + item.nome.slice(1)}</h5>
         {item.substituto && (
           <small>
-            <span>Substitui por </span>
+            <span>Subs. por </span>
             <span style={{ color: colors.elements }}>{item.substituto}</span>
           </small>
         )}
@@ -439,34 +444,33 @@ const Ingrediente = ({
             color: item.disponivel ? "#5eff5e" : "#ff9c8d",
           }}
         >
-          {item.disponivel ? "Disponivel" : "Indisponivel"}
+          {item.disponivel ? "Disp" : "Indisp"}
         </b>
-        <MdArrowForwardIos />
+        {/* <MdArrowForwardIos /> */}
       </div>
-      {isInside && (
-        <div className="controls">
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              editIngrediente(item);
-            }}
-          >
-            <FaEdit />
-          </button>
-          <hr />
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log("CLICKKKKKKKKKKKKKKKKKKKKKKKK", item);
-              removeIngrediente(item);
-            }}
-          >
-            <FaTrash />
-          </button>
-        </div>
-      )}
+
+      <div className={`controls ${isInside ? "visible" : ""}`}>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            editIngrediente(item);
+          }}
+        >
+          <FaEdit />
+        </button>
+        {/* <hr />
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("CLICKKKKKKKKKKKKKKKKKKKKKKKK", item);
+            removeIngrediente(item);
+          }}
+        >
+          <FaTrash />
+        </button> */}
+      </div>
     </li>
   );
 };

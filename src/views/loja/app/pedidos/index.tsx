@@ -7,6 +7,7 @@ import { Search } from "src/views/loja/components/listas/search";
 import { fuzzySearch } from "@util/array";
 import { PedidoItem } from "./item";
 import { Lista } from "./lista";
+import Text from "@components/text";
 // import { Footer } from "src/views/loja/components/listas/footer";
 
 export const PedidosView = () => {
@@ -76,9 +77,16 @@ export const PedidosView = () => {
       {/* <Search value={search} setValue={setSearch} /> */}
 
       <Lista name="pedidos">
-        {pedidos.map((pedido) => (
-          <PedidoItem key={pedido.id} pedido={pedido} />
-        ))}
+        {!pedidos.length ? (
+          <div className="empty">
+            <Text type="title">Sem pedidos!</Text>
+            <Text type="subtitle">Não há pedidos para exibir no momento</Text>
+          </div>
+        ) : (
+          pedidos.map((pedido) => (
+            <PedidoItem key={pedido.id} pedido={pedido} />
+          ))
+        )}
       </Lista>
       {/* <Footer itens={pedidos} filtrados={filtrados} /> */}
       <FloatButton

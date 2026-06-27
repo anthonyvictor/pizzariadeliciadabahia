@@ -1,6 +1,6 @@
 import { LayoutStyle } from "@components/layout/styles";
 import { colors } from "@styles/colors";
-import { hover } from "@styles/mediaQueries";
+import { hover, touch } from "@styles/mediaQueries";
 import styled, { css } from "styled-components";
 import { Produto } from "../../styles";
 
@@ -77,6 +77,7 @@ export const SaboresViewStyle = styled(LayoutStyle)`
         height: 100%;
         display: flex;
         gap: 5px;
+        flex-wrap: wrap;
         .ingrediente {
           background-color: ${colors.backgroundDark}95;
           color: #fff;
@@ -86,7 +87,7 @@ export const SaboresViewStyle = styled(LayoutStyle)`
           display: flex;
           align-items: center;
           /* gap: 2px; */
-          zoom: 0.75;
+          zoom: 0.7;
 
           div {
             padding: 6px 0 6px 5px;
@@ -186,13 +187,14 @@ export const IngredientesStyle = styled.div`
     display: flex;
 
     .back-button {
-      padding: 0 20px;
+      padding: 0 12px;
       background-color: transparent;
       border: none;
       color: #fff;
       cursor: pointer;
       display: flex;
       align-items: center;
+      font-size: 1.2rem;
 
       ${hover} {
         &:hover {
@@ -399,6 +401,7 @@ export const IngredientesStyle = styled.div`
         justify-content: start;
         align-items: start;
         flex: 1;
+        text-align: start;
         small {
           font-size: 0.8rem;
         }
@@ -416,9 +419,19 @@ export const IngredientesStyle = styled.div`
       }
 
       .controls {
-        display: flex;
         height: 100%;
         animation: slideRight 0.2s ease-in-out;
+
+        display: none;
+
+        &.visible {
+          display: flex;
+        }
+
+        ${touch} {
+          display: flex;
+        }
+
         hr {
           border: 0.1px solid #ffffff36;
         }
