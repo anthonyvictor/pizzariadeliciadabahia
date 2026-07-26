@@ -40,9 +40,9 @@ const Sobre: NextPage = () => {
           </p>
 
           <p className="highlight-box">
-            Nosso foco está em surpreender você com sabores de extrema
-            qualidade, massa leve e artesanal, recheio farto e suculento, além
-            de entregas ágeis e um atendimento acolhedor.
+            Nosso foco está em surpreender você com sabores deliciosos a massa
+            leve e fofinha, bem recheada e suculenta, além de entrega ágil e
+            atendimento rápido.
           </p>
 
           <p>

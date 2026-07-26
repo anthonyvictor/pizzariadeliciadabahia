@@ -215,16 +215,16 @@ export const FlavorsGrid = styled.ul`
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.25rem;
   min-height: 200px;
 
   @media ${breakpointsMQ.tabletSmUp} {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   @media ${breakpointsMQ.desktopSmUp} {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
 `;
 
@@ -288,23 +288,24 @@ export const FlavorCard = styled.li`
   }
 
   .content {
-    padding: 1rem;
+    padding: 0.7rem;
     display: flex;
     flex-direction: column;
     flex: 1;
+    gap: 0.2rem;
 
     h3 {
       font-size: 1.15rem;
       font-weight: 700;
       color: #ffffff;
-      margin-bottom: 0.35rem;
+      /* margin-bottom: 0.35rem; */
     }
 
     p {
-      font-size: 0.85rem;
+      font-size: 0.65rem;
       color: rgba(255, 255, 255, 0.75);
       line-height: 1.35;
-      margin-bottom: 1rem;
+      /* margin-bottom: 1rem; */
       flex: 1;
     }
   }
@@ -340,5 +341,21 @@ export const FlavorCard = styled.li`
     color: ${colors.elements};
     font-weight: 700;
     padding: 0 1rem 0.75rem 1rem;
+  }
+
+  @media ${breakpointsMQ.tabletSmUp} {
+    .content {
+      p {
+        font-size: 0.75rem;
+      }
+    }
+  }
+
+  @media ${breakpointsMQ.desktopSmUp} {
+    .content {
+      p {
+        font-size: 0.85rem;
+      }
+    }
   }
 `;

@@ -53,11 +53,12 @@ const AreasEntrega: NextPage = () => {
             <MdOutlinePinDrop className="icon" />
             <span>Raio de até 5km (expansível até 7km)</span>
           </div>
+
           <div className="map-wrapper">
             <iframe
-              title="Mapa de Área de Entrega"
+              title="Mapa de Área de Entrega - Ondina, Salvador"
               id="gmap_canvas"
-              src="https://maps.google.com/maps?q=Ondina,%20Salvador%20-%20BA&t=&z=13&ie=UTF8&iwloc=&output=embed"
+              src="https://maps.google.com/maps?q=-13.0080,-38.5085&t=&z=14&ie=UTF8&iwloc=&output=embed"
               frameBorder="0"
               scrolling="no"
               marginHeight={0}
