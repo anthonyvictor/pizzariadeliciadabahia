@@ -1,24 +1,11 @@
-import { MdLocalOffer, MdPeople } from "react-icons/md";
 import { PizzasViewStyle } from "./styles";
-import {
-  FaCogs,
-  FaGlassCheers,
-  FaHamburger,
-  FaHotdog,
-  FaMap,
-  FaPlus,
-  FaPuzzlePiece,
-  FaRuler,
-} from "react-icons/fa";
+import { FaFire, FaPlus, FaRuler } from "react-icons/fa";
 import { IMyButton } from "../../util/types";
 import { MyButton } from "../../../components/myButton";
 import { useAuth } from "../../../auth";
 import TextContainer from "@components/textContainer";
-import { IoPizza } from "react-icons/io5";
-import { IoFastFoodSharp } from "react-icons/io5";
 import { GiCoolSpices } from "react-icons/gi";
-import { BiSolidDoughnutChart } from "react-icons/bi";
-import { BsFire } from "react-icons/bs";
+import { BiDoughnutChart } from "react-icons/bi";
 import { MdAnchor } from "react-icons/md";
 
 export const PizzasView = () => {
@@ -39,13 +26,13 @@ export const PizzasView = () => {
     {
       titulo: "Bordas",
       url: "/loja/app/produtos/pizzas/bordas",
-      Icone: BiSolidDoughnutChart,
+      Icone: BiDoughnutChart,
       cor: "#f7e72f",
     },
     {
       titulo: "Pontos",
       url: "/loja/app/produtos/pizzas/pontos",
-      Icone: BsFire,
+      Icone: FaFire,
       cor: "#ff4040",
     },
     {
@@ -59,12 +46,6 @@ export const PizzasView = () => {
       url: "/loja/app/produtos/pizzas/extras",
       Icone: FaPlus,
       cor: "#0cb235",
-    },
-    {
-      titulo: "Ingredientes indisp.",
-      url: "/loja/app/produtos/pizzas/ingredientes-indisponiveis",
-      Icone: FaPuzzlePiece,
-      cor: "#ff00e1",
     },
   ];
 

@@ -18,7 +18,9 @@ export const PedidoItemStyle = styled.li.attrs(
   (props: { pedido: IPedido }) => props,
 )`
   display: flex;
-  height: 100%;
+  /* height: 100%; */
+  justify-self: stretch;
+  align-self: stretch;
   background-color: ${colors.backgroundDark}80;
 
   ${hover} {

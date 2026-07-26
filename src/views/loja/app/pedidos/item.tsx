@@ -18,7 +18,7 @@ import { useState } from "react";
 import { Mensagens } from "./mensagens";
 
 export const PedidoItem = ({ pedido }: { pedido: IPedido }) => {
-  const { setEditando, setPedidos } = usePedidos();
+  const { setEditando, setPedidos, finalizarPedido } = usePedidos();
 
   // const pizzas = pedido.itens.filter((x) => x.tipo === "pizza");
   // const bebidas = getCount(
@@ -223,6 +223,7 @@ export const PedidoItem = ({ pedido }: { pedido: IPedido }) => {
           ico={<BiCheck />}
           click={() => {
             console.log("Finalizar");
+            finalizarPedido(pedido.id);
           }}
         />
       </aside>

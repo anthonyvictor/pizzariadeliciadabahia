@@ -74,7 +74,13 @@ export const obterCliente = async (id: string | ICliente | undefined) => {
     }),
   };
 };
-export const obterClientes = async ({ ids }: { ids?: string[] }) => {
+export const obterClientes = async ({
+  ids,
+  page,
+}: {
+  ids?: string[];
+  page?: number;
+}) => {
   await conectarDB();
   const q: any = {};
   if (ids && ids.length)
@@ -85,27 +91,28 @@ export const obterClientes = async ({ ids }: { ids?: string[] }) => {
     populates: populates.clientes,
   });
 
-  const distancias = await obterDistancias();
+  // const distancias = await obterDistancias();
 
   return clientes.map((cliente) => {
     return {
       ...cliente,
-      enderecos: (cliente?.enderecos ?? []).map((endereco) => {
-        const taxa = encontrarTaxa(
-          endereco.enderecoOriginal.distancia_metros,
-          distancias,
-        );
-        return {
-          ...endereco,
-          enderecoOriginal: {
-            ...endereco.enderecoOriginal,
-            taxa:
-              endereco.enderecoOriginal.taxa != null
-                ? endereco.enderecoOriginal.taxa
-                : taxa,
-          },
-        };
-      }),
+      enderecos: cliente?.enderecos ?? [],
+      // .map((endereco) => {
+      //   const taxa = encontrarTaxa(
+      //     endereco.enderecoOriginal.distancia_metros,
+      //     distancias,
+      //   );
+      //   return {
+      //     ...endereco,
+      //     enderecoOriginal: {
+      //       ...endereco.enderecoOriginal,
+      //       taxa:
+      //         endereco.enderecoOriginal.taxa != null
+      //           ? endereco.enderecoOriginal.taxa
+      //           : taxa,
+      //     },
+      //   };
+      // }),
     };
   });
 };

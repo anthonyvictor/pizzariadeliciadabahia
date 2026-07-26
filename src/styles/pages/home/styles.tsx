@@ -119,7 +119,7 @@ export const HomeStyle = styled.main`
 
     .right {
       .image-wrapper {
-        transform: scale(100%);
+        transform: scale(130%);
       }
     }
   }

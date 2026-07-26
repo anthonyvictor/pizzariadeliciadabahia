@@ -8,10 +8,13 @@ import { fuzzySearch } from "@util/array";
 import { PedidoItem } from "./item";
 import { Lista } from "./lista";
 import Text from "@components/text";
+import Loading from "@components/loading";
 // import { Footer } from "src/views/loja/components/listas/footer";
 
 export const PedidosView = () => {
-  const { pedidos, setEditando } = usePedidos();
+  const { pedidos, setEditando, pedidosCarregados } = usePedidos();
+  const [filterSomenteNaoEnviados, setFilterSomenteNaoEnviados] =
+    useState(true);
   // const [search, setSearch] = useState("");
   // const categorias = Array.from(new Set(pedidos.map((x) => x.categoria)));
   // const [categoriasFiltro, setCategoriasFiltro] = useState<string[]>([]);
@@ -70,20 +73,37 @@ export const PedidosView = () => {
   //     </li>
   //   );
   // };
+  const pedidosFiltrados = pedidos?.length
+    ? pedidos.filter((x) => !filterSomenteNaoEnviados || !x.enviadoEm)
+    : [];
 
   return (
     <PedidosViewStyle>
-      <TextContainer title="Pedidos" />
+      <header>
+        <TextContainer title="Pedidos" />
+        <div>
+          <button
+            className=""
+            onClick={() => {
+              setFilterSomenteNaoEnviados((prev) => !prev);
+            }}
+          >
+            {filterSomenteNaoEnviados ? "Não Enviados" : "Todos"}
+          </button>
+        </div>
+      </header>
       {/* <Search value={search} setValue={setSearch} /> */}
 
       <Lista name="pedidos">
-        {!pedidos.length ? (
+        {!pedidosCarregados ? (
+          <Loading />
+        ) : !pedidosFiltrados.length ? (
           <div className="empty">
             <Text type="title">Sem pedidos!</Text>
             <Text type="subtitle">Não há pedidos para exibir no momento</Text>
           </div>
         ) : (
-          pedidos.map((pedido) => (
+          pedidosFiltrados.map((pedido) => (
             <PedidoItem key={pedido.id} pedido={pedido} />
           ))
         )}

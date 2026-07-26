@@ -113,6 +113,9 @@ export function formatPhoneNumber(
 ) {
   let novoValor = valor;
 
+  if ((valor.length === 13 || valor.length === 14) && valor.startsWith("55")) {
+    novoValor = valor.replace(/^(55)/, "");
+  }
   // Remove the Country code BRASILEIRO.
   novoValor = novoValor.replace("+55", "");
 
@@ -153,10 +156,19 @@ export function formatPhoneNumber(
       break;
   }
 
+  _ddd = _ddd.replace(/\s+/g, "");
   _ddi = manterDDI ? _ddi : "";
+  console.log("manterDDD", manterDDD);
+  console.log("_ddd", _ddd, "informacoesLocais.DDD", informacoesLocais.DDD);
   _ddd = manterDDD || _ddd !== informacoesLocais.DDD ? _ddd : "";
 
   novoValor = _ddi + _ddd + _num;
+  console.log(
+    "_ddd !== informacoesLocais.DDD",
+    _ddd !== informacoesLocais.DDD,
+    `"${_ddd}"`,
+    `"${informacoesLocais.DDD}"`,
+  );
   return novoValor;
 }
 

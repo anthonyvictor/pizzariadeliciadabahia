@@ -1,86 +1,148 @@
 import { GetStaticProps, NextPage } from "next";
-import { CardapioStyle } from "@styles/pages/cardapio/styles";
 import { IPizzaSabor, IPizzaTamanho } from "tpdb-lib";
 import { formatCurrency, getValueString } from "@util/format";
 import { obterTamanhos } from "@routes/pizzas/tamanhos";
 import { obterSabores } from "@routes/pizzas/sabores";
 import { dvEst } from "@models/deveEstar";
+import React, { useState } from "react";
+import {
+  CardapioContainer,
+  HeaderSection,
+  SectionTitle,
+  SizesSlider,
+  SizeCard,
+  CalculationNotice,
+  SearchAndFilter,
+  FlavorsGrid,
+  FlavorCard,
+} from "@styles/pages/cardapio/styles";
 
-const Cardapio: NextPage = ({
-  sabores,
-  tamanhos,
-}: {
+export interface IPizzaValor {
+  tamanhoId: string;
+  valor: number;
+}
+
+export interface IPizzaSaborIngr {
+  id: string;
+  nome: string;
+}
+
+export interface IRegra {
+  id: string;
+  descricao: string;
+}
+
+export interface IDado {
+  chave: string;
+  valor: string;
+}
+
+interface CardapioProps {
   sabores: IPizzaSabor[];
   tamanhos: IPizzaTamanho[];
-}) => {
-  const getAllValues = (s: IPizzaSabor) => {
-    return s.valores
-      .filter((x) => {
-        const tam = tamanhos.find((t) => t.id === x.tamanhoId && t.visivel);
+}
 
-        return !!tam;
-      })
-      .map((v) =>
-        getValueString({
-          value: v.valor - 0.01,
-          name: tamanhos.find((x) => x.id === v.tamanhoId).nome.slice(0, 3),
-        }),
-      )
-      .join(" • ");
-  };
+const Cardapio: NextPage<CardapioProps> = ({ sabores = [], tamanhos = [] }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const visibleSizes = tamanhos.filter((t) => t.visivel);
+  const disponibleSizes = tamanhos.filter((t) => t.visivel && t.disponivel);
+
+  const filteredSabores = sabores.filter(
+    (sabor) =>
+      sabor.visivel &&
+      (sabor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sabor.descricao?.toLowerCase().includes(searchTerm.toLowerCase())),
+  );
 
   return (
-    <CardapioStyle>
-      <div className="sizes">
-        {tamanhos
-          .filter((x) => x.visivel)
-          .map((s) => (
-            <li key={s.nome} className="size">
-              <label>
-                {s.nome} - {s.fatias} Fatias
-              </label>
-              <div className="info">
-                <label>
-                  Até {s.maxSabores} sabor{s.maxSabores > 1 && "es"}
-                </label>
-                <label>Aprox. {s.tamanhoAprox}cm</label>
-              </div>
-            </li>
-          ))}
-      </div>
-      <p className="value-detail">
-        * O valor da pizza será calculado pelo <b>valor médio</b> dos sabores
-        escolhidos*
-      </p>
-      {/* <div className="groups">
-        <aside className="groups-left">
-          {groupsLeft.map((g) => getGroups(g))}
-        </aside>
-        <aside className="groups-right">
-          {groupsRight.map((g) => getGroups(g))}
-        </aside>
-      </div> */}
-      <ul className="sabores">
-        {sabores.map((sabor) => (
-          <li key={sabor.id}>
-            <h1>{sabor.nome}</h1>
-            <p>{sabor.descricao}</p>
-            <small>
+    <CardapioContainer>
+      <HeaderSection>
+        <h1>Nosso Cardápio</h1>
+        <p>
+          Aquela pizza no capricho, gostosa e bem recheada que você respeita. É
+          Daquele jeitinho que só a gente faz na pegada baiana né, pai? 😉
+        </p>
+      </HeaderSection>
+
+      {disponibleSizes.length > 1 && (
+        <>
+          <SectionTitle>Tamanhos:</SectionTitle>
+          <SizesSlider>
+            {visibleSizes.map((tam) => (
+              <SizeCard key={tam.id || tam.nome}>
+                <div className="header">
+                  <span className="name">{tam.nome}</span>
+                  <span className="fatias">{tam.fatias} Fatias</span>
+                </div>
+                <div className="details">
+                  <span>
+                    Até {tam.maxSabores} sabor{tam.maxSabores > 1 ? "es" : ""}
+                  </span>
+                  <span>Aprox. {tam.tamanhoAprox} cm</span>
+                </div>
+              </SizeCard>
+            ))}
+          </SizesSlider>
+        </>
+      )}
+
+      <CalculationNotice>
+        * O valor final da pizza é calculado pela <b>média simples</b> dos
+        sabores selecionados.
+      </CalculationNotice>
+
+      {disponibleSizes.length > 1 && <SectionTitle>Sabores:</SectionTitle>}
+      <SearchAndFilter>
+        <input
+          type="text"
+          placeholder="Buscar sabor ou ingrediente..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </SearchAndFilter>
+
+      <FlavorsGrid>
+        {filteredSabores.map((sabor) => (
+          <FlavorCard key={sabor.id}>
+            <div className="image-wrapper">
+              {sabor.imagemUrl ? (
+                <img src={sabor.imagemUrl} alt={sabor.nome} loading="lazy" />
+              ) : (
+                <div className="placeholder">🍕</div>
+              )}
+              {sabor.vendidos > 50 && (
+                <span className="badge-bestseller">Mais Pedido</span>
+              )}
+            </div>
+
+            <div className="content">
+              <h3>{sabor.nome}</h3>
+              <p>{sabor.descricao || "Sem descrição disponível."}</p>
+            </div>
+
+            <div className="prices-container">
               {sabor.valores
                 .map((v) => {
-                  const nome = tamanhos.find((x) => x.id === v.tamanhoId)?.nome;
-
-                  return nome
-                    ? `${nome.slice(0, 3)}: ${formatCurrency(v.valor)}`
-                    : "";
+                  const tam = (
+                    disponibleSizes.length > 1 ? visibleSizes : disponibleSizes
+                  ).find((x) => x.id === v.tamanhoId);
+                  if (!tam) return null;
+                  return (
+                    <div key={v.tamanhoId} className="price-tag">
+                      <span className="size-name">{tam.nome.slice(0, 3)}:</span>
+                      <span className="price-value">
+                        {formatCurrency(v.valor)}
+                      </span>
+                    </div>
+                  );
                 })
-                .filter(Boolean)
-                .join(" - ")}
-            </small>
-          </li>
+                .filter(Boolean)}
+            </div>
+          </FlavorCard>
         ))}
-      </ul>
-    </CardapioStyle>
+      </FlavorsGrid>
+    </CardapioContainer>
   );
 };
 
